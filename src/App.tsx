@@ -12,11 +12,30 @@ import { TimelineScreen } from './features/timeline/TimelineScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { SearchModal } from './features/search/SearchModal';
 import { QuickAddModal } from './components/common/QuickAddModal';
+import { PasscodeLock } from './components/common/PasscodeLock';
+import { VaultStorageService } from './services/vaultStorage';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  
+  // Interactivity and linking states
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedItemId, setSelectedItemId] = useState<string | undefined>(undefined);
+  
+  // Settings & Simulated Lock state
+  const [settings, setSettings] = useState(() => VaultStorageService.getSettings());
+  const [isLocked, setIsLocked] = useState(() => settings.autoLock);
+
+  // Sync dark theme on settings update
+  useEffect(() => {
+    if (settings.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [settings.darkMode]);
 
   // Global Cmd+K search hotkey handler
   useEffect(() => {
@@ -30,36 +49,102 @@ export function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  const handleNavigateToTab = (tab: ActiveTab, linkedItemId?: string) => {
+    setSelectedItemId(linkedItemId);
+    setActiveTab(tab);
+  };
+
+  const handleTabChange = (tab: ActiveTab) => {
+    setSelectedItemId(undefined); // Clear deep link target when navigating away manually
+    setActiveTab(tab);
+  };
+
+  const handleResetData = () => {
+    if (confirm('Reset all vault data to initial mock seed?')) {
+      VaultStorageService.resetVault();
+      window.location.reload();
+    }
+  };
+
   const renderActiveScreen = () => {
     switch (activeTab) {
       case 'home':
         return (
           <HomeScreen
-            onNavigateToTab={setActiveTab}
+            key={`home-${refreshKey}`}
+            onNavigateToTab={handleNavigateToTab}
             onOpenSearch={() => setIsSearchOpen(true)}
             onOpenQuickAdd={() => setIsQuickAddOpen(true)}
           />
         );
       case 'documents':
-        return <DocumentsScreen onOpenAdd={() => setIsQuickAddOpen(true)} />;
+        return (
+          <DocumentsScreen
+            key={`documents-${refreshKey}`}
+            selectedItemId={selectedItemId}
+            onOpenAdd={() => setIsQuickAddOpen(true)}
+          />
+        );
       case 'receipts':
-        return <ReceiptsScreen onOpenAdd={() => setIsQuickAddOpen(true)} />;
+        return (
+          <ReceiptsScreen
+            key={`receipts-${refreshKey}`}
+            selectedItemId={selectedItemId}
+            onOpenAdd={() => setIsQuickAddOpen(true)}
+          />
+        );
       case 'subscriptions':
-        return <SubscriptionsScreen onOpenAdd={() => setIsQuickAddOpen(true)} />;
+        return (
+          <SubscriptionsScreen
+            key={`subscriptions-${refreshKey}`}
+            selectedItemId={selectedItemId}
+            onOpenAdd={() => setIsQuickAddOpen(true)}
+          />
+        );
       case 'warranties':
-        return <WarrantiesScreen onOpenAdd={() => setIsQuickAddOpen(true)} />;
+        return (
+          <WarrantiesScreen
+            key={`warranties-${refreshKey}`}
+            selectedItemId={selectedItemId}
+            onOpenAdd={() => setIsQuickAddOpen(true)}
+            onViewReceipt={(receiptId) => handleNavigateToTab('receipts', receiptId)}
+          />
+        );
       case 'notes':
-        return <NotesScreen onOpenAdd={() => setIsQuickAddOpen(true)} />;
+        return (
+          <NotesScreen
+            key={`notes-${refreshKey}`}
+            onOpenAdd={() => setIsQuickAddOpen(true)}
+          />
+        );
       case 'bookmarks':
-        return <BookmarksScreen onOpenAdd={() => setIsQuickAddOpen(true)} />;
+        return (
+          <BookmarksScreen
+            key={`bookmarks-${refreshKey}`}
+            selectedItemId={selectedItemId}
+            onOpenAdd={() => setIsQuickAddOpen(true)}
+          />
+        );
       case 'timeline':
-        return <TimelineScreen />;
+        return (
+          <TimelineScreen
+            key={`timeline-${refreshKey}`}
+            onNavigateToTab={handleNavigateToTab}
+          />
+        );
       case 'settings':
-        return <SettingsScreen />;
+        return (
+          <SettingsScreen
+            key={`settings-${refreshKey}`}
+            onSettingsChange={() => setSettings(VaultStorageService.getSettings())}
+            onLock={() => setIsLocked(true)}
+          />
+        );
       default:
         return (
           <HomeScreen
-            onNavigateToTab={setActiveTab}
+            key={`home-${refreshKey}`}
+            onNavigateToTab={handleNavigateToTab}
             onOpenSearch={() => setIsSearchOpen(true)}
             onOpenQuickAdd={() => setIsQuickAddOpen(true)}
           />
@@ -67,10 +152,20 @@ export function App() {
     }
   };
 
+  if (isLocked) {
+    return (
+      <PasscodeLock
+        correctPasscode={settings.passcode || '1234'}
+        onSuccess={() => setIsLocked(false)}
+        onResetData={handleResetData}
+      />
+    );
+  }
+
   return (
     <MainLayout
       activeTab={activeTab}
-      onTabChange={setActiveTab}
+      onTabChange={handleTabChange}
       onOpenSearch={() => setIsSearchOpen(true)}
       onOpenQuickAdd={() => setIsQuickAddOpen(true)}
     >
@@ -80,7 +175,7 @@ export function App() {
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
-        onNavigateToTab={setActiveTab}
+        onNavigateToTab={handleNavigateToTab}
       />
 
       {/* Quick Add Item Modal */}
@@ -88,8 +183,8 @@ export function App() {
         isOpen={isQuickAddOpen}
         onClose={() => setIsQuickAddOpen(false)}
         onSuccess={() => {
-          // Re-render current tab
-          setActiveTab(prev => prev);
+          // Increment trigger key to refresh active sub-screen data
+          setRefreshKey(prev => prev + 1);
         }}
       />
     </MainLayout>

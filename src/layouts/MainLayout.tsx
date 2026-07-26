@@ -32,32 +32,32 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       {/* Content */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen">
         {/* Mobile Top Bar */}
-        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-30">
+        <header className="md:hidden flex items-center justify-between px-5 py-4 border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-30">
           <button
             onClick={() => onTabChange('home')}
-            className="flex items-center gap-2 active:opacity-70"
+            className="flex items-center gap-2.5 active:opacity-70 transition-opacity"
           >
-            <div className="w-7 h-7 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
+            <div className="w-8 h-8 rounded-xl bg-primary text-primary-foreground flex items-center justify-center text-[15px] font-bold shadow-soft">
               K
             </div>
-            <span className="text-[15px] font-semibold text-primary tracking-[-0.02em]">Kapsule</span>
+            <span className="text-[17px] font-semibold text-primary tracking-[-0.02em]">Kapsule</span>
           </button>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <button
               onClick={onOpenSearch}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-border text-secondary text-xs active:scale-95 transition-transform"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface border border-border text-secondary text-[13px] active:scale-[0.98] transition-transform"
             >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
               </svg>
               Search
             </button>
             <button
               onClick={onOpenQuickAdd}
-              className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-white active:scale-95 transition-transform"
+              className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-primary-foreground shadow-soft active:scale-[0.98] transition-transform"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" d="M12 5v14M5 12h14"/>
               </svg>
             </button>

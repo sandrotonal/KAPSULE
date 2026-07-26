@@ -368,6 +368,7 @@ export const INITIAL_SUGGESTIONS: VaultSuggestion[] = [
     type: 'urgent',
     actionLabel: 'Garantiyi İncele',
     targetScreen: 'warranties',
+    linkedItemId: 'war-2',
     date: '2026-09-01',
   },
   {
@@ -377,6 +378,7 @@ export const INITIAL_SUGGESTIONS: VaultSuggestion[] = [
     type: 'reminder',
     actionLabel: 'Poliçeyi Gör',
     targetScreen: 'documents',
+    linkedItemId: 'doc-3',
     date: '2026-09-20',
   },
   {
@@ -386,5 +388,6 @@ export const INITIAL_SUGGESTIONS: VaultSuggestion[] = [
     type: 'tip',
     actionLabel: 'Detay',
     targetScreen: 'documents',
+    linkedItemId: 'doc-1',
   }
 ];

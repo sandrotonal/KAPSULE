@@ -36,9 +36,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
         <input
           ref={ref}
           className={cn(
-            "w-full h-10 bg-surface text-primary placeholder:text-secondary/50",
-            "text-sm rounded-xl border border-border",
-            "px-3.5 transition-all duration-150",
+            "w-full h-12 bg-surface text-primary placeholder:text-secondary/50",
+            "text-[16px] rounded-xl border border-border",
+            "px-4 transition-all duration-150",
             "focus:outline-none focus:border-accent/40 focus:bg-background focus:shadow-focus focus:ring-0",
             "hover:border-border hover:bg-surface-elevated",
             icon && "pl-9",

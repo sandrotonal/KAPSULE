@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Moon, Bell, Lock, Download, RefreshCw, ChevronRight, Info, Sun } from 'lucide-react';
+import { Moon, Bell, Lock, Download, RefreshCw, ChevronRight, Info, Sun, LogOut } from 'lucide-react';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { VaultStorageService } from '../../services/vaultStorage';
@@ -11,7 +11,7 @@ const Toggle: React.FC<ToggleProps> = ({ checked, onChange, id }) => (
     aria-checked={checked}
     id={id}
     onClick={onChange}
-    className={`relative w-9 h-5 rounded-full transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent/30 ${checked ? 'bg-primary' : 'bg-border'}`}
+    className={`relative w-9 h-5 rounded-full transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent/30 ${checked ? 'bg-accent' : 'bg-border'}`}
   >
     <span
       className={`absolute top-[2px] left-[2px] w-4 h-4 rounded-full bg-white shadow-soft transition-transform duration-200 ${checked ? 'translate-x-4' : 'translate-x-0'}`}
@@ -54,15 +54,26 @@ const SettingsSection: React.FC<{ title?: string; children: React.ReactNode }> =
   </div>
 );
 
-export const SettingsScreen: React.FC = () => {
-  const [darkMode, setDarkMode] = useState(false);
-  const [notifications, setNotifications] = useState(true);
-  const [autoLock, setAutoLock] = useState(true);
-  const [toast, setToast] = useState('');
+export interface SettingsScreenProps {
+  onSettingsChange?: () => void;
+  onLock?: () => void;
+}
 
-  const toggleDark = () => {
-    setDarkMode(!darkMode);
-    document.documentElement.classList.toggle('dark');
+export const SettingsScreen: React.FC<SettingsScreenProps> = ({
+  onSettingsChange,
+  onLock,
+}) => {
+  const [settings, setSettingsState] = useState(() => VaultStorageService.getSettings());
+  const [toast, setToast] = useState('');
+  const [showPasscodeModal, setShowPasscodeModal] = useState(false);
+  const [newPasscode, setNewPasscode] = useState('');
+
+  const updateSetting = (key: 'darkMode' | 'notifications' | 'autoLock', value: boolean) => {
+    const updated = VaultStorageService.saveSettings({ [key]: value });
+    setSettingsState(updated);
+    if (onSettingsChange) {
+      onSettingsChange();
+    }
   };
 
   const handleExport = () => {
@@ -111,23 +122,35 @@ export const SettingsScreen: React.FC = () => {
 
       {/* Profile */}
       <div className="flex items-center gap-4 p-4 bg-background border border-border rounded-2xl">
-        <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground font-semibold text-lg flex items-center justify-center shrink-0">
-          A
+        <div className="w-12 h-12 rounded-full bg-primary text-background font-semibold text-lg flex items-center justify-center shrink-0 uppercase">
+          {settings.profileName ? settings.profileName.charAt(0) : 'U'}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-base font-semibold text-primary tracking-[-0.01em]">Ali Can</p>
-          <p className="text-sm text-secondary">Personal vault · Kapsule</p>
+          <p className="text-base font-semibold text-primary tracking-[-0.01em]">{settings.profileName || 'User'}</p>
+          <p className="text-sm text-secondary">{settings.profileEmail || 'Personal vault'}</p>
         </div>
-        <Badge variant="success" size="sm" dot>Active</Badge>
+        <div className="flex items-center gap-2">
+          {onLock && (
+            <Button
+              variant="ghost"
+              size="xs"
+              icon={<LogOut className="w-3.5 h-3.5" />}
+              onClick={onLock}
+            >
+              Lock
+            </Button>
+          )}
+          <Badge variant="success" size="sm" dot>Active</Badge>
+        </div>
       </div>
 
       {/* Appearance */}
       <SettingsSection title="Appearance">
         <SettingsRow
-          icon={darkMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+          icon={settings.darkMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
           label="Dark mode"
           description="Switch between light and dark interface"
-          right={<Toggle checked={darkMode} onChange={toggleDark} id="dark-mode" />}
+          right={<Toggle checked={settings.darkMode} onChange={() => updateSetting('darkMode', !settings.darkMode)} id="dark-mode" />}
         />
       </SettingsSection>
 
@@ -137,17 +160,23 @@ export const SettingsScreen: React.FC = () => {
           icon={<Bell className="w-4 h-4" />}
           label="Warranty and renewal reminders"
           description="Get notified before important expiry dates"
-          right={<Toggle checked={notifications} onChange={() => setNotifications(!notifications)} id="notifications" />}
+          right={<Toggle checked={settings.notifications} onChange={() => updateSetting('notifications', !settings.notifications)} id="notifications" />}
         />
       </SettingsSection>
 
-      {/* Security */}
-      <SettingsSection title="Security">
+      {/* Security & Passcode */}
+      <SettingsSection title="Security & Passcode">
         <SettingsRow
           icon={<Lock className="w-4 h-4" />}
-          label="Auto-lock vault"
-          description="Require authentication when idle"
-          right={<Toggle checked={autoLock} onChange={() => setAutoLock(!autoLock)} id="autolock" />}
+          label="Auto-lock vault on start"
+          description="Require 4-digit passcode when opening app"
+          right={<Toggle checked={settings.autoLock} onChange={() => updateSetting('autoLock', !settings.autoLock)} id="autolock" />}
+        />
+        <SettingsRow
+          icon={<Lock className="w-4 h-4" />}
+          label="Change 4-digit Passcode"
+          description={`Current passcode: ${settings.passcode || '1234'}`}
+          onClick={() => setShowPasscodeModal(true)}
         />
       </SettingsSection>
 
@@ -168,15 +197,41 @@ export const SettingsScreen: React.FC = () => {
         />
       </SettingsSection>
 
-      {/* About */}
-      <SettingsSection>
-        <SettingsRow
-          icon={<Info className="w-4 h-4" />}
-          label="Kapsule v1.0"
-          description="Everything important. One place."
-          right={<Badge variant="muted" size="xs">2026</Badge>}
-        />
-      </SettingsSection>
+      {/* Change Passcode Modal */}
+      {showPasscodeModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-surface border border-border rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-2xl">
+            <h3 className="text-base font-bold text-primary">Change Passcode</h3>
+            <p className="text-xs text-secondary">Enter a new 4-digit numeric code for your vault lock.</p>
+            <input
+              type="password"
+              maxLength={4}
+              placeholder="e.g. 5678"
+              value={newPasscode}
+              onChange={(e) => setNewPasscode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              className="w-full text-center text-2xl tracking-[0.5em] font-mono py-3 bg-background border border-border rounded-xl text-primary focus:outline-none focus:border-accent"
+            />
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button variant="ghost" size="sm" onClick={() => setShowPasscodeModal(false)}>Cancel</Button>
+              <Button
+                variant="primary"
+                size="sm"
+                disabled={newPasscode.length !== 4}
+                onClick={() => {
+                  VaultStorageService.saveSettings({ passcode: newPasscode });
+                  setSettingsState(prev => ({ ...prev, passcode: newPasscode }));
+                  setShowPasscodeModal(false);
+                  setNewPasscode('');
+                  setToast('Passcode updated successfully.');
+                  setTimeout(() => setToast(''), 2500);
+                }}
+              >
+                Save Passcode
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

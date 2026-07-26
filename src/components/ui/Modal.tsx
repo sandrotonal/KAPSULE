@@ -39,7 +39,7 @@ export const Modal: React.FC<ModalProps> = ({
       document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   const widths = {
     sm: 'max-w-sm',

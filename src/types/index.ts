@@ -103,7 +103,19 @@ export interface VaultSuggestion {
   type: 'urgent' | 'reminder' | 'tip';
   actionLabel?: string;
   targetScreen?: string;
+  linkedItemId?: string;
   date?: string;
 }
 
 export type ActiveTab = 'home' | 'documents' | 'receipts' | 'subscriptions' | 'warranties' | 'notes' | 'bookmarks' | 'timeline' | 'settings';
+
+export interface VaultSettings {
+  profileName?: string;
+  profileEmail?: string;
+  darkMode: boolean;
+  notifications: boolean;
+  autoLock: boolean;
+  passcode?: string;
+  isLocked?: boolean;
+}
+

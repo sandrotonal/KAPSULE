@@ -8,17 +8,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "#FFFFFF",
-        surface: "#F8F8F8",
-        "surface-elevated": "#F2F2F2",
-        border: "#E8E8E8",
-        "border-subtle": "#F0F0F0",
+        background: "var(--background)",
+        surface: "var(--surface)",
+        "surface-elevated": "var(--surface-elevated)",
+        border: "var(--border)",
+        "border-subtle": "var(--border-subtle)",
         primary: {
-          DEFAULT: "#0F0F0F",
-          foreground: "#FFFFFF",
+          DEFAULT: "var(--text-primary)",
+          foreground: "var(--background)",
         },
         secondary: {
-          DEFAULT: "#6B6B6B",
+          DEFAULT: "var(--text-secondary)",
           light: "#9B9B9B",
         },
         accent: {

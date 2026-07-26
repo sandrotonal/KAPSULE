@@ -90,7 +90,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Search documents, receipts, warranties..."
-          className="flex-1 px-3 py-4 text-sm text-primary placeholder:text-secondary/50 bg-transparent focus:outline-none"
+          className="flex-1 px-3 py-4 text-[16px] text-primary placeholder:text-secondary/50 bg-transparent focus:outline-none"
         />
         {query && (
           <button onClick={() => setQuery('')} className="p-1 text-secondary hover:text-primary">

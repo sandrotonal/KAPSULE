@@ -6,20 +6,37 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { BookmarkItem } from '../../types';
-import { formatDate } from '../../lib/utils';
+import { BookmarkDetailModal } from './BookmarkDetailModal';
 import { motion } from 'framer-motion';
 
 export interface BookmarksScreenProps {
   onOpenAdd: () => void;
+  selectedItemId?: string;
 }
 
-export const BookmarksScreen: React.FC<BookmarksScreenProps> = ({ onOpenAdd }) => {
+export const BookmarksScreen: React.FC<BookmarksScreenProps> = ({
+  onOpenAdd,
+  selectedItemId,
+}) => {
   const [bookmarks, setBookmarks] = useState<BookmarkItem[]>(() => VaultStorageService.getBookmarks());
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedBookmark, setSelectedBookmark] = useState<BookmarkItem | null>(() => {
+    if (selectedItemId) {
+      const list = VaultStorageService.getBookmarks();
+      return list.find(b => b.id === selectedItemId) || null;
+    }
+    return null;
+  });
 
   const filtered = bookmarks.filter(b =>
     !searchQuery || b.title.toLowerCase().includes(searchQuery.toLowerCase()) || b.domain.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleDelete = (id: string) => {
+    VaultStorageService.deleteBookmark(id);
+    setBookmarks(VaultStorageService.getBookmarks());
+    setSelectedBookmark(null);
+  };
 
   return (
     <div className="space-y-7">
@@ -40,46 +57,71 @@ export const BookmarksScreen: React.FC<BookmarksScreenProps> = ({ onOpenAdd }) =
         onChange={e => setSearchQuery(e.target.value)}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {filtered.map((bm, i) => (
-          <motion.div
-            key={bm.id}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.14, delay: i * 0.04 }}
-          >
-            <Card padding="none" className="overflow-hidden flex flex-col group border-border/80">
-              {/* Preview */}
-              {bm.previewUrl && (
-                <div className="h-28 overflow-hidden border-b border-border">
-                  <img src={bm.previewUrl} alt={bm.title} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300" />
-                </div>
-              )}
-              <div className="p-4 space-y-2 flex-1">
-                <div className="flex items-center gap-2">
-                  <Globe className="w-3.5 h-3.5 text-secondary/60 shrink-0" />
-                  <span className="text-[11px] text-secondary truncate">{bm.domain}</span>
-                </div>
-                <p className="text-sm font-medium text-primary line-clamp-1">{bm.title}</p>
-                {bm.description && (
-                  <p className="text-xs text-secondary line-clamp-2 leading-relaxed">{bm.description}</p>
+      {filtered.length === 0 ? (
+        <div className="py-16 text-center space-y-3">
+          <div className="w-10 h-10 rounded-xl bg-surface border border-border flex items-center justify-center mx-auto">
+            <Bookmark className="w-5 h-5 text-secondary" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-primary">No bookmarks yet.</p>
+            <p className="text-xs text-secondary mt-1">Store key resources, official portals, or reference links.</p>
+          </div>
+          <Button variant="secondary" size="sm" onClick={onOpenAdd}>Add bookmark</Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {filtered.map((bm, i) => (
+            <motion.div
+              key={bm.id}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.14, delay: i * 0.04 }}
+            >
+              <Card
+                interactive
+                padding="none"
+                onClick={() => setSelectedBookmark(bm)}
+                className="overflow-hidden flex flex-col group border-border/80 h-full"
+              >
+                {/* Preview */}
+                {bm.previewUrl && (
+                  <div className="h-28 overflow-hidden border-b border-border">
+                    <img src={bm.previewUrl} alt={bm.title} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300" />
+                  </div>
                 )}
-              </div>
-              <div className="px-4 pb-4">
-                <a
-                  href={bm.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={e => e.stopPropagation()}
-                  className="flex items-center justify-center gap-1.5 w-full py-2 text-xs font-medium text-secondary bg-surface hover:bg-surface-elevated border border-border rounded-lg transition-all duration-100"
-                >
-                  Open <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+                <div className="p-4 space-y-2 flex-1">
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-3.5 h-3.5 text-secondary/60 shrink-0" />
+                    <span className="text-[11px] text-secondary truncate">{bm.domain}</span>
+                  </div>
+                  <p className="text-sm font-medium text-primary line-clamp-1">{bm.title}</p>
+                  {bm.description && (
+                    <p className="text-xs text-secondary line-clamp-2 leading-relaxed">{bm.description}</p>
+                  )}
+                </div>
+                <div className="px-4 pb-4">
+                  <a
+                    href={bm.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
+                    className="flex items-center justify-center gap-1.5 w-full py-2 text-xs font-medium text-secondary bg-surface hover:bg-surface-elevated border border-border rounded-lg transition-all duration-100"
+                  >
+                    Open <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      <BookmarkDetailModal
+        bookmark={selectedBookmark}
+        isOpen={!!selectedBookmark}
+        onClose={() => setSelectedBookmark(null)}
+        onDelete={handleDelete}
+      />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Home,
   FileText,
@@ -14,6 +13,7 @@ import {
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 import { cn } from '../lib/utils';
+import { LineSidebar } from '../components/ui/LineSidebar';
 
 export interface SidebarProps {
   activeTab: ActiveTab;
@@ -72,30 +72,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto no-scrollbar px-2 space-y-0.5">
-        {NAV_ITEMS.map((item) => {
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => onTabChange(item.id)}
-              className={cn(
-                "w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-sm transition-all duration-100 text-left",
-                isActive
-                  ? "bg-background text-primary font-medium shadow-soft border border-[#EBEBEB]"
-                  : "text-secondary hover:text-primary hover:bg-background/60"
-              )}
-            >
-              <span className={cn(
-                "shrink-0 transition-colors",
-                isActive ? "text-primary" : "text-secondary/80"
-              )}>
-                {item.icon}
-              </span>
-              <span className="text-[13px]">{item.label}</span>
-            </button>
-          );
-        })}
+      <nav className="flex-1 overflow-y-auto no-scrollbar py-2">
+        <LineSidebar
+          items={NAV_ITEMS}
+          activeId={activeTab}
+          onItemClick={(idx, item) => onTabChange(item.id as ActiveTab)}
+          accentColor="#4F46E5"
+          textColor="var(--text-secondary)"
+          markerColor="var(--border)"
+          showIndex={false}
+          showMarker={true}
+          markerLength={12}
+          markerGap={12}
+          tickScale={0}
+          itemGap={8}
+          fontSize={0.85}
+          maxShift={8}
+        />
       </nav>
 
       {/* Bottom Actions */}

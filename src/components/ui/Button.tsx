@@ -38,10 +38,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   };
 
   const sizes = {
-    xs: "text-xs px-2.5 py-1.5 rounded-lg gap-1.5 h-7",
-    sm: "text-sm px-3 py-1.5 rounded-lg gap-1.5 h-8",
-    md: "text-sm px-4 py-2 rounded-xl gap-2 h-9",
-    lg: "text-base px-5 py-2.5 rounded-xl gap-2 h-11",
+    xs: "text-xs px-3 py-1.5 rounded-lg gap-1.5 h-8",
+    sm: "text-sm px-4 py-2 rounded-xl gap-1.5 h-10",
+    md: "text-sm px-5 py-2.5 rounded-xl gap-2 h-12",
+    lg: "text-[16px] px-6 py-3 rounded-2xl gap-2 h-14",
   };
 
   return (

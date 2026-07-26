@@ -1,22 +1,23 @@
-import { 
-  DocumentItem, 
-  ReceiptItem, 
-  SubscriptionItem, 
-  WarrantyItem, 
-  NoteItem, 
-  BookmarkItem, 
-  TimelineEvent, 
-  VaultSuggestion 
+import {
+  DocumentItem,
+  ReceiptItem,
+  SubscriptionItem,
+  WarrantyItem,
+  NoteItem,
+  BookmarkItem,
+  TimelineEvent,
+  VaultSuggestion,
+  VaultSettings
 } from '../types';
-import { 
-  INITIAL_DOCUMENTS, 
-  INITIAL_RECEIPTS, 
-  INITIAL_SUBSCRIPTIONS, 
-  INITIAL_WARRANTIES, 
-  INITIAL_NOTES, 
-  INITIAL_BOOKMARKS, 
-  INITIAL_TIMELINE, 
-  INITIAL_SUGGESTIONS 
+import {
+  INITIAL_DOCUMENTS,
+  INITIAL_RECEIPTS,
+  INITIAL_SUBSCRIPTIONS,
+  INITIAL_WARRANTIES,
+  INITIAL_NOTES,
+  INITIAL_BOOKMARKS,
+  INITIAL_TIMELINE,
+  INITIAL_SUGGESTIONS
 } from './mockData';
 
 const STORAGE_KEYS = {
@@ -284,7 +285,70 @@ export class VaultStorageService {
 
   // Suggestions
   static getSuggestions(): VaultSuggestion[] {
-    return INITIAL_SUGGESTIONS;
+    const suggestions: VaultSuggestion[] = [];
+    const now = new Date();
+
+    // Warranty expiries
+    const warranties = this.getWarranties();
+    warranties.forEach(war => {
+      const expiry = new Date(war.expiryDate);
+      const diffDays = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      if (diffDays > 0 && diffDays <= 45) {
+        suggestions.push({
+          id: `sug-war-${war.id}`,
+          title: `${war.productName} Warranty Expiring Soon`,
+          description: `Warranty ends in ${diffDays} days. Consider booking a service if needed.`,
+          type: 'urgent',
+          actionLabel: 'View Warranty',
+          targetScreen: 'warranties',
+          linkedItemId: war.id,
+          date: war.expiryDate,
+        });
+      }
+    });
+
+    // Subscriptions renewals
+    const subscriptions = this.getSubscriptions();
+    subscriptions.forEach(sub => {
+      const renewal = new Date(sub.renewalDate);
+      const diffDays = Math.ceil((renewal.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      if (diffDays > 0 && diffDays <= 7) {
+        suggestions.push({
+          id: `sug-sub-${sub.id}`,
+          title: `${sub.name} Renews Soon`,
+          description: `Subscription renews in ${diffDays} days.`,
+          type: 'reminder',
+          actionLabel: 'View Sub',
+          targetScreen: 'subscriptions',
+          linkedItemId: sub.id,
+          date: sub.renewalDate,
+        });
+      }
+    });
+
+    // Return dynamic or fallback to INITIAL_SUGGESTIONS if empty so UI looks alive for new users
+    return suggestions.length > 0 ? suggestions : INITIAL_SUGGESTIONS;
+  }
+
+  // Settings
+  static getSettings(): VaultSettings {
+    const defaultSettings: VaultSettings = {
+      profileName: 'Ali Can',
+      profileEmail: 'Personal vault · Kapsule',
+      darkMode: false,
+      notifications: true,
+      autoLock: false,
+      passcode: '1234',
+      isLocked: true,
+    };
+    return getStored(STORAGE_KEYS.SETTINGS, defaultSettings);
+  }
+
+  static saveSettings(settings: Partial<VaultSettings>): VaultSettings {
+    const current = this.getSettings();
+    const updated = { ...current, ...settings };
+    setStored(STORAGE_KEYS.SETTINGS, updated);
+    return updated;
   }
 
   // Reset to initial mock state if requested
@@ -296,5 +360,6 @@ export class VaultStorageService {
     localStorage.removeItem(STORAGE_KEYS.NOTES);
     localStorage.removeItem(STORAGE_KEYS.BOOKMARKS);
     localStorage.removeItem(STORAGE_KEYS.TIMELINE);
+    localStorage.removeItem(STORAGE_KEYS.SETTINGS);
   }
 }

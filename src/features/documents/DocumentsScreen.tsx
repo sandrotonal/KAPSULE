@@ -14,13 +14,20 @@ const CATEGORIES = ['All', 'Identity', 'Property', 'Vehicle', 'Health', 'Finance
 
 export interface DocumentsScreenProps {
   onOpenAdd: () => void;
+  selectedItemId?: string;
 }
 
-export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd }) => {
+export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, selectedItemId }) => {
   const [documents, setDocuments] = useState<DocumentItem[]>(() => VaultStorageService.getDocuments());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [selectedDoc, setSelectedDoc] = useState<DocumentItem | null>(null);
+  const [selectedDoc, setSelectedDoc] = useState<DocumentItem | null>(() => {
+    if (selectedItemId) {
+      const list = VaultStorageService.getDocuments();
+      return list.find(d => d.id === selectedItemId) || null;
+    }
+    return null;
+  });
 
   const filtered = documents.filter(doc => {
     const q = searchQuery.toLowerCase();

@@ -12,12 +12,19 @@ import { motion } from 'framer-motion';
 
 export interface ReceiptsScreenProps {
   onOpenAdd: () => void;
+  selectedItemId?: string;
 }
 
-export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd }) => {
+export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selectedItemId }) => {
   const [receipts, setReceipts] = useState<ReceiptItem[]>(() => VaultStorageService.getReceipts());
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedReceipt, setSelectedReceipt] = useState<ReceiptItem | null>(null);
+  const [selectedReceipt, setSelectedReceipt] = useState<ReceiptItem | null>(() => {
+    if (selectedItemId) {
+      const list = VaultStorageService.getReceipts();
+      return list.find(r => r.id === selectedItemId) || null;
+    }
+    return null;
+  });
 
   const filtered = receipts.filter(r =>
     !searchQuery || r.merchant.toLowerCase().includes(searchQuery.toLowerCase()) || r.category.toLowerCase().includes(searchQuery.toLowerCase())

@@ -17,9 +17,11 @@ import { ActiveTab } from '../../types';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { formatCurrency, formatDate } from '../../lib/utils';
 import { motion } from 'framer-motion';
+import SlideArrowButton from '../../components/ui/SlideArrowButton';
+import { PinContainer } from '../../components/ui/3d-pin';
 
 export interface HomeScreenProps {
-  onNavigateToTab: (tab: ActiveTab) => void;
+  onNavigateToTab: (tab: ActiveTab, linkedItemId?: string) => void;
   onOpenSearch: () => void;
   onOpenQuickAdd: () => void;
 }
@@ -41,6 +43,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const notes = VaultStorageService.getNotes();
   const bookmarks = VaultStorageService.getBookmarks();
   const suggestions = VaultStorageService.getSuggestions();
+  const [selectedColIndex, setSelectedColIndex] = React.useState(0);
 
   const recentItems = [
     ...docs.slice(0, 2).map(d => ({
@@ -74,13 +77,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   });
 
   const COLLECTIONS = [
-    { id: 'documents' as ActiveTab,     label: 'Documents',     count: docs.length,          icon: <FileText className="w-4 h-4" />,    desc: 'Passports, policies, contracts' },
-    { id: 'receipts' as ActiveTab,      label: 'Receipts',      count: receipts.length,       icon: <Receipt className="w-4 h-4" />,     desc: 'Purchase history and invoices' },
-    { id: 'subscriptions' as ActiveTab, label: 'Subscriptions', count: subscriptions.length,  icon: <CreditCard className="w-4 h-4" />,  desc: 'Monthly and annual services' },
-    { id: 'warranties' as ActiveTab,    label: 'Warranties',    count: warranties.length,     icon: <ShieldCheck className="w-4 h-4" />, desc: 'Device and product coverage' },
-    { id: 'notes' as ActiveTab,         label: 'Notes',         count: notes.length,          icon: <StickyNote className="w-4 h-4" />,  desc: 'Important codes and info' },
-    { id: 'bookmarks' as ActiveTab,     label: 'Bookmarks',     count: bookmarks.length,      icon: <Bookmark className="w-4 h-4" />,    desc: 'Saved links and resources' },
-    { id: 'timeline' as ActiveTab,      label: 'Timeline',      count: '—',                   icon: <Clock className="w-4 h-4" />,       desc: 'Life events and history' },
+    { id: 'documents' as ActiveTab, label: 'Documents', count: docs.length, icon: <FileText className="w-4 h-4" />, desc: 'Passports, policies, contracts' },
+    { id: 'receipts' as ActiveTab, label: 'Receipts', count: receipts.length, icon: <Receipt className="w-4 h-4" />, desc: 'Purchase history and invoices' },
+    { id: 'subscriptions' as ActiveTab, label: 'Subscriptions', count: subscriptions.length, icon: <CreditCard className="w-4 h-4" />, desc: 'Monthly and annual services' },
+    { id: 'warranties' as ActiveTab, label: 'Warranties', count: warranties.length, icon: <ShieldCheck className="w-4 h-4" />, desc: 'Device and product coverage' },
+    { id: 'notes' as ActiveTab, label: 'Notes', count: notes.length, icon: <StickyNote className="w-4 h-4" />, desc: 'Important codes and info' },
+    { id: 'bookmarks' as ActiveTab, label: 'Bookmarks', count: bookmarks.length, icon: <Bookmark className="w-4 h-4" />, desc: 'Saved links and resources' },
+    { id: 'timeline' as ActiveTab, label: 'Timeline', count: '—', icon: <Clock className="w-4 h-4" />, desc: 'Life events and history' },
   ];
 
   return (
@@ -96,8 +99,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         <h1 className="text-[28px] font-bold text-primary tracking-[-0.03em] leading-tight">
           {greeting}
         </h1>
-        <p className="text-sm text-secondary">
-          Everything important, in one place.
+        <p className="text-sm text-secondary flex items-center justify-between gap-4">
+          <span>Everything important, in one place.</span>
+          <SlideArrowButton
+            text="Add Item"
+            variant="primary"
+            onClick={onOpenQuickAdd}
+          />
         </p>
       </motion.div>
 
@@ -128,7 +136,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             {suggestions.slice(0, 2).map(sug => (
               <div
                 key={sug.id}
-                onClick={() => sug.targetScreen && onNavigateToTab(sug.targetScreen as ActiveTab)}
+                onClick={() => sug.targetScreen && onNavigateToTab(sug.targetScreen as ActiveTab, sug.linkedItemId)}
                 className="flex items-start gap-3 px-4 py-3 bg-surface border border-border rounded-xl cursor-pointer hover:bg-surface-elevated transition-all duration-150 group"
               >
                 <div className={`mt-0.5 shrink-0 w-1.5 h-1.5 rounded-full mt-1.5 ${sug.type === 'urgent' ? 'bg-warning' : 'bg-secondary/30'}`} />
@@ -153,7 +161,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 key={item.id}
                 interactive
                 padding="sm"
-                onClick={() => onNavigateToTab(item.tab)}
+                onClick={() => onNavigateToTab(item.tab, item.id)}
                 className="flex items-center justify-between group"
               >
                 <div className="min-w-0 flex-1">
@@ -202,6 +210,38 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           ))}
         </div>
       </motion.div>
+
+      {/* 3D Pin Container Showcase — Featured Vault Security Badge */}
+      <motion.div variants={stagger.item} className="pt-2 pb-6 flex justify-center w-full">
+        <PinContainer
+          title="Kapsüle Vault Security"
+          onClick={() => onNavigateToTab('documents')}
+          containerClassName="w-full max-w-sm"
+        >
+          <div className="flex flex-col p-4 w-[17rem] h-[12rem] sm:w-[20rem] sm:h-[13rem]">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-bold text-sm text-primary">
+                Encrypted Vault Cloud
+              </h3>
+              <Badge variant="success" size="xs" dot>Protected</Badge>
+            </div>
+            <p className="text-[11px] text-secondary leading-relaxed">
+              Your sensitive documents, warranties & notes are end-to-end encrypted.
+            </p>
+            <div className="flex-1 w-full rounded-xl mt-3 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-blue-500/10 border border-accent/20 p-3 flex flex-col justify-between">
+              <div className="flex items-center justify-between text-xs text-primary font-medium">
+                <span>Active Storage Items</span>
+                <span className="font-bold text-accent tabular-nums">{docs.length + receipts.length + warranties.length + notes.length}</span>
+              </div>
+              <div className="text-[11px] text-secondary flex items-center justify-between">
+                <span>Tap to view secure storage</span>
+                <ArrowRight className="w-3 h-3 text-accent" />
+              </div>
+            </div>
+          </div>
+        </PinContainer>
+      </motion.div>
     </motion.div>
   );
 };
+

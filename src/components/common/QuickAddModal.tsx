@@ -5,6 +5,8 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { VaultCategory } from '../../types';
+import SlideArrowButton from '../ui/SlideArrowButton';
+import { cn } from '../../lib/utils';
 
 export interface QuickAddModalProps {
   isOpen: boolean;
@@ -86,24 +88,29 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Add to vault" maxWidth="md">
       <div className="space-y-5">
-        {/* Type selector */}
-        <div className="grid grid-cols-3 gap-2">
-          {TYPES.map(t => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => setType(t.id)}
-              className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all duration-100 ${
-                type === t.id
-                  ? 'bg-surface border-primary ring-2 ring-primary/8'
-                  : 'border-border bg-background hover:bg-surface'
-              }`}
-            >
-              <span className={`mb-1.5 ${type === t.id ? 'text-primary' : 'text-secondary'}`}>{t.icon}</span>
-              <span className="text-xs font-medium text-primary">{t.label}</span>
-              <span className="text-[10px] text-secondary mt-0.5 line-clamp-1">{t.hint}</span>
-            </button>
-          ))}
+        {/* Type selector grid */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+          {TYPES.map((t) => {
+            const isSelected = type === t.id;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setType(t.id)}
+                className={cn(
+                  "flex flex-col items-center justify-center p-2.5 rounded-xl border text-xs font-medium transition-all gap-1.5",
+                  isSelected
+                    ? "bg-accent/15 border-accent text-primary shadow-sm scale-[1.02]"
+                    : "bg-surface border-border text-secondary hover:text-primary hover:bg-surface-elevated"
+                )}
+              >
+                <span className={cn("p-1.5 rounded-lg border shrink-0", isSelected ? "bg-accent text-accent-foreground border-accent" : "bg-background border-border text-secondary")}>
+                  {t.icon}
+                </span>
+                <span className="truncate text-[11px]">{t.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Form */}
@@ -148,7 +155,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-primary/80">{type === 'note' ? 'Content' : 'Notes'}</label>
               <textarea
-                className="w-full h-20 bg-surface text-primary placeholder:text-secondary/50 text-sm rounded-xl border border-border px-3.5 py-2.5 resize-none focus:outline-none focus:border-accent/40 focus:bg-background focus:shadow-focus transition-all"
+                className="w-full h-24 bg-surface text-primary placeholder:text-secondary/50 text-[16px] rounded-xl border border-border px-4 py-3 resize-none focus:outline-none focus:border-accent/40 focus:bg-background focus:shadow-focus transition-all"
                 placeholder={type === 'note' ? 'Write your note here...' : 'Optional description or notes...'}
                 value={content}
                 onChange={e => setContent(e.target.value)}
@@ -158,7 +165,12 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
 
           <div className="flex items-center justify-end gap-2 pt-2">
             <Button type="button" variant="ghost" size="sm" onClick={handleClose}>Cancel</Button>
-            <Button type="submit" variant="primary" size="sm" loading={loading}>Save</Button>
+            <SlideArrowButton 
+              type="submit" 
+              text={loading ? "Saving..." : "Save to Vault"} 
+              variant="primary"
+              disabled={loading}
+            />
           </div>
         </form>
       </div>
