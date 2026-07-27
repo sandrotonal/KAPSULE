@@ -42,16 +42,16 @@ export const BookmarksScreen: React.FC<BookmarksScreenProps> = ({
     <div className="space-y-7">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-primary tracking-[-0.02em]">Bookmarks</h1>
-          <p className="text-sm text-secondary mt-0.5">{bookmarks.length} saved links</p>
+          <h1 className="text-2xl font-bold text-primary tracking-[-0.02em]">Yer İmleri</h1>
+          <p className="text-sm text-secondary mt-0.5">{bookmarks.length} kayıtlı bağlantı</p>
         </div>
         <Button variant="secondary" size="sm" icon={<Plus className="w-3.5 h-3.5" />} onClick={onOpenAdd}>
-          Add
+          Ekle
         </Button>
       </div>
 
       <Input
-        placeholder="Search bookmarks..."
+        placeholder="Yer imlerinde ara..."
         icon={<Search className="w-4 h-4" />}
         value={searchQuery}
         onChange={e => setSearchQuery(e.target.value)}
@@ -63,19 +63,23 @@ export const BookmarksScreen: React.FC<BookmarksScreenProps> = ({
             <Bookmark className="w-5 h-5 text-secondary" />
           </div>
           <div>
-            <p className="text-sm font-medium text-primary">No bookmarks yet.</p>
-            <p className="text-xs text-secondary mt-1">Store key resources, official portals, or reference links.</p>
+            <p className="text-sm font-medium text-primary">Henüz yer imi yok.</p>
+            <p className="text-xs text-secondary mt-1">Önemli kaynakları, resmi portalları veya referans linklerini saklayın.</p>
           </div>
-          <Button variant="secondary" size="sm" onClick={onOpenAdd}>Add bookmark</Button>
+          <Button variant="secondary" size="sm" onClick={onOpenAdd}>Yer imi ekle</Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {filtered.map((bm, i) => (
             <motion.div
               key={bm.id}
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.14, delay: i * 0.04 }}
+              transition={{ 
+                duration: 0.3, 
+                delay: i * 0.04,
+                ease: [0.16, 1, 0.3, 1]
+              }}
             >
               <Card
                 interactive
@@ -107,7 +111,7 @@ export const BookmarksScreen: React.FC<BookmarksScreenProps> = ({
                     onClick={e => e.stopPropagation()}
                     className="flex items-center justify-center gap-1.5 w-full py-2 text-xs font-medium text-secondary bg-surface hover:bg-surface-elevated border border-border rounded-lg transition-all duration-100"
                   >
-                    Open <ExternalLink className="w-3 h-3" />
+                    Aç <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
               </Card>

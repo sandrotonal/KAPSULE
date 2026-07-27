@@ -6,22 +6,24 @@
   :root {
     --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
     --background: #FFFFFF;
-    --surface: #F8F8F8;
-    --surface-elevated: #F2F2F2;
-    --border: #E8E8E8;
-    --border-subtle: #F0F0F0;
-    --text-primary: #0F0F0F;
-    --text-secondary: #6B6B6B;
+    --surface: #F8F9FA;
+    --surface-elevated: #F1F3F5;
+    --border: rgba(0, 0, 0, 0.06);
+    --border-subtle: rgba(0, 0, 0, 0.03);
+    --text-primary: #1A1A1A;
+    --text-secondary: #6B7280;
+    --accent: #007AFF;
   }
 
   .dark {
-    --background: #09090B;
-    --surface: #18181B;
-    --surface-elevated: #27272A;
-    --border: #27272A;
-    --border-subtle: #1F1F22;
-    --text-primary: #FAFAFA;
-    --text-secondary: #A1A1AA;
+    --background: #000000;
+    --surface: #0A0A0A;
+    --surface-elevated: #141414;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-subtle: rgba(255, 255, 255, 0.04);
+    --text-primary: #F5F5F7;
+    --text-secondary: #86868B;
+    --accent: #0A84FF;
   }
 
   * {
@@ -44,7 +46,7 @@
     line-height: 1.6;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior: none;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   /* Selection */
@@ -112,16 +114,20 @@
      Card
   ────────────────────────────────────── */
   .vault-card {
-    @apply bg-background rounded-2xl border border-border shadow-card;
+    @apply bg-background/50 backdrop-blur-xl rounded-3xl border border-border shadow-soft;
   }
   .vault-card-interactive {
-    @apply vault-card transition-all duration-200 cursor-pointer;
+    @apply vault-card transition-all duration-300 cursor-pointer;
   }
   .vault-card-interactive:hover {
-    @apply shadow-card-hover -translate-y-px;
+    @apply border-border shadow-card -translate-y-0.5;
   }
   .vault-card-interactive:active {
-    @apply shadow-soft translate-y-0 scale-[0.995];
+    @apply scale-[0.98] duration-150;
+  }
+
+  .glass-effect {
+    @apply bg-white/70 dark:bg-black/70 backdrop-blur-2xl border border-white/20 dark:border-white/10;
   }
 }
 
@@ -133,8 +139,15 @@
   /* Thin scrollbar */
   .thin-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
   .thin-scrollbar::-webkit-scrollbar-track { background: transparent; }
-  .thin-scrollbar::-webkit-scrollbar-thumb { background: #E4E4E7; border-radius: 9999px; }
+  .thin-scrollbar::-webkit-scrollbar-thumb { 
+    background: #E4E4E7; 
+    border-radius: 9999px; 
+    transition: background 0.2s ease;
+  }
   .thin-scrollbar::-webkit-scrollbar-thumb:hover { background: #D4D4D8; }
+
+  .dark .thin-scrollbar::-webkit-scrollbar-thumb { background: #27272A; }
+  .dark .thin-scrollbar::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
 
   /* Text balance */
   .text-balance { text-wrap: balance; }
@@ -147,4 +160,8 @@
   /* Smooth transitions */
   .transition-smooth { transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1); }
   .transition-fast { transition: all 0.12s ease; }
+
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
 }

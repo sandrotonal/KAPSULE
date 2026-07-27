@@ -27,14 +27,17 @@ export const Card: React.FC<CardProps> = ({
 
   return (
     <motion.div
-      whileHover={interactive ? { y: -1, transition: { duration: 0.15, ease: [0.16, 1, 0.3, 1] } } : undefined}
-      whileTap={interactive ? { scale: 0.995, y: 0 } : undefined}
+      whileHover={interactive ? { 
+        y: -4, 
+        transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } 
+      } : undefined}
+      whileTap={interactive ? { scale: 0.98, y: 0 } : undefined}
       className={cn(
-        "bg-background rounded-2xl border transition-all duration-200",
+        "bg-background/40 backdrop-blur-xl border transition-all duration-500 rounded-[2rem]",
         selected
-          ? "border-accent/30 ring-2 ring-accent/10 shadow-card"
-          : "border-border shadow-card",
-        interactive && "hover:shadow-card-hover cursor-pointer",
+          ? "border-accent ring-4 ring-accent/5 shadow-card"
+          : "border-border shadow-soft hover:shadow-card hover:border-border-subtle",
+        interactive && "cursor-pointer",
         paddings[padding],
         className
       )}

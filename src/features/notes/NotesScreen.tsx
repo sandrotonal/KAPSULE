@@ -34,81 +34,92 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd }) => {
 
   const NoteCard = ({ note, index }: { note: NoteItem; index: number }) => (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.14, delay: index * 0.03 }}
+      transition={{ 
+        duration: 0.4, 
+        delay: index * 0.05,
+        ease: [0.16, 1, 0.3, 1]
+      }}
     >
       <Card
         interactive
         onClick={() => setSelectedNote(note)}
-        className="flex flex-col justify-between space-y-3 group h-full"
+        className="flex flex-col justify-between space-y-6 group h-full p-8 border-border/60"
       >
-        <div className="space-y-2">
-          <div className="flex items-start justify-between gap-2">
-            <p className="text-sm font-medium text-primary leading-snug line-clamp-1">{note.title}</p>
-            {note.isPinned && <Pin className="w-3 h-3 text-accent shrink-0 mt-0.5" />}
+        <div className="space-y-4">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="text-lg font-bold text-primary tracking-tight leading-snug group-hover:text-accent transition-colors">{note.title}</h3>
+            {note.isPinned && (
+              <div className="w-8 h-8 rounded-xl bg-accent/5 flex items-center justify-center shrink-0">
+                <Pin className="w-4 h-4 text-accent" />
+              </div>
+            )}
           </div>
-          <p className="text-xs text-secondary leading-relaxed line-clamp-3 whitespace-pre-line">{note.content}</p>
+          <p className="text-sm text-secondary/80 leading-relaxed line-clamp-4 whitespace-pre-line font-medium">{note.content}</p>
         </div>
-        <div className="flex items-center justify-between pt-2 border-t border-border-subtle">
-          <div className="flex gap-1">
+        <div className="flex items-center justify-between pt-6 border-t border-border/40">
+          <div className="flex gap-2">
             {note.tags.slice(0, 2).map(t => (
-              <Badge key={t} variant="outline" size="xs">{t}</Badge>
+              <Badge key={t} variant="secondary" size="xs" className="opacity-70">{t}</Badge>
             ))}
           </div>
-          <span className="text-[10px] text-secondary/60">{formatDate(note.updatedAt)}</span>
+          <span className="text-[11px] font-bold text-secondary uppercase tracking-widest opacity-40">{formatDate(note.updatedAt)}</span>
         </div>
       </Card>
     </motion.div>
   );
 
   return (
-    <div className="space-y-7">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-primary tracking-[-0.02em]">Notes</h1>
-          <p className="text-sm text-secondary mt-0.5">{notes.length} notes</p>
+    <div className="space-y-10">
+      <div className="flex items-end justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-bold text-primary tracking-tight">Notlar</h1>
+          <p className="text-lg text-secondary font-medium">{notes.length} önemli kayıt</p>
         </div>
-        <Button variant="secondary" size="sm" icon={<Plus className="w-3.5 h-3.5" />} onClick={onOpenAdd}>
-          New note
+        <Button variant="primary" size="md" className="rounded-full px-6" icon={<Plus className="w-4 h-4" />} onClick={onOpenAdd}>
+          Ekle
         </Button>
       </div>
 
-      <Input
-        placeholder="Search notes..."
-        icon={<Search className="w-4 h-4" />}
-        value={searchQuery}
-        onChange={e => setSearchQuery(e.target.value)}
-      />
+      <div className="max-w-md">
+        <Input
+          placeholder="Notlarda ara..."
+          className="rounded-2xl bg-surface/40 border-border/60 h-12"
+          icon={<Search className="w-4 h-4 opacity-40" />}
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+        />
+      </div>
 
       {pinned.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-secondary px-0.5">Pinned</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="space-y-4">
+          <h2 className="text-xs font-bold text-secondary uppercase tracking-widest px-1 opacity-60">Sabitlenenler</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {pinned.map((note, i) => <NoteCard key={note.id} note={note} index={i} />)}
           </div>
         </div>
       )}
 
       {unpinned.length > 0 && (
-        <div className="space-y-2">
-          {pinned.length > 0 && <p className="text-xs font-medium text-secondary px-0.5">All notes</p>}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="space-y-4">
+          {pinned.length > 0 && <h2 className="text-xs font-bold text-secondary uppercase tracking-widest px-1 opacity-60">Diğer Notlar</h2>}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {unpinned.map((note, i) => <NoteCard key={note.id} note={note} index={i} />)}
           </div>
         </div>
       )}
 
       {filtered.length === 0 && (
-        <div className="py-16 text-center space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-surface border border-border flex items-center justify-center mx-auto">
-            <StickyNote className="w-5 h-5 text-secondary" />
+        <div className="py-24 text-center space-y-6">
+          <div className="w-20 h-20 rounded-[2.5rem] bg-surface border border-border flex items-center justify-center mx-auto shadow-soft">
+            <StickyNote className="w-10 h-10 text-secondary opacity-40" />
           </div>
-          <div>
-            <p className="text-sm font-medium text-primary">No notes yet.</p>
-            <p className="text-xs text-secondary mt-1">Capture important codes, contacts, and information.</p>
+          <div className="max-w-xs mx-auto">
+            <p className="text-lg font-bold text-primary">Henüz not yok</p>
+            <p className="text-sm text-secondary mt-2 leading-relaxed">Önemli kodları, kişisel bilgileri ve aklınıza gelen fikirleri güvenle not edin.</p>
           </div>
-          <Button variant="secondary" size="sm" onClick={onOpenAdd}>New note</Button>
+          <Button variant="primary" size="md" className="rounded-full px-8" onClick={onOpenAdd}>Yeni not oluştur</Button>
         </div>
       )}
 
@@ -117,7 +128,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd }) => {
         isOpen={!!selectedNote}
         onClose={() => setSelectedNote(null)}
         title={selectedNote?.title}
-        subtitle={selectedNote ? `Updated ${formatDate(selectedNote.updatedAt)}` : ''}
+        subtitle={selectedNote ? `Güncellendi: ${formatDate(selectedNote.updatedAt)}` : ''}
         maxWidth="md"
       >
         {selectedNote && (
@@ -138,9 +149,9 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd }) => {
                 onClick={() => handleDelete(selectedNote.id)}
                 className="text-danger hover:text-danger hover:bg-danger-muted"
               >
-                Delete
+                Sil
               </Button>
-              <Button variant="secondary" size="sm" onClick={() => setSelectedNote(null)}>Done</Button>
+              <Button variant="secondary" size="sm" onClick={() => setSelectedNote(null)}>Tamam</Button>
             </div>
           </div>
         )}

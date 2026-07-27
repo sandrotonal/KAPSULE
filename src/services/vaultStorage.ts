@@ -7,7 +7,8 @@ import {
   BookmarkItem,
   TimelineEvent,
   VaultSuggestion,
-  VaultSettings
+  VaultSettings,
+  VaultStats
 } from '../types';
 import {
   INITIAL_DOCUMENTS,
@@ -328,6 +329,52 @@ export class VaultStorageService {
 
     // Return dynamic or fallback to INITIAL_SUGGESTIONS if empty so UI looks alive for new users
     return suggestions.length > 0 ? suggestions : INITIAL_SUGGESTIONS;
+  }
+
+  // Stats calculation
+  static getStats(): VaultStats {
+    const subs = this.getSubscriptions();
+    const warranties = this.getWarranties();
+    const docs = this.getDocuments();
+
+    let monthly = 0;
+    let annual = 0;
+    const distribution: Record<string, number> = {};
+
+    subs.forEach(s => {
+      if (s.status !== 'active') return;
+      
+      // Basic normalization to TRY for stats (can be expanded)
+      const rate = s.currency === 'USD' ? 34 : 1;
+      const priceInBase = s.price * rate;
+
+      if (s.billingCycle === 'monthly') {
+        monthly += priceInBase;
+        annual += priceInBase * 12;
+      } else {
+        monthly += priceInBase / 12;
+        annual += priceInBase;
+      }
+
+      distribution[s.currency] = (distribution[s.currency] || 0) + s.price;
+    });
+
+    const now = new Date();
+    const expiringWarranties = warranties.filter(w => {
+      const expiry = new Date(w.expiryDate);
+      const diffDays = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      return diffDays > 0 && diffDays <= 60;
+    }).length;
+
+    return {
+      totalMonthlyCost: Math.round(monthly),
+      totalAnnualCost: Math.round(annual),
+      activeSubscriptions: subs.filter(s => s.status === 'active').length,
+      activeWarranties: warranties.filter(w => w.status === 'active').length,
+      expiringWarrantiesCount: expiringWarranties,
+      documentCount: docs.length,
+      currencyDistribution: distribution,
+    };
   }
 
   // Settings

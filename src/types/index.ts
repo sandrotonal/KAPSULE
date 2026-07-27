@@ -119,3 +119,13 @@ export interface VaultSettings {
   isLocked?: boolean;
 }
 
+export interface VaultStats {
+  totalMonthlyCost: number;
+  totalAnnualCost: number;
+  activeSubscriptions: number;
+  activeWarranties: number;
+  expiringWarrantiesCount: number;
+  documentCount: number;
+  currencyDistribution: Record<string, number>;
+}
+

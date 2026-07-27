@@ -15,12 +15,12 @@ export interface QuickAddModalProps {
 }
 
 const TYPES: { id: VaultCategory; label: string; icon: React.ReactNode; hint: string }[] = [
-  { id: 'document',     label: 'Document',    icon: <FileText className="w-4 h-4" />,    hint: 'Passport, contract, policy' },
-  { id: 'receipt',      label: 'Receipt',     icon: <Receipt className="w-4 h-4" />,     hint: 'Purchase and spending' },
-  { id: 'subscription', label: 'Subscription',icon: <CreditCard className="w-4 h-4" />,  hint: 'Monthly or annual service' },
-  { id: 'warranty',     label: 'Warranty',    icon: <ShieldCheck className="w-4 h-4" />, hint: 'Product coverage' },
-  { id: 'note',         label: 'Note',        icon: <StickyNote className="w-4 h-4" />,  hint: 'Quick information' },
-  { id: 'bookmark',     label: 'Bookmark',    icon: <Bookmark className="w-4 h-4" />,    hint: 'Save a website' },
+  { id: 'document',     label: 'Belge',    icon: <FileText className="w-4 h-4" />,    hint: 'Pasaport, kontrat, poliçe' },
+  { id: 'receipt',      label: 'Fiş',     icon: <Receipt className="w-4 h-4" />,     hint: 'Satın alım ve harcama' },
+  { id: 'subscription', label: 'Abonelik',icon: <CreditCard className="w-4 h-4" />,  hint: 'Aylık veya yıllık hizmet' },
+  { id: 'warranty',     label: 'Garanti',    icon: <ShieldCheck className="w-4 h-4" />, hint: 'Ürün koruması' },
+  { id: 'note',         label: 'Not',        icon: <StickyNote className="w-4 h-4" />,  hint: 'Hızlı bilgi' },
+  { id: 'bookmark',     label: 'Yer İmi',    icon: <Bookmark className="w-4 h-4" />,    hint: 'Web sitesi kaydet' },
 ];
 
 export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, onSuccess }) => {
@@ -33,10 +33,12 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   const [content, setContent] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState('');
 
   const reset = () => {
     setTitle(''); setAmount(''); setPrice('');
     setBrand(''); setUrl(''); setContent(''); setExpiryDate('');
+    setCategory('');
   };
 
   const handleClose = () => { reset(); onClose(); };
@@ -50,20 +52,20 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
       const now = new Date().toISOString().split('T')[0];
       if (type === 'document') {
         VaultStorageService.saveDocument({
-          title, category: 'Personal' as any, fileType: 'pdf', fileSize: '—',
+          title, category: (category as any) || 'Kişisel', fileType: 'pdf', fileSize: '—',
           previewUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80',
           tags: [], description: content, isFavorite: false, isArchived: false,
         });
       } else if (type === 'receipt') {
         VaultStorageService.saveReceipt({
           merchant: title, amount: parseFloat(amount) || 0,
-          currency: 'TL', date: now, category: 'Tech', notes: content,
+          currency: 'TL', date: now, category: (category as any) || 'Teknoloji', notes: content,
         });
       } else if (type === 'subscription') {
         VaultStorageService.saveSubscription({
           name: title, price: parseFloat(price) || 0, currency: 'TL',
           billingCycle: 'monthly', renewalDate: expiryDate || now,
-          category: 'Software', status: 'active',
+          category: (category as any) || 'Yazılım', status: 'active',
         });
       } else if (type === 'warranty') {
         VaultStorageService.saveWarranty({
@@ -86,10 +88,10 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Add to vault" maxWidth="md">
-      <div className="space-y-5">
+    <Modal isOpen={isOpen} onClose={handleClose} title="Kasaya ekle" maxWidth="md">
+      <div className="space-y-6">
         {/* Type selector grid */}
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
           {TYPES.map((t) => {
             const isSelected = type === t.id;
             return (
@@ -98,79 +100,128 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                 type="button"
                 onClick={() => setType(t.id)}
                 className={cn(
-                  "flex flex-col items-center justify-center p-2.5 rounded-xl border text-xs font-medium transition-all gap-1.5",
+                  "flex flex-col items-center justify-center p-4 rounded-[24px] border transition-all duration-300 relative group overflow-hidden",
                   isSelected
-                    ? "bg-accent/15 border-accent text-primary shadow-sm scale-[1.02]"
-                    : "bg-surface border-border text-secondary hover:text-primary hover:bg-surface-elevated"
+                    ? "bg-accent/5 border-accent/40 shadow-[0_0_20px_rgba(var(--accent-rgb),0.1)]"
+                    : "bg-surface/50 border-border/40 text-secondary hover:border-border hover:bg-surface-elevated"
                 )}
               >
-                <span className={cn("p-1.5 rounded-lg border shrink-0", isSelected ? "bg-accent text-accent-foreground border-accent" : "bg-background border-border text-secondary")}>
+                {/* Background Glow for Selected */}
+                {isSelected && (
+                  <div className="absolute inset-0 bg-accent/5 opacity-50 blur-xl transition-all duration-500" />
+                )}
+
+                <div className={cn(
+                  "w-12 h-12 rounded-2xl border flex items-center justify-center shrink-0 transition-all duration-500 relative z-10",
+                  isSelected 
+                    ? "bg-accent text-white border-accent shadow-lg shadow-accent/20 scale-110 -rotate-3" 
+                    : "bg-background border-border/40 text-secondary group-hover:scale-105 group-hover:text-primary"
+                )}>
                   {t.icon}
+                </div>
+                <span className={cn(
+                  "truncate text-[9px] uppercase tracking-[2px] mt-3 font-black relative z-10 transition-colors",
+                  isSelected ? "text-accent" : "text-secondary"
+                )}>
+                  {t.label}
                 </span>
-                <span className="truncate text-[11px]">{t.label}</span>
+                
+                {isSelected && (
+                  <div className="absolute bottom-1 w-1 h-1 rounded-full bg-accent" />
+                )}
               </button>
             );
           })}
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-3 pt-2 border-t border-border">
-          <Input
-            label="Name"
-            placeholder={
-              type === 'document' ? 'e.g. Passport copy' :
-              type === 'receipt' ? 'e.g. Apple Store' :
-              type === 'subscription' ? 'e.g. Spotify' :
-              type === 'warranty' ? 'e.g. MacBook Pro' :
-              type === 'note' ? 'e.g. Emergency contacts' : 'e.g. Apple Developer'
-            }
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            required
-          />
-
-          {type === 'receipt' && (
-            <Input label="Amount (TL)" type="number" placeholder="0.00" value={amount} onChange={e => setAmount(e.target.value)} />
-          )}
-
-          {type === 'subscription' && (
-            <div className="grid grid-cols-2 gap-2">
-              <Input label="Monthly price (TL)" type="number" placeholder="0.00" value={price} onChange={e => setPrice(e.target.value)} />
-              <Input label="Renewal date" type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} />
-            </div>
-          )}
-
-          {type === 'warranty' && (
-            <div className="grid grid-cols-2 gap-2">
-              <Input label="Brand" placeholder="e.g. Apple" value={brand} onChange={e => setBrand(e.target.value)} />
-              <Input label="Expires" type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} />
-            </div>
-          )}
-
-          {type === 'bookmark' && (
-            <Input label="URL" placeholder="https://..." value={url} onChange={e => setUrl(e.target.value)} />
-          )}
-
-          {(type === 'document' || type === 'note' || type === 'receipt') && (
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-primary/80">{type === 'note' ? 'Content' : 'Notes'}</label>
-              <textarea
-                className="w-full h-24 bg-surface text-primary placeholder:text-secondary/50 text-[16px] rounded-xl border border-border px-4 py-3 resize-none focus:outline-none focus:border-accent/40 focus:bg-background focus:shadow-focus transition-all"
-                placeholder={type === 'note' ? 'Write your note here...' : 'Optional description or notes...'}
-                value={content}
-                onChange={e => setContent(e.target.value)}
-              />
-            </div>
-          )}
-
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Button type="button" variant="ghost" size="sm" onClick={handleClose}>Cancel</Button>
-            <SlideArrowButton 
-              type="submit" 
-              text={loading ? "Saving..." : "Save to Vault"} 
-              variant="primary"
-              disabled={loading}
+        <form onSubmit={handleSubmit} className="space-y-5 pt-6 border-t border-border/20">
+          <div className="bg-surface/30 p-5 rounded-[32px] border border-border/40 space-y-4 backdrop-blur-sm">
+            <Input
+              label="Başlık"
+              placeholder={
+                type === 'document' ? 'Örn: Pasaport kopyası' :
+                type === 'receipt' ? 'Örn: Apple Store' :
+                type === 'subscription' ? 'Örn: Spotify' :
+                type === 'warranty' ? 'Örn: MacBook Pro' :
+                type === 'note' ? 'Örn: Acil durum kişileri' : 'Örn: Apple Geliştirici'
+              }
+              className="rounded-2xl bg-background/50 h-14 border-border/40 focus:border-accent/40"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              required
             />
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-secondary uppercase tracking-[2px] px-1">Kategori</label>
+                <select
+                  className="w-full h-14 bg-background/50 text-primary text-[15px] font-bold rounded-2xl border border-border/40 px-4 transition-all focus:outline-none focus:border-accent/40 focus:bg-background appearance-none"
+                  value={category}
+                  onChange={e => setCategory(e.target.value)}
+                >
+                  <option value="">Seçiniz</option>
+                  {type === 'document' && ['Kişisel', 'Finans', 'Sigorta', 'Kimlik', 'Sağlık', 'İş'].map(c => <option key={c} value={c}>{c}</option>)}
+                  {type === 'receipt' && ['Teknoloji', 'Ev', 'Seyahat', 'Giyim', 'Yemek', 'Hizmetler'].map(c => <option key={c} value={c}>{c}</option>)}
+                  {type === 'subscription' && ['Yazılım', 'Eğlence', 'İş', 'Bulut', 'Hizmet'].map(c => <option key={c} value={c}>{c}</option>)}
+                  {type === 'warranty' && ['Teknoloji', 'Ev', 'Araç', 'Kişisel'].map(c => <option key={c} value={c}>{c}</option>)}
+                  {type === 'note' && ['Genel', 'Güvenlik', 'Kişisel', 'İş'].map(c => <option key={c} value={c}>{c}</option>)}
+                  {type === 'bookmark' && ['İş', 'Sosyal', 'Kaynak', 'Referans'].map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+
+              {type === 'receipt' && (
+                <Input label="Tutar (TL)" type="number" placeholder="0.00" className="rounded-2xl bg-background/50 h-14 border-border/40" value={amount} onChange={e => setAmount(e.target.value)} />
+              )}
+
+              {type === 'subscription' && (
+                <Input label="Aylık fiyat (TL)" type="number" placeholder="0.00" className="rounded-2xl bg-background/50 h-14 border-border/40" value={price} onChange={e => setPrice(e.target.value)} />
+              )}
+
+              {type === 'warranty' && (
+                <Input label="Marka" placeholder="Örn: Apple" className="rounded-2xl bg-background/50 h-14 border-border/40" value={brand} onChange={e => setBrand(e.target.value)} />
+              )}
+            </div>
+
+            {(type === 'subscription' || type === 'warranty') && (
+              <Input 
+                label={type === 'subscription' ? "Sıradaki Yenileme" : "Garanti Bitiş Tarihi"} 
+                type="date" 
+                className="rounded-2xl bg-background/50 h-14 border-border/40"
+                value={expiryDate} 
+                onChange={e => setExpiryDate(e.target.value)} 
+              />
+            )}
+
+            {type === 'bookmark' && (
+              <Input label="URL" placeholder="https://..." className="rounded-2xl bg-background/50 h-14 border-border/40" value={url} onChange={e => setUrl(e.target.value)} />
+            )}
+
+            {(type === 'document' || type === 'note' || type === 'receipt') && (
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-secondary uppercase tracking-[2px] px-1">{type === 'note' ? 'İçerik' : 'Notlar'}</label>
+                <textarea
+                  className="w-full h-32 bg-background/50 text-primary placeholder:text-secondary/40 text-[15px] font-bold rounded-2xl border border-border/40 px-4 py-3 resize-none focus:outline-none focus:border-accent/40 focus:bg-background transition-all"
+                  placeholder={type === 'note' ? 'Notunuzu buraya yazın...' : 'İsteğe bağlı açıklama veya notlar...'}
+                  value={content}
+                  onChange={e => setContent(e.target.value)}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-end gap-3 pt-2">
+            <Button type="button" variant="ghost" size="md" className="rounded-full px-8 text-secondary font-bold hover:text-primary" onClick={handleClose}>İptal</Button>
+            <Button 
+              type="submit" 
+              variant="primary"
+              size="lg"
+              className="rounded-full px-12 shadow-[0_10px_20px_rgba(var(--accent-rgb),0.2)] font-black tracking-tight"
+              disabled={loading}
+              loading={loading}
+            >
+              Kasaya Kaydet
+            </Button>
           </div>
         </form>
       </div>

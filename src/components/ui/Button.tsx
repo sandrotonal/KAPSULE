@@ -23,25 +23,25 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 }, ref) => {
   const base = [
     "inline-flex items-center justify-center font-medium select-none",
-    "transition-all duration-150 ease-out",
-    "active:scale-[0.975]",
+    "transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
+    "active:scale-[0.96]",
     "disabled:opacity-40 disabled:pointer-events-none",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30",
   ].join(' ');
 
   const variants = {
-    primary: "bg-primary text-primary-foreground hover:bg-vault-800 shadow-soft",
-    secondary: "bg-surface text-primary hover:bg-surface-elevated border border-border",
-    ghost: "text-secondary hover:text-primary hover:bg-surface",
+    primary: "bg-primary text-primary-foreground hover:opacity-90 shadow-soft active:scale-95",
+    secondary: "bg-surface/50 backdrop-blur-md text-primary hover:bg-surface-elevated border border-border/60",
+    ghost: "text-secondary hover:text-accent hover:bg-accent/5",
     danger: "text-danger hover:bg-danger-muted border border-danger/20",
-    outline: "border border-border text-primary hover:bg-surface",
+    outline: "border border-border/80 text-primary hover:bg-surface",
   };
 
   const sizes = {
-    xs: "text-xs px-3 py-1.5 rounded-lg gap-1.5 h-8",
-    sm: "text-sm px-4 py-2 rounded-xl gap-1.5 h-10",
-    md: "text-sm px-5 py-2.5 rounded-xl gap-2 h-12",
-    lg: "text-[16px] px-6 py-3 rounded-2xl gap-2 h-14",
+    xs: "text-xs px-3 py-1.5 rounded-full gap-1.5 h-8",
+    sm: "text-sm px-4 py-2 rounded-full gap-1.5 h-10",
+    md: "text-sm px-6 py-2.5 rounded-full gap-2 h-12",
+    lg: "text-base px-8 py-3 rounded-full gap-2.5 h-14 font-semibold",
   };
 
   return (

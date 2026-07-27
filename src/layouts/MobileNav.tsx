@@ -12,11 +12,11 @@ export interface MobileNavProps {
 }
 
 const MAIN_TABS: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-  { id: 'home',      label: 'Home',      icon: <Home className="w-5 h-5" /> },
-  { id: 'documents', label: 'Documents', icon: <FileText className="w-5 h-5" /> },
-  { id: 'warranties',label: 'Warranties',icon: <ShieldCheck className="w-5 h-5" /> },
-  { id: 'subscriptions', label: 'More', icon: <CreditCard className="w-5 h-5" /> },
-  { id: 'settings',  label: 'Settings',  icon: <Settings className="w-5 h-5" /> },
+  { id: 'home',      label: 'Ana Sayfa', icon: <Home className="w-5 h-5" /> },
+  { id: 'documents', label: 'Belgeler',  icon: <FileText className="w-5 h-5" /> },
+  { id: 'warranties',label: 'Garanti',   icon: <ShieldCheck className="w-5 h-5" /> },
+  { id: 'subscriptions', label: 'Diğer', icon: <CreditCard className="w-5 h-5" /> },
+  { id: 'settings',  label: 'Ayarlar',   icon: <Settings className="w-5 h-5" /> },
 ];
 
 export const MobileNav: React.FC<MobileNavProps> = ({
