@@ -164,4 +164,28 @@
   .bg-noise {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
+
+  /* Search Orb Animations */
+  @keyframes blob-float {
+    0% {
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      transform: translate(0, 0);
+    }
+    50% {
+      border-radius: 60% 40% 50% 50% / 30% 60% 40% 70%;
+      transform: translate(5px, -5px);
+    }
+    100% {
+      border-radius: 50% 50% 30% 70% / 60% 40% 60% 40%;
+      transform: translate(-5px, 5px);
+    }
+  }
+
+  .animate-blob-float {
+    animation: blob-float 6s infinite alternate ease-in-out;
+  }
+
+  .animate-blob-float-reverse {
+    animation: blob-float 8s infinite alternate-reverse ease-in-out;
+  }
 }

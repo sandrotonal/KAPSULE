@@ -15,13 +15,13 @@ export interface QuickAddModalProps {
 }
 
 const TYPES: { id: VaultCategory; label: string; icon: React.ReactNode; hint: string }[] = [
-  { id: 'document',     label: 'Belge',    icon: <FileText className="w-4 h-4" />,    hint: 'Pasaport, kontrat, poliçe' },
-  { id: 'receipt',      label: 'Fiş',     icon: <Receipt className="w-4 h-4" />,     hint: 'Satın alım ve harcama' },
-  { id: 'subscription', label: 'Abonelik',icon: <CreditCard className="w-4 h-4" />,  hint: 'Aylık veya yıllık hizmet' },
-  { id: 'warranty',     label: 'Garanti',    icon: <ShieldCheck className="w-4 h-4" />, hint: 'Ürün koruması' },
-  { id: 'note',         label: 'Not',        icon: <StickyNote className="w-4 h-4" />,  hint: 'Hızlı bilgi' },
-  { id: 'bookmark',     label: 'Yer İmi',    icon: <Bookmark className="w-4 h-4" />,    hint: 'Web sitesi kaydet' },
-];
+    { id: 'document',     label: 'Belge',    icon: <FileText className="w-5 h-5" />,    hint: 'Pasaport, kontrat, poliçe' },
+    { id: 'receipt',      label: 'Fiş',     icon: <Receipt className="w-5 h-5" />,     hint: 'Satın alım ve harcama' },
+    { id: 'subscription', label: 'Abonelik',icon: <CreditCard className="w-5 h-5" />,  hint: 'Aylık veya yıllık hizmet' },
+    { id: 'warranty',     label: 'Garanti',    icon: <ShieldCheck className="w-5 h-5" />, hint: 'Ürün koruması' },
+    { id: 'note',         label: 'Not',        icon: <StickyNote className="w-5 h-5" />,  hint: 'Hızlı bilgi' },
+    { id: 'bookmark',     label: 'Yer İmi',    icon: <Bookmark className="w-5 h-5" />,    hint: 'Web sitesi kaydet' },
+  ];
 
 export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const [type, setType] = useState<VaultCategory>('document');
@@ -91,7 +91,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
     <Modal isOpen={isOpen} onClose={handleClose} title="Kasaya ekle" maxWidth="md">
       <div className="space-y-6">
         {/* Type selector grid */}
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
           {TYPES.map((t) => {
             const isSelected = type === t.id;
             return (
@@ -100,34 +100,32 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                 type="button"
                 onClick={() => setType(t.id)}
                 className={cn(
-                  "flex flex-col items-center justify-center p-4 rounded-[24px] border transition-all duration-300 relative group overflow-hidden",
+                  "flex flex-col items-center justify-center p-5 rounded-[32px] border transition-all duration-500 relative group overflow-hidden",
                   isSelected
-                    ? "bg-accent/5 border-accent/40 shadow-[0_0_20px_rgba(var(--accent-rgb),0.1)]"
-                    : "bg-surface/50 border-border/40 text-secondary hover:border-border hover:bg-surface-elevated"
+                    ? "bg-accent/10 border-accent/40 shadow-[0_20px_40px_rgba(var(--accent-rgb),0.15)] ring-1 ring-accent/20"
+                    : "bg-surface/50 border-border/40 text-secondary hover:border-border hover:bg-surface-elevated hover:-translate-y-1"
                 )}
               >
                 {/* Background Glow for Selected */}
                 {isSelected && (
-                  <div className="absolute inset-0 bg-accent/5 opacity-50 blur-xl transition-all duration-500" />
+                  <div className="absolute inset-0 bg-accent/10 opacity-60 blur-2xl transition-all duration-700" />
                 )}
-
+                
                 <div className={cn(
-                  "w-12 h-12 rounded-2xl border flex items-center justify-center shrink-0 transition-all duration-500 relative z-10",
-                  isSelected 
-                    ? "bg-accent text-white border-accent shadow-lg shadow-accent/20 scale-110 -rotate-3" 
-                    : "bg-background border-border/40 text-secondary group-hover:scale-105 group-hover:text-primary"
+                  "relative z-10 p-3 rounded-2xl transition-all duration-500",
+                  isSelected ? "bg-accent text-white scale-110 shadow-lg -rotate-3" : "bg-surface-elevated text-secondary group-hover:text-primary group-hover:scale-110"
                 )}>
                   {t.icon}
                 </div>
                 <span className={cn(
-                  "truncate text-[9px] uppercase tracking-[2px] mt-3 font-black relative z-10 transition-colors",
-                  isSelected ? "text-accent" : "text-secondary"
+                  "relative z-10 text-[10px] uppercase tracking-[1.5px] mt-3 font-black transition-colors",
+                  isSelected ? "text-accent" : "text-secondary group-hover:text-primary"
                 )}>
                   {t.label}
                 </span>
                 
                 {isSelected && (
-                  <div className="absolute bottom-1 w-1 h-1 rounded-full bg-accent" />
+                  <div className="absolute bottom-2 w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_10px_rgba(var(--accent-rgb),0.5)]" />
                 )}
               </button>
             );
@@ -135,10 +133,14 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5 pt-6 border-t border-border/20">
-          <div className="bg-surface/30 p-5 rounded-[32px] border border-border/40 space-y-4 backdrop-blur-sm">
+        <form onSubmit={handleSubmit} className="space-y-6 pt-6 border-t border-border/20">
+          <div className="bg-surface/30 p-6 rounded-[32px] border border-border/40 space-y-5 backdrop-blur-md relative overflow-hidden group/form">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover/form:opacity-10 transition-opacity pointer-events-none text-accent">
+              {TYPES.find(t => t.id === type)?.icon}
+            </div>
+            
             <Input
-              label="Başlık"
+              label={type === 'receipt' ? 'Mağaza / Satıcı' : type === 'warranty' ? 'Ürün Adı' : type === 'subscription' ? 'Hizmet Adı' : type === 'bookmark' ? 'Başlık' : 'Başlık'}
               placeholder={
                 type === 'document' ? 'Örn: Pasaport kopyası' :
                 type === 'receipt' ? 'Örn: Apple Store' :
@@ -211,17 +213,12 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-2">
-            <Button type="button" variant="ghost" size="md" className="rounded-full px-8 text-secondary font-bold hover:text-primary" onClick={handleClose}>İptal</Button>
-            <Button 
-              type="submit" 
-              variant="primary"
-              size="lg"
-              className="rounded-full px-12 shadow-[0_10px_20px_rgba(var(--accent-rgb),0.2)] font-black tracking-tight"
-              disabled={loading}
-              loading={loading}
-            >
-              Kasaya Kaydet
-            </Button>
+            <Button type="button" variant="ghost" className="rounded-2xl px-8 text-secondary font-bold hover:text-primary" onClick={handleClose}>İptal</Button>
+            <SlideArrowButton 
+              text={loading ? 'Kaydediliyor...' : 'Kasaya Kilitle'}
+              onClick={handleSubmit as any} 
+              className="w-56"
+            />
           </div>
         </form>
       </div>
