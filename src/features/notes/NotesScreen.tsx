@@ -61,7 +61,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd }) => {
         <div className="flex items-center justify-between pt-6 border-t border-border/40">
           <div className="flex gap-2">
             {note.tags.slice(0, 2).map(t => (
-              <Badge key={t} variant="secondary" size="xs" className="opacity-70">{t}</Badge>
+              <Badge key={t} variant="muted" size="xs" className="opacity-70">{t}</Badge>
             ))}
           </div>
           <span className="text-[11px] font-bold text-secondary uppercase tracking-widest opacity-40">{formatDate(note.updatedAt)}</span>

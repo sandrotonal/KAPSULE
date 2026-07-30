@@ -6,36 +6,32 @@ import {
   ShieldCheck,
   StickyNote,
   Bookmark,
-  Clock,
-  Search,
   ArrowRight,
   TrendingUp,
-  Activity,
-  Zap,
 } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ActiveTab } from '../../types';
+import { VaultCategory } from '../../types';
 import { VaultStorageService } from '../../services/vaultStorage';
-import { formatCurrency, formatDate, cn } from '../../lib/utils';
+import { formatCurrency, cn } from '../../lib/utils';
 import { motion } from 'framer-motion';
-import SlideArrowButton from '../../components/ui/SlideArrowButton';
-import { PinContainer } from '../../components/ui/3d-pin';
 import { WalletCard } from '../../components/ui/WalletCard';
 
 export interface HomeScreenProps {
   onNavigateToTab: (tab: ActiveTab, linkedItemId?: string) => void;
   onOpenSearch: () => void;
   onOpenQuickAdd: () => void;
+  onOpenQuickAddFor: (category: VaultCategory) => void;
 }
 
 const stagger = {
-  container: { transition: { staggerChildren: 0.05 } },
-  item: { 
-    initial: { opacity: 0, y: 12 }, 
-    animate: { opacity: 1, y: 0 }, 
-    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } 
+  container: { transition: { staggerChildren: 0.06 } },
+  item: {
+    initial: { opacity: 0, y: 14 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
@@ -43,6 +39,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onNavigateToTab,
   onOpenSearch,
   onOpenQuickAdd,
+  onOpenQuickAddFor,
 }) => {
   const docs = VaultStorageService.getDocuments();
   const receipts = VaultStorageService.getReceipts();
@@ -50,32 +47,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const warranties = VaultStorageService.getWarranties();
   const notes = VaultStorageService.getNotes();
   const bookmarks = VaultStorageService.getBookmarks();
-  const suggestions = VaultStorageService.getSuggestions();
   const stats = VaultStorageService.getStats();
-  const [selectedColIndex, setSelectedColIndex] = React.useState(0);
-
-  const recentItems = [
-    ...docs.slice(0, 2).map(d => ({
-      id: d.id, title: d.title,
-      tab: 'documents' as ActiveTab,
-      date: d.createdAt, meta: d.category, type: 'Document',
-    })),
-    ...receipts.slice(0, 1).map(r => ({
-      id: r.id, title: r.merchant,
-      tab: 'receipts' as ActiveTab,
-      date: r.date, meta: formatCurrency(r.amount, r.currency), type: 'Receipt',
-    })),
-    ...warranties.slice(0, 1).map(w => ({
-      id: w.id, title: w.productName,
-      tab: 'warranties' as ActiveTab,
-      date: w.expiryDate, meta: w.brand, type: 'Warranty',
-    })),
-    ...notes.slice(0, 1).map(n => ({
-      id: n.id, title: n.title,
-      tab: 'notes' as ActiveTab,
-      date: n.updatedAt, meta: n.tags[0] || 'Note', type: 'Note',
-    })),
-  ].slice(0, 5);
 
   const now = new Date();
   const hour = now.getHours();
@@ -85,15 +57,72 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     weekday: 'long', day: 'numeric', month: 'long',
   });
 
-  const COLLECTIONS = [
-    { id: 'documents' as ActiveTab, label: 'Belgeler', count: docs.length, icon: <FileText className="w-4 h-4" />, desc: 'Pasaportlar, poliçeler, kontratlar' },
-    { id: 'receipts' as ActiveTab, label: 'Fişler', count: receipts.length, icon: <Receipt className="w-4 h-4" />, desc: 'Satın alım geçmişi ve faturalar' },
-    { id: 'subscriptions' as ActiveTab, label: 'Abonelikler', count: subscriptions.length, icon: <CreditCard className="w-4 h-4" />, desc: 'Aylık ve yıllık hizmetler' },
-    { id: 'warranties' as ActiveTab, label: 'Garantiler', count: warranties.length, icon: <ShieldCheck className="w-4 h-4" />, desc: 'Cihaz ve ürün korumaları' },
-    { id: 'notes' as ActiveTab, label: 'Notlar', count: notes.length, icon: <StickyNote className="w-4 h-4" />, desc: 'Önemli kodlar ve bilgiler' },
-    { id: 'bookmarks' as ActiveTab, label: 'Yer İmleri', count: bookmarks.length, icon: <Bookmark className="w-4 h-4" />, desc: 'Kaydedilen bağlantılar' },
-    { id: 'timeline' as ActiveTab, label: 'Zaman Akışı', count: '—', icon: <Clock className="w-4 h-4" />, desc: 'Hayat olayları ve geçmiş' },
+  const COLLECTIONS: {
+    id: ActiveTab;
+    category: VaultCategory;
+    label: string;
+    count: number;
+    icon: React.ReactNode;
+    desc: string;
+    color: string;
+  }[] = [
+    {
+      id: 'documents',
+      category: 'document',
+      label: 'Belgeler',
+      count: docs.length,
+      icon: <FileText className="w-4 h-4" />,
+      desc: 'Pasaport, poliçe, kontrat',
+      color: 'from-blue-500/20 to-blue-600/5',
+    },
+    {
+      id: 'receipts',
+      category: 'receipt',
+      label: 'Fişler',
+      count: receipts.length,
+      icon: <Receipt className="w-4 h-4" />,
+      desc: 'Alım geçmişi, faturalar',
+      color: 'from-emerald-500/20 to-emerald-600/5',
+    },
+    {
+      id: 'subscriptions',
+      category: 'subscription',
+      label: 'Abonelikler',
+      count: subscriptions.length,
+      icon: <CreditCard className="w-4 h-4" />,
+      desc: 'Aylık & yıllık hizmetler',
+      color: 'from-purple-500/20 to-purple-600/5',
+    },
+    {
+      id: 'warranties',
+      category: 'warranty',
+      label: 'Garantiler',
+      count: warranties.length,
+      icon: <ShieldCheck className="w-4 h-4" />,
+      desc: 'Cihaz & ürün korumaları',
+      color: 'from-orange-500/20 to-orange-600/5',
+    },
+    {
+      id: 'notes',
+      category: 'note',
+      label: 'Notlar',
+      count: notes.length,
+      icon: <StickyNote className="w-4 h-4" />,
+      desc: 'Önemli kodlar & bilgiler',
+      color: 'from-yellow-500/20 to-yellow-600/5',
+    },
+    {
+      id: 'bookmarks',
+      category: 'bookmark',
+      label: 'Yer İmleri',
+      count: bookmarks.length,
+      icon: <Bookmark className="w-4 h-4" />,
+      desc: 'Kaydedilen bağlantılar',
+      color: 'from-pink-500/20 to-pink-600/5',
+    },
   ];
+
+  const totalItems = docs.length + receipts.length + warranties.length + notes.length + bookmarks.length + subscriptions.length;
 
   return (
     <motion.div
@@ -170,81 +199,74 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </motion.div>
 
-      {/* Collections Grid */}
-      <motion.div variants={stagger.item} className="space-y-6">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-xl font-bold text-primary tracking-tight">Koleksiyonlar</h2>
-          <Button variant="ghost" size="sm" onClick={onOpenQuickAdd} className="text-accent hover:bg-accent/5">
-            Tümünü Gör
-          </Button>
+      {/* Collections — Minimal Modern Grid */}
+      <motion.div variants={stagger.item} className="space-y-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-primary tracking-tight">Koleksiyonlar</h2>
+            <p className="text-xs text-secondary/60 mt-0.5">{totalItems} öğe güvende saklanıyor</p>
+          </div>
+          <button
+            onClick={onOpenQuickAdd}
+            className="text-xs font-semibold text-accent hover:text-accent/70 transition-colors flex items-center gap-1"
+          >
+            Yeni ekle
+            <ArrowRight className="w-3 h-3" />
+          </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {COLLECTIONS.map((col, idx) => (
-            <Card
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {COLLECTIONS.map((col, i) => (
+            <motion.button
               key={col.id}
-              interactive
-              padding="none"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={{ y: -3, scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => onNavigateToTab(col.id)}
               className={cn(
-                "group relative overflow-hidden transition-all duration-500",
-                "bg-surface/30 dark:bg-white/[0.02] border-border/40",
-                idx === 0 && "col-span-2 row-span-1"
+                'group relative flex flex-col gap-3 p-4 rounded-2xl text-left',
+                'border border-border/60 bg-surface/50 hover:bg-surface',
+                'hover:border-border hover:shadow-md',
+                'transition-all duration-200 overflow-hidden',
               )}
             >
-              <div className="p-8 flex flex-col h-full justify-between min-h-[200px]">
-                <div className="flex items-start justify-between">
-                  <div className="w-14 h-14 rounded-2xl bg-background border border-border/60 shadow-soft flex items-center justify-center text-secondary group-hover:text-accent transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3">
-                    {col.icon}
-                  </div>
-                  <div className="text-2xl font-bold text-primary/20 group-hover:text-accent/20 tabular-nums transition-colors">
-                    {col.count}
-                  </div>
+              {/* Subtle gradient bg on hover */}
+              <div className={cn('absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br', col.color)} />
+
+              <div className="relative flex items-center justify-between">
+                <div className="w-8 h-8 rounded-xl bg-background border border-border/80 flex items-center justify-center text-secondary group-hover:text-primary group-hover:border-border transition-colors">
+                  {col.icon}
                 </div>
-                <div className="mt-8 space-y-2">
-                  <p className="text-lg font-bold text-primary tracking-tight group-hover:translate-x-1 transition-transform">{col.label}</p>
-                  <p className="text-[13px] text-secondary leading-relaxed opacity-70 group-hover:opacity-100 transition-opacity">{col.desc}</p>
-                </div>
+                <span className="text-xs font-bold text-secondary/50 group-hover:text-secondary tabular-nums transition-colors">
+                  {col.count}
+                </span>
               </div>
-              
-              {/* Apple-style subtle light effect */}
-              <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-accent/5 rounded-full blur-[80px] group-hover:bg-accent/10 transition-all duration-700" />
-            </Card>
+
+              <div className="relative">
+                <p className="text-sm font-semibold text-primary leading-snug">{col.label}</p>
+                <p className="text-[11px] text-secondary/60 mt-0.5 leading-relaxed line-clamp-1">{col.desc}</p>
+              </div>
+            </motion.button>
           ))}
         </div>
       </motion.div>
 
-      {/* 3D Pin Container Showcase — Featured Vault Security Badge */}
-      <motion.div variants={stagger.item} className="pt-2 pb-6 flex justify-center w-full">
-        <PinContainer
-          title="Kapsüle Kasa Güvenliği"
-          onClick={() => onNavigateToTab('documents')}
-          containerClassName="w-full max-w-sm"
-        >
-          <div className="flex flex-col p-4 w-[17rem] h-[12rem] sm:w-[20rem] sm:h-[13rem]">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="font-bold text-sm text-primary">
-                Şifreli Bulut Kasası
+      {/* Archive Summary */}
+      <motion.div variants={stagger.item} className="pb-2">
+        <Card className="p-5 bg-background border-border" interactive onClick={() => onNavigateToTab('timeline')}>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold text-secondary uppercase tracking-[1.4px]">Arşiv Özeti</p>
+              <h3 className="text-lg font-semibold text-primary mt-1">
+                Toplam {totalItems} öğe güvenle saklanıyor
               </h3>
-              <Badge variant="success" size="xs" dot>Korumalı</Badge>
             </div>
-            <p className="text-[11px] text-secondary leading-relaxed">
-              Hassas belgeleriniz, garantileriniz ve notlarınız uçtan uca şifrelenmiştir.
-            </p>
-            <div className="flex-1 w-full rounded-xl mt-3 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-blue-500/10 border border-accent/20 p-3 flex flex-col justify-between">
-              <div className="flex items-center justify-between text-xs text-primary font-medium">
-                <span>Aktif Depolama Öğeleri</span>
-                <span className="font-bold text-accent tabular-nums">{docs.length + receipts.length + warranties.length + notes.length}</span>
-              </div>
-              <div className="text-[11px] text-secondary flex items-center justify-between">
-                <span>Güvenli depolamayı görmek için tıkla</span>
-                <ArrowRight className="w-3 h-3 text-accent" />
-              </div>
-            </div>
+            <ArrowRight className="w-4 h-4 text-secondary" />
           </div>
-        </PinContainer>
+        </Card>
       </motion.div>
     </motion.div>
   );
 };
-

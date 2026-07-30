@@ -13,7 +13,7 @@ export const INITIAL_DOCUMENTS: DocumentItem[] = [
   {
     id: 'doc-1',
     title: 'T.C. Pasaport & Vize Belgesi',
-    category: 'Kimlik',
+    category: 'Identity',
     fileType: 'pdf',
     fileSize: '2.4 MB',
     previewUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80',
@@ -28,7 +28,7 @@ export const INITIAL_DOCUMENTS: DocumentItem[] = [
   {
     id: 'doc-2',
     title: 'Konut Kira Sözleşmesi 2026-2027',
-    category: 'Mülk',
+    category: 'Property',
     fileType: 'pdf',
     fileSize: '4.1 MB',
     previewUrl: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&auto=format&fit=crop&q=80',
@@ -43,7 +43,7 @@ export const INITIAL_DOCUMENTS: DocumentItem[] = [
   {
     id: 'doc-3',
     title: 'Araç Kasko & Trafik Poliçesi',
-    category: 'Araç',
+    category: 'Vehicle',
     fileType: 'pdf',
     fileSize: '1.8 MB',
     previewUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&auto=format&fit=crop&q=80',
@@ -58,7 +58,7 @@ export const INITIAL_DOCUMENTS: DocumentItem[] = [
   {
     id: 'doc-4',
     title: 'Tam Kapsamlı Özel Sağlık Sigortası',
-    category: 'Sağlık',
+    category: 'Health',
     fileType: 'pdf',
     fileSize: '3.2 MB',
     previewUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&auto=format&fit=crop&q=80',
@@ -73,7 +73,7 @@ export const INITIAL_DOCUMENTS: DocumentItem[] = [
   {
     id: 'doc-5',
     title: 'MacBook Pro M3 Max Faturası',
-    category: 'Finans',
+    category: 'Finance',
     fileType: 'pdf',
     fileSize: '950 KB',
     previewUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80',

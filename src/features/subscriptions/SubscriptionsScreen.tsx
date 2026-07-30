@@ -158,7 +158,7 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
                     </div>
                     <div className="min-w-0">
                       <p className="text-base font-bold text-primary line-clamp-1 tracking-tight">{sub.name}</p>
-                      <Badge variant="secondary" size="xs" className="mt-1 opacity-70">{sub.category}</Badge>
+                      <Badge variant="muted" size="xs" className="mt-1 opacity-70">{sub.category}</Badge>
                     </div>
                   </div>
                   <Badge variant={sub.status === 'active' ? 'success' : 'default'} size="xs" dot className="rounded-full">

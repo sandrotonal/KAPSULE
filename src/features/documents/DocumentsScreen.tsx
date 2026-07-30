@@ -174,7 +174,7 @@ export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, sel
                   <div>
                     <p className="text-base font-bold text-primary line-clamp-1 tracking-tight group-hover:text-accent transition-colors">{doc.title}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <Badge variant="secondary" size="xs" className="opacity-70">{doc.category}</Badge>
+                      <Badge variant="muted" size="xs" className="opacity-70">{doc.category}</Badge>
                       <span className="text-[11px] font-bold text-secondary uppercase tracking-widest opacity-40">{doc.fileType} · {doc.fileSize}</span>
                     </div>
                   </div>

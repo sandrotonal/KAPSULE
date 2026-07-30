@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileText, Receipt, CreditCard, ShieldCheck, StickyNote, Bookmark, X } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { VaultCategory } from '../../types';
-import SlideArrowButton from '../ui/SlideArrowButton';
 import { cn } from '../../lib/utils';
 
 export interface QuickAddModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  initialType?: VaultCategory;
 }
 
 const TYPES: { id: VaultCategory; label: string; icon: React.ReactNode; hint: string }[] = [
@@ -23,8 +23,8 @@ const TYPES: { id: VaultCategory; label: string; icon: React.ReactNode; hint: st
     { id: 'bookmark',     label: 'Yer İmi',    icon: <Bookmark className="w-5 h-5" />,    hint: 'Web sitesi kaydet' },
   ];
 
-export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, onSuccess }) => {
-  const [type, setType] = useState<VaultCategory>('document');
+export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, onSuccess, initialType = 'document' }) => {
+  const [type, setType] = useState<VaultCategory>(initialType);
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [price, setPrice] = useState('');
@@ -34,6 +34,11 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   const [expiryDate, setExpiryDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState('');
+
+  // Modal her açıldığında veya hedef tür değiştiğinde seçili türü senkronla.
+  useEffect(() => {
+    if (isOpen) setType(initialType);
+  }, [isOpen, initialType]);
 
   const reset = () => {
     setTitle(''); setAmount(''); setPrice('');
@@ -90,8 +95,13 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Kasaya ekle" maxWidth="md">
       <div className="space-y-6">
-        {/* Type selector grid */}
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
+        <div className="flex items-center justify-between gap-4 border-b border-border/50 pb-4">
+          <p className="text-[11px] font-bold uppercase tracking-[1.6px] text-secondary">Kayıt Türü</p>
+          <p className="text-xs text-secondary/80">Önce türü seç, sonra detayları gir</p>
+        </div>
+
+        {/* Type selector */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2">
           {TYPES.map((t) => {
             const isSelected = type === t.id;
             return (
@@ -100,45 +110,50 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                 type="button"
                 onClick={() => setType(t.id)}
                 className={cn(
-                  "flex flex-col items-center justify-center p-5 rounded-[32px] border transition-all duration-500 relative group overflow-hidden",
+                  "group flex items-center gap-3 text-left py-3 px-1 border-b transition-all duration-300",
                   isSelected
-                    ? "bg-accent/10 border-accent/40 shadow-[0_20px_40px_rgba(var(--accent-rgb),0.15)] ring-1 ring-accent/20"
-                    : "bg-surface/50 border-border/40 text-secondary hover:border-border hover:bg-surface-elevated hover:-translate-y-1"
+                    ? "border-accent text-primary"
+                    : "border-border/60 text-secondary hover:border-accent/50 hover:text-primary"
                 )}
               >
-                {/* Background Glow for Selected */}
-                {isSelected && (
-                  <div className="absolute inset-0 bg-accent/10 opacity-60 blur-2xl transition-all duration-700" />
-                )}
-                
                 <div className={cn(
-                  "relative z-10 p-3 rounded-2xl transition-all duration-500",
-                  isSelected ? "bg-accent text-white scale-110 shadow-lg -rotate-3" : "bg-surface-elevated text-secondary group-hover:text-primary group-hover:scale-110"
+                  "w-9 h-9 rounded-lg border flex items-center justify-center transition-all duration-300",
+                  isSelected
+                    ? "bg-accent text-white border-accent shadow-soft"
+                    : "bg-background text-secondary border-border group-hover:text-accent"
                 )}>
                   {t.icon}
                 </div>
+                <div className="flex flex-col min-w-0 flex-1">
+                  <span className={cn("text-xs font-bold uppercase tracking-[1.2px]", isSelected ? "text-accent" : "text-primary")}>{t.label}</span>
+                  <span className="text-[11px] text-secondary leading-tight">{t.hint}</span>
+                </div>
                 <span className={cn(
-                  "relative z-10 text-[10px] uppercase tracking-[1.5px] mt-3 font-black transition-colors",
-                  isSelected ? "text-accent" : "text-secondary group-hover:text-primary"
+                  "text-[10px] uppercase tracking-[1.4px] font-bold transition-opacity",
+                  isSelected ? "opacity-100 text-accent" : "opacity-0 group-hover:opacity-60"
                 )}>
-                  {t.label}
+                  Seçildi
                 </span>
-                
-                {isSelected && (
-                  <div className="absolute bottom-2 w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_10px_rgba(var(--accent-rgb),0.5)]" />
-                )}
+                <div className={cn(
+                  "h-[2px] w-6 rounded-full transition-all duration-300",
+                  isSelected ? "bg-accent" : "bg-transparent group-hover:bg-accent/40"
+                )} />
               </button>
             );
           })}
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6 pt-6 border-t border-border/20">
-          <div className="bg-surface/30 p-6 rounded-[32px] border border-border/40 space-y-5 backdrop-blur-md relative overflow-hidden group/form">
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover/form:opacity-10 transition-opacity pointer-events-none text-accent">
-              {TYPES.find(t => t.id === type)?.icon}
+        <form onSubmit={handleSubmit} className="space-y-5 pt-1">
+          <div className="space-y-4">
+            <div className="flex items-start justify-between gap-3 border-b border-border/50 pb-3">
+              <div>
+                <p className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px]">Detaylar</p>
+                <p className="text-xs text-secondary/80 mt-1">Kısa ve net başlıklarla daha hızlı arama yapabilirsin.</p>
+              </div>
+              <X className="w-4 h-4 text-secondary/60" />
             </div>
-            
+
             <Input
               label={type === 'receipt' ? 'Mağaza / Satıcı' : type === 'warranty' ? 'Ürün Adı' : type === 'subscription' ? 'Hizmet Adı' : type === 'bookmark' ? 'Başlık' : 'Başlık'}
               placeholder={
@@ -148,17 +163,17 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                 type === 'warranty' ? 'Örn: MacBook Pro' :
                 type === 'note' ? 'Örn: Acil durum kişileri' : 'Örn: Apple Geliştirici'
               }
-              className="rounded-2xl bg-background/50 h-14 border-border/40 focus:border-accent/40"
+              className="rounded-xl h-12 border-border"
               value={title}
               onChange={e => setTitle(e.target.value)}
               required
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-secondary uppercase tracking-[2px] px-1">Kategori</label>
+                <label className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px] px-1">Kategori</label>
                 <select
-                  className="w-full h-14 bg-background/50 text-primary text-[15px] font-bold rounded-2xl border border-border/40 px-4 transition-all focus:outline-none focus:border-accent/40 focus:bg-background appearance-none"
+                  className="w-full h-12 bg-background text-primary text-sm font-semibold rounded-xl border border-border px-3 transition-colors focus:outline-none focus:border-accent appearance-none"
                   value={category}
                   onChange={e => setCategory(e.target.value)}
                 >
@@ -173,37 +188,37 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
               </div>
 
               {type === 'receipt' && (
-                <Input label="Tutar (TL)" type="number" placeholder="0.00" className="rounded-2xl bg-background/50 h-14 border-border/40" value={amount} onChange={e => setAmount(e.target.value)} />
+                <Input label="Tutar (TL)" type="number" placeholder="0.00" className="rounded-xl h-12 border-border" value={amount} onChange={e => setAmount(e.target.value)} />
               )}
 
               {type === 'subscription' && (
-                <Input label="Aylık fiyat (TL)" type="number" placeholder="0.00" className="rounded-2xl bg-background/50 h-14 border-border/40" value={price} onChange={e => setPrice(e.target.value)} />
+                <Input label="Aylık fiyat (TL)" type="number" placeholder="0.00" className="rounded-xl h-12 border-border" value={price} onChange={e => setPrice(e.target.value)} />
               )}
 
               {type === 'warranty' && (
-                <Input label="Marka" placeholder="Örn: Apple" className="rounded-2xl bg-background/50 h-14 border-border/40" value={brand} onChange={e => setBrand(e.target.value)} />
+                <Input label="Marka" placeholder="Örn: Apple" className="rounded-xl h-12 border-border" value={brand} onChange={e => setBrand(e.target.value)} />
               )}
             </div>
 
             {(type === 'subscription' || type === 'warranty') && (
               <Input 
-                label={type === 'subscription' ? "Sıradaki Yenileme" : "Garanti Bitiş Tarihi"} 
-                type="date" 
-                className="rounded-2xl bg-background/50 h-14 border-border/40"
-                value={expiryDate} 
-                onChange={e => setExpiryDate(e.target.value)} 
+                label={type === 'subscription' ? "Sıradaki Yenileme" : "Garanti Bitiş Tarihi"}
+                type="date"
+                className="rounded-xl h-12 border-border"
+                value={expiryDate}
+                onChange={e => setExpiryDate(e.target.value)}
               />
             )}
 
             {type === 'bookmark' && (
-              <Input label="URL" placeholder="https://..." className="rounded-2xl bg-background/50 h-14 border-border/40" value={url} onChange={e => setUrl(e.target.value)} />
+              <Input label="URL" placeholder="https://..." className="rounded-xl h-12 border-border" value={url} onChange={e => setUrl(e.target.value)} />
             )}
 
             {(type === 'document' || type === 'note' || type === 'receipt') && (
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-secondary uppercase tracking-[2px] px-1">{type === 'note' ? 'İçerik' : 'Notlar'}</label>
+                <label className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px] px-1">{type === 'note' ? 'İçerik' : 'Notlar'}</label>
                 <textarea
-                  className="w-full h-32 bg-background/50 text-primary placeholder:text-secondary/40 text-[15px] font-bold rounded-2xl border border-border/40 px-4 py-3 resize-none focus:outline-none focus:border-accent/40 focus:bg-background transition-all"
+                  className="w-full h-28 bg-background text-primary placeholder:text-secondary/50 text-sm rounded-xl border border-border px-3 py-3 resize-none focus:outline-none focus:border-accent transition-colors"
                   placeholder={type === 'note' ? 'Notunuzu buraya yazın...' : 'İsteğe bağlı açıklama veya notlar...'}
                   value={content}
                   onChange={e => setContent(e.target.value)}
@@ -212,13 +227,11 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
             )}
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <Button type="button" variant="ghost" className="rounded-2xl px-8 text-secondary font-bold hover:text-primary" onClick={handleClose}>İptal</Button>
-            <SlideArrowButton 
-              text={loading ? 'Kaydediliyor...' : 'Kasaya Kilitle'}
-              onClick={handleSubmit as any} 
-              className="w-56"
-            />
+          <div className="flex items-center justify-end gap-3 pt-2 border-t border-border/50">
+            <Button type="button" variant="ghost" className="rounded-xl px-5 h-11 text-secondary font-semibold hover:text-primary" onClick={handleClose}>İptal</Button>
+            <Button type="submit" className="rounded-xl px-6 h-11 font-semibold min-w-[170px]" disabled={loading}>
+              {loading ? 'Kaydediliyor...' : 'Kasaya Ekle'}
+            </Button>
           </div>
         </form>
       </div>

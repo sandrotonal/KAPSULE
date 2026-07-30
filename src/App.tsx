@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ActiveTab } from './types';
+import { VaultCategory } from './types';
 import { MainLayout } from './layouts/MainLayout';
 import { HomeScreen } from './features/home/HomeScreen';
 import { DocumentsScreen } from './features/documents/DocumentsScreen';
@@ -19,6 +20,7 @@ export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [quickAddInitialType, setQuickAddInitialType] = useState<VaultCategory>('document');
   
   // Interactivity and linking states
   const [refreshKey, setRefreshKey] = useState(0);
@@ -75,6 +77,7 @@ export function App() {
             onNavigateToTab={handleNavigateToTab}
             onOpenSearch={() => setIsSearchOpen(true)}
             onOpenQuickAdd={() => setIsQuickAddOpen(true)}
+            onOpenQuickAddFor={(cat) => { setQuickAddInitialType(cat); setIsQuickAddOpen(true); }}
           />
         );
       case 'documents':
@@ -147,6 +150,7 @@ export function App() {
             onNavigateToTab={handleNavigateToTab}
             onOpenSearch={() => setIsSearchOpen(true)}
             onOpenQuickAdd={() => setIsQuickAddOpen(true)}
+            onOpenQuickAddFor={(cat) => { setQuickAddInitialType(cat); setIsQuickAddOpen(true); }}
           />
         );
     }
@@ -181,6 +185,7 @@ export function App() {
       {/* Quick Add Item Modal */}
       <QuickAddModal
         isOpen={isQuickAddOpen}
+        initialType={quickAddInitialType}
         onClose={() => setIsQuickAddOpen(false)}
         onSuccess={() => {
           // Increment trigger key to refresh active sub-screen data
