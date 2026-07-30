@@ -9,6 +9,7 @@ import { WarrantyItem } from '../../types';
 import { formatDate, getDaysRemaining } from '../../lib/utils';
 import { WarrantyDetailModal } from './WarrantyDetailModal';
 import { motion } from 'framer-motion';
+import { TiltCard } from '../../components/ui/TiltCard';
 
 export interface WarrantiesScreenProps {
   onOpenAdd: () => void;
@@ -93,6 +94,7 @@ export const WarrantiesScreen: React.FC<WarrantiesScreenProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
               >
+                <TiltCard className="rounded-3xl h-full" intensity={7}>
                 <Card
                   interactive
                   padding="none"
@@ -146,7 +148,8 @@ export const WarrantiesScreen: React.FC<WarrantiesScreenProps> = ({
                       <p className="text-[12px] text-secondary/70 line-clamp-2 italic leading-relaxed pl-2 border-l-2 border-border/40">{war.notes}</p>
                     )}
                   </div>
-                </Card>
+                  </Card>
+              </TiltCard>
               </motion.div>
             );
           })}

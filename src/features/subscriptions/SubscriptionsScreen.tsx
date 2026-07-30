@@ -9,6 +9,7 @@ import { SubscriptionItem } from '../../types';
 import { formatCurrency, formatDate } from '../../lib/utils';
 import { SubscriptionDetailModal } from './SubscriptionDetailModal';
 import { motion } from 'framer-motion';
+import { TiltCard } from '../../components/ui/TiltCard';
 
 export interface SubscriptionsScreenProps {
   onOpenAdd: () => void;
@@ -78,40 +79,46 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
 
       {/* Subscription Analytics Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-surface/30 border-border/40 p-6 space-y-4">
-          <div className="flex items-center gap-2 text-secondary/60">
-            <TrendingDown className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-widest">Aylık Harcama</span>
-          </div>
-          <p className="text-3xl font-bold text-primary tracking-tight">{formatCurrency(Math.round(monthlyTotal), 'TL')}</p>
-          <div className="w-full bg-border/20 h-1.5 rounded-full overflow-hidden">
-            <motion.div 
-              initial={{ width: 0 }}
-              animate={{ width: '65%' }}
-              className="bg-accent h-full" 
-            />
-          </div>
-        </Card>
-        
-        <Card className="bg-surface/30 border-border/40 p-6 space-y-4">
-          <div className="flex items-center gap-2 text-secondary/60">
-            <Calendar className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-widest">Sıradaki Yenileme</span>
-          </div>
-          <p className="text-3xl font-bold text-primary tracking-tight">
-            {subs.length > 0 ? formatDate(subs.sort((a,b) => new Date(a.renewalDate).getTime() - new Date(b.renewalDate).getTime())[0].renewalDate) : '—'}
-          </p>
-          <p className="text-[11px] text-secondary font-medium">En yakın ödeme tarihi</p>
-        </Card>
+        <TiltCard className="rounded-2xl">
+          <Card className="bg-surface/30 border-border/40 p-6 space-y-4 h-full">
+            <div className="flex items-center gap-2 text-secondary/60">
+              <TrendingDown className="w-4 h-4" />
+              <span className="text-xs font-bold uppercase tracking-widest">Aylık Harcama</span>
+            </div>
+            <p className="text-3xl font-bold text-primary tracking-tight">{formatCurrency(Math.round(monthlyTotal), 'TL')}</p>
+            <div className="w-full bg-border/20 h-1.5 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: '65%' }}
+                className="bg-accent h-full"
+              />
+            </div>
+          </Card>
+        </TiltCard>
 
-        <Card className="bg-surface/30 border-border/40 p-6 space-y-4">
-          <div className="flex items-center gap-2 text-secondary/60">
-            <ArrowUpRight className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-widest">Yıllık Etki</span>
-          </div>
-          <p className="text-3xl font-bold text-primary tracking-tight">{formatCurrency(Math.round(monthlyTotal * 12), 'TL')}</p>
-          <p className="text-[11px] text-secondary font-medium">Tahmini 12 aylık maliyet</p>
-        </Card>
+        <TiltCard className="rounded-2xl">
+          <Card className="bg-surface/30 border-border/40 p-6 space-y-4 h-full">
+            <div className="flex items-center gap-2 text-secondary/60">
+              <Calendar className="w-4 h-4" />
+              <span className="text-xs font-bold uppercase tracking-widest">Sıradaki Yenileme</span>
+            </div>
+            <p className="text-3xl font-bold text-primary tracking-tight">
+              {subs.length > 0 ? formatDate(subs.sort((a,b) => new Date(a.renewalDate).getTime() - new Date(b.renewalDate).getTime())[0].renewalDate) : '—'}
+            </p>
+            <p className="text-[11px] text-secondary font-medium">En yakın ödeme tarihi</p>
+          </Card>
+        </TiltCard>
+
+        <TiltCard className="rounded-2xl">
+          <Card className="bg-surface/30 border-border/40 p-6 space-y-4 h-full">
+            <div className="flex items-center gap-2 text-secondary/60">
+              <ArrowUpRight className="w-4 h-4" />
+              <span className="text-xs font-bold uppercase tracking-widest">Yıllık Etki</span>
+            </div>
+            <p className="text-3xl font-bold text-primary tracking-tight">{formatCurrency(Math.round(monthlyTotal * 12), 'TL')}</p>
+            <p className="text-[11px] text-secondary font-medium">Tahmini 12 aylık maliyet</p>
+          </Card>
+        </TiltCard>
       </div>
 
       <div className="max-w-md">
@@ -144,12 +151,13 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
             >
-              <Card
-                interactive
-                padding="lg"
-                onClick={() => setSelectedSub(sub)}
-                className="space-y-6 border-border/60 h-full flex flex-col justify-between"
-              >
+              <TiltCard className="rounded-[1.5rem] h-full" intensity={6}>
+                <Card
+                  interactive
+                  padding="lg"
+                  onClick={() => setSelectedSub(sub)}
+                  className="space-y-6 border-border/60 h-full flex flex-col justify-between"
+                >
                 {/* Header */}
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
@@ -180,7 +188,8 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
                     <span className="font-bold text-primary">{formatDate(sub.renewalDate)}</span>
                   </div>
                 </div>
-              </Card>
+                </Card>
+              </TiltCard>
             </motion.div>
           ))}
         </div>

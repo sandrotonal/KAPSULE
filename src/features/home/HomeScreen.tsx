@@ -18,6 +18,7 @@ import { VaultStorageService } from '../../services/vaultStorage';
 import { formatCurrency, cn } from '../../lib/utils';
 import { motion } from 'framer-motion';
 import { WalletCard } from '../../components/ui/WalletCard';
+import { TiltCard } from '../../components/ui/TiltCard';
 
 export interface HomeScreenProps {
   onNavigateToTab: (tab: ActiveTab, linkedItemId?: string) => void;
@@ -152,44 +153,48 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* Vault Insights — Premium Stats */}
       <motion.div variants={stagger.item} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
         <div className="lg:col-span-1 flex flex-col gap-6 order-2 lg:order-1">
-          <Card className="bg-primary dark:bg-accent text-primary-foreground border-none overflow-hidden relative group p-8 min-h-[160px] flex flex-col justify-between shadow-2xl shadow-primary/20">
-            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-all duration-700 group-hover:scale-110">
-              <TrendingUp className="w-24 h-24" />
-            </div>
-            <div className="relative z-10 space-y-1">
-              <p className="text-[11px] font-bold text-primary-foreground/60 uppercase tracking-[2px]">Aylık Harcama</p>
-              <h3 className="text-4xl font-bold tracking-tighter">
-                {formatCurrency(stats.totalMonthlyCost, 'TL')}
-              </h3>
-            </div>
-            <div className="relative z-10 text-xs font-medium text-primary-foreground/80">
-              <span className="opacity-60">Yıllık tahmini: </span>
-              <span>{formatCurrency(stats.totalAnnualCost, 'TL')}</span>
-            </div>
-          </Card>
-
-          <Card className="bg-surface/50 dark:bg-white/5 border-border overflow-hidden relative group p-8 min-h-[160px] flex flex-col justify-between" interactive onClick={() => onNavigateToTab('warranties')}>
-            <div className="flex items-start justify-between">
-              <div className="space-y-1">
-                <p className="text-[11px] font-bold text-secondary uppercase tracking-[2px]">Garantiler</p>
-                <h3 className="text-4xl font-bold text-primary tracking-tighter">
-                  {stats.activeWarranties}
+          <TiltCard className="rounded-3xl" intensity={8}>
+            <Card className="bg-primary dark:bg-accent text-primary-foreground border-none overflow-hidden relative group p-8 min-h-[160px] flex flex-col justify-between shadow-2xl shadow-primary/20">
+              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-all duration-700 group-hover:scale-110">
+                <TrendingUp className="w-24 h-24" />
+              </div>
+              <div className="relative z-10 space-y-1">
+                <p className="text-[11px] font-bold text-primary-foreground/60 uppercase tracking-[2px]">Aylık Harcama</p>
+                <h3 className="text-4xl font-bold tracking-tighter">
+                  {formatCurrency(stats.totalMonthlyCost, 'TL')}
                 </h3>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-background border border-border flex items-center justify-center text-primary shadow-soft group-hover:rotate-6 transition-transform">
-                <ShieldCheck className="w-6 h-6" />
+              <div className="relative z-10 text-xs font-medium text-primary-foreground/80">
+                <span className="opacity-60">Yıllık tahmini: </span>
+                <span>{formatCurrency(stats.totalAnnualCost, 'TL')}</span>
               </div>
-            </div>
-            <div className="flex items-center gap-3">
-              {stats.expiringWarrantiesCount > 0 ? (
-                <Badge variant="warning" size="sm" dot className="rounded-full px-3 py-1 text-[10px]">
-                  {stats.expiringWarrantiesCount} Yakın
-                </Badge>
-              ) : (
-                <Badge variant="success" size="sm" dot className="rounded-full px-3 py-1 text-[10px]">Güvende</Badge>
-              )}
-            </div>
-          </Card>
+            </Card>
+          </TiltCard>
+
+          <TiltCard className="rounded-3xl" intensity={8}>
+            <Card className="bg-surface/50 dark:bg-white/5 border-border overflow-hidden relative group p-8 min-h-[160px] flex flex-col justify-between" interactive onClick={() => onNavigateToTab('warranties')}>
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <p className="text-[11px] font-bold text-secondary uppercase tracking-[2px]">Garantiler</p>
+                  <h3 className="text-4xl font-bold text-primary tracking-tighter">
+                    {stats.activeWarranties}
+                  </h3>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-background border border-border flex items-center justify-center text-primary shadow-soft group-hover:rotate-6 transition-transform">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                {stats.expiringWarrantiesCount > 0 ? (
+                  <Badge variant="warning" size="sm" dot className="rounded-full px-3 py-1 text-[10px]">
+                    {stats.expiringWarrantiesCount} Yakın
+                  </Badge>
+                ) : (
+                  <Badge variant="success" size="sm" dot className="rounded-full px-3 py-1 text-[10px]">Güvende</Badge>
+                )}
+              </div>
+            </Card>
+          </TiltCard>
         </div>
 
         <div className="lg:col-span-2 flex items-center justify-center order-1 lg:order-2 py-4">

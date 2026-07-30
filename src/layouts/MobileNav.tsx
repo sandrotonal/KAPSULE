@@ -28,15 +28,15 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   );
 
   return (
-    <nav className="md:hidden fixed bottom-3 left-3 right-3 z-40 select-none flex justify-center pointer-events-auto">
+    <nav className="md:hidden fixed bottom-3 left-0 right-0 z-40 select-none flex justify-center pointer-events-auto px-4">
       <FluidTabs
         activeIndex={activeIndex < 0 ? 0 : activeIndex}
         onActiveIndexChange={(idx) => onTabChange(MAIN_TABS[idx].id)}
-        className="w-full max-w-lg"
+        className="w-full max-w-[320px]"
       >
         <FluidTabs.List className="w-full justify-around bg-surface/90 backdrop-blur-2xl border border-border/80 shadow-2xl p-1.5 rounded-full">
           {MAIN_TABS.map((tab) => (
-            <FluidTabs.Tab key={tab.id} label={tab.label} className="py-2.5 px-3 justify-center min-h-[44px]">
+            <FluidTabs.Tab key={tab.id} label={tab.label} className="py-2 px-1 justify-center min-h-[40px]">
               <FluidTabsIcon>{tab.icon}</FluidTabsIcon>
             </FluidTabs.Tab>
           ))}

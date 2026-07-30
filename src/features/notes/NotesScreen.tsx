@@ -12,12 +12,19 @@ import { motion } from 'framer-motion';
 
 export interface NotesScreenProps {
   onOpenAdd: () => void;
+  selectedItemId?: string;
 }
 
-export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd }) => {
+export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd, selectedItemId }) => {
   const [notes, setNotes] = useState<NoteItem[]>(() => VaultStorageService.getNotes());
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedNote, setSelectedNote] = useState<NoteItem | null>(null);
+  const [selectedNote, setSelectedNote] = useState<NoteItem | null>(() => {
+    if (selectedItemId) {
+      const list = VaultStorageService.getNotes();
+      return list.find(n => n.id === selectedItemId) || null;
+    }
+    return null;
+  });
 
   const filtered = notes.filter(n =>
     !searchQuery || n.title.toLowerCase().includes(searchQuery.toLowerCase()) || n.content.toLowerCase().includes(searchQuery.toLowerCase())

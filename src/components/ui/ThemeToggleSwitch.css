@@ -1,0 +1,153 @@
+/* All selectors scoped under .theme-switch to prevent global conflicts */
+
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.theme-switch label {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.theme-switch input[type="checkbox"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.theme-switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #38bdf8;
+  transition: 0.4s;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.theme-switch .sun-moon {
+  position: absolute;
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: #facc15;
+  transition: 0.4s;
+}
+
+.theme-switch input[type="checkbox"]:checked + .slider {
+  background-color: #0f172a;
+}
+
+.theme-switch input[type="checkbox"]:checked + .slider .sun-moon {
+  transform: translateX(26px);
+  background-color: #f8fafc;
+}
+
+.theme-switch .moon-dot {
+  opacity: 0;
+  transition: 0.4s;
+  fill: #94a3b8;
+}
+
+.theme-switch input[type="checkbox"]:checked + .slider .sun-moon .moon-dot {
+  opacity: 1;
+}
+
+.theme-switch .slider.round {
+  border-radius: 34px;
+}
+
+.theme-switch .slider.round .sun-moon {
+  border-radius: 50%;
+}
+
+.theme-switch #moon-dot-1 {
+  left: 10px;
+  top: 3px;
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  z-index: 4;
+}
+
+.theme-switch #moon-dot-2 {
+  left: 2px;
+  top: 10px;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  z-index: 4;
+}
+
+.theme-switch #moon-dot-3 {
+  left: 16px;
+  top: 18px;
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  z-index: 4;
+}
+
+.theme-switch .stars {
+  transform: translateY(-32px);
+  opacity: 0;
+  transition: 0.4s;
+}
+
+.theme-switch input[type="checkbox"]:checked + .slider .stars {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.theme-switch .star {
+  fill: white;
+  position: absolute;
+  transition: 0.4s;
+  animation: ts-star-twinkle 2s infinite;
+}
+
+.theme-switch #star-1 {
+  width: 14px;
+  top: 4px;
+  left: 6px;
+  animation-delay: 0.3s;
+}
+
+.theme-switch #star-2 {
+  width: 6px;
+  top: 16px;
+  left: 6px;
+}
+
+.theme-switch #star-3 {
+  width: 10px;
+  top: 18px;
+  left: 14px;
+  animation-delay: 0.6s;
+}
+
+.theme-switch #star-4 {
+  width: 12px;
+  top: 4px;
+  left: 18px;
+  animation-delay: 1.3s;
+}
+
+@keyframes ts-star-twinkle {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+}

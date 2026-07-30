@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onNavigateToTab: (tab: ActiveTab) => void;
+  onNavigateToTab: (tab: ActiveTab, linkedItemId?: string) => void;
 }
 
 type ResultItem = {
@@ -172,7 +172,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
               {results.map(r => (
                 <button
                   key={r.id}
-                  onClick={() => { onNavigateToTab(r.tab); onClose(); }}
+                  onClick={() => { onNavigateToTab(r.tab, r.id); onClose(); }}
                   className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-surface text-left transition-all duration-200 group border border-transparent hover:border-border"
                 >
                   <div className="w-10 h-10 rounded-xl bg-surface border border-border flex items-center justify-center text-secondary group-hover:text-primary shrink-0 transition-all group-hover:scale-110">
