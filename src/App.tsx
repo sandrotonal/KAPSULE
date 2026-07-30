@@ -14,7 +14,10 @@ import { SettingsScreen } from './features/settings/SettingsScreen';
 import { SearchModal } from './features/search/SearchModal';
 import { QuickAddModal } from './components/common/QuickAddModal';
 import { PasscodeLock } from './components/common/PasscodeLock';
+import { OnboardingScreen } from './features/onboarding/OnboardingScreen';
 import { VaultStorageService } from './services/vaultStorage';
+
+const ONBOARDING_KEY = 'kapsule_onboarding_complete';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
@@ -29,6 +32,22 @@ export function App() {
   // Settings & Simulated Lock state
   const [settings, setSettings] = useState(() => VaultStorageService.getSettings());
   const [isLocked, setIsLocked] = useState(() => settings.autoLock);
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    try {
+      return localStorage.getItem(ONBOARDING_KEY) !== 'true';
+    } catch {
+      return true;
+    }
+  });
+
+  const handleOnboardingComplete = () => {
+    try {
+      localStorage.setItem(ONBOARDING_KEY, 'true');
+    } catch (e) {
+      console.error('Failed to save onboarding state', e);
+    }
+    setShowOnboarding(false);
+  };
 
   // Sync dark theme on settings update
   useEffect(() => {
@@ -156,6 +175,10 @@ export function App() {
         );
     }
   };
+
+  if (showOnboarding) {
+    return <OnboardingScreen onComplete={handleOnboardingComplete} />;
+  }
 
   if (isLocked) {
     return (
