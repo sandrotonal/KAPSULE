@@ -20,6 +20,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   wrapperClassName,
   ...props
 }, ref) => {
+  const descriptionId = props.id
+    ? error
+      ? `${props.id}-error`
+      : hint
+        ? `${props.id}-hint`
+        : undefined
+    : undefined;
+
   return (
     <div className={cn("w-full flex flex-col gap-1.5", wrapperClassName)}>
       {label && (
@@ -46,6 +54,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
             error && "border-danger/40 focus:border-danger/60 focus:shadow-[0_0_0_3px_rgba(220,38,38,0.08)]",
             className
           )}
+          aria-invalid={error ? 'true' : 'false'}
+          aria-describedby={descriptionId}
           {...props}
         />
         {iconRight && (
@@ -55,10 +65,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
         )}
       </div>
       {error && (
-        <p className="text-xs text-danger">{error}</p>
+        <p id={props.id ? `${props.id}-error` : undefined} className="text-xs text-danger" role="alert">{error}</p>
       )}
       {hint && !error && (
-        <p className="text-xs text-secondary">{hint}</p>
+        <p id={props.id ? `${props.id}-hint` : undefined} className="text-xs text-secondary">{hint}</p>
       )}
     </div>
   );

@@ -144,7 +144,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         <Button
           onClick={onOpenQuickAdd}
           size="lg"
-          className="rounded-full px-8 bg-primary text-primary-foreground hover:scale-105 active:scale-95 transition-transform"
+          className="w-full sm:w-auto rounded-full px-8 h-12 bg-primary text-primary-foreground hover:scale-105 active:scale-95 transition-transform shadow-md font-bold"
         >
           Yeni Ekle
         </Button>
@@ -197,8 +197,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </TiltCard>
         </div>
 
-        <div className="lg:col-span-2 flex items-center justify-center order-1 lg:order-2 py-4">
-          <div className="w-full max-w-[500px] flex justify-center">
+        <div className="lg:col-span-2 flex items-center justify-center order-1 lg:order-2 py-2">
+          <div className="w-full max-w-[420px] flex justify-center">
             <WalletCard />
           </div>
         </div>
@@ -206,7 +206,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
       {/* Collections — Minimal Modern Grid */}
       <motion.div variants={stagger.item} className="space-y-5">
-        <div className="flex items-center justify-between">
+        <header className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-primary tracking-tight">Koleksiyonlar</h2>
             <p className="text-xs text-secondary/60 mt-0.5">{totalItems} öğe güvende saklanıyor</p>
@@ -214,13 +214,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <button
             onClick={onOpenQuickAdd}
             className="text-xs font-semibold text-accent hover:text-accent/70 transition-colors flex items-center gap-1"
+            aria-label="Yeni öğe ekle"
           >
             Yeni ekle
             <ArrowRight className="w-3 h-3" />
           </button>
-        </div>
+        </header>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <nav className="grid grid-cols-2 sm:grid-cols-3 gap-3" aria-label="Koleksiyon kategorileri">
           {COLLECTIONS.map((col, i) => (
             <motion.button
               key={col.id}
@@ -255,7 +256,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
             </motion.button>
           ))}
-        </div>
+        </nav>
       </motion.div>
 
       {/* Archive Summary */}

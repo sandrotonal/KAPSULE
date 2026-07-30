@@ -61,6 +61,9 @@
     outline-offset: 2px;
     border-radius: 6px;
   }
+  .dark :focus-visible {
+    outline: 2px solid #0A84FF;
+  }
   :focus:not(:focus-visible) {
     outline: none;
   }

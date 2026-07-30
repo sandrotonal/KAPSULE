@@ -106,10 +106,11 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Dijital boşluğu keşfedin..."
+            aria-label="Kasada ara"
             className="flex-1 bg-transparent border-none outline-none text-white text-[15px] font-medium px-3 placeholder:text-white/60 tracking-tight"
           />
           {query && (
-            <button onClick={() => setQuery('')} className="p-1 text-white/70 hover:text-white transition-colors">
+            <button onClick={() => setQuery('')} className="p-1 text-white/70 hover:text-white transition-colors" aria-label="Aramayı temizle">
               <X className="w-5 h-5" />
             </button>
           )}
@@ -119,7 +120,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
         </div>
 
         {/* SVG Filter Definition */}
-        <svg className="absolute invisible w-0 h-0" xmlns="http://www.w3.org/2000/svg">
+        <svg className="absolute invisible w-0 h-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <filter id="enhanced-goo">
               <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />

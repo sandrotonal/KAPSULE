@@ -128,8 +128,8 @@ const HeroComposition: React.FC = () => (
 
         <div className="flex items-center justify-between relative z-10">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center font-bold text-xs shadow-md">
-              K
+            <div className="w-8 h-8 rounded-xl bg-surface border border-border flex items-center justify-center p-1 shadow-sm overflow-hidden">
+              <img src="/src/assets/logo.png" alt="Kapsule Logo" className="w-full h-full object-contain dark:invert" />
             </div>
             <div>
               <p className="text-xs font-bold tracking-tight text-neutral-900 dark:text-neutral-100">Kapsule Vault</p>
@@ -368,10 +368,10 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
         className="flex items-center justify-center pt-10 pb-2"
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-2xl bg-neutral-900 dark:bg-white flex items-center justify-center text-white dark:text-neutral-900 shadow-md">
-            <span className="text-base font-bold tracking-tight">K</span>
+          <div className="w-9 h-9 rounded-2xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 flex items-center justify-center p-1.5 shadow-sm overflow-hidden">
+            <img src="/src/assets/logo.png" alt="Kapsule" className="w-full h-full object-contain dark:invert" />
           </div>
-          <span className="text-sm font-bold text-neutral-400 dark:text-neutral-500 tracking-wider uppercase">
+          <span className="text-sm font-bold text-neutral-900 dark:text-neutral-100 tracking-wider uppercase">
             Kapsule
           </span>
         </div>

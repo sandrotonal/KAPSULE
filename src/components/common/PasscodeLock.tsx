@@ -53,15 +53,15 @@ export const PasscodeLock: React.FC<PasscodeLockProps> = ({
   return (
     <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background text-primary transition-colors duration-300">
       <div className="w-full max-w-xs px-6 flex flex-col items-center space-y-8 select-none">
-        
+
         {/* Header */}
         <div className="flex flex-col items-center space-y-3 text-center">
-          <div className="w-12 h-12 rounded-2xl bg-surface border border-border flex items-center justify-center text-primary shadow-soft">
-            <Lock className="w-5 h-5" />
+          <div className="w-14 h-14 rounded-2xl bg-surface border border-border/80 flex items-center justify-center p-2.5 shadow-soft overflow-hidden">
+            <img src="/src/assets/logo.png" alt="Kapsule Logo" className="w-full h-full object-contain dark:invert" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-lg font-semibold tracking-tight">Vault Locked</h2>
-            <p className="text-xs text-secondary">Enter passcode to access Kapsule</p>
+            <h2 className="text-lg font-bold tracking-tight">Kapsule Kilitli</h2>
+            <p className="text-xs text-secondary font-medium">Devam etmek için şifrenizi girin</p>
           </div>
         </div>
 
@@ -76,13 +76,12 @@ export const PasscodeLock: React.FC<PasscodeLockProps> = ({
             return (
               <div
                 key={index}
-                className={`w-3.5 h-3.5 rounded-full border transition-all duration-150 ${
-                  isError
-                    ? 'bg-danger border-danger'
-                    : filled
+                className={`w-3.5 h-3.5 rounded-full border transition-all duration-150 ${isError
+                  ? 'bg-danger border-danger'
+                  : filled
                     ? 'bg-primary border-primary scale-110 shadow-soft'
                     : 'border-border bg-surface'
-                }`}
+                  }`}
               />
             );
           })}
@@ -99,7 +98,7 @@ export const PasscodeLock: React.FC<PasscodeLockProps> = ({
               {num}
             </button>
           ))}
-          
+
           {/* Bottom row */}
           <button
             onClick={onResetData}
@@ -108,14 +107,14 @@ export const PasscodeLock: React.FC<PasscodeLockProps> = ({
           >
             Reset
           </button>
-          
+
           <button
             onClick={() => handleKeyPress('0')}
             className="w-16 h-16 rounded-full bg-surface hover:bg-surface-elevated border border-border/80 text-xl font-medium flex items-center justify-center active:scale-90 transition-all select-none mx-auto outline-none focus:ring-2 focus:ring-accent/20"
           >
             0
           </button>
-          
+
           <button
             onClick={handleDelete}
             className="w-16 h-16 rounded-full text-secondary hover:text-primary flex items-center justify-center active:scale-90 transition-all mx-auto outline-none"

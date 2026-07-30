@@ -26,14 +26,14 @@ export interface SidebarProps {
 type NavItem = { id: ActiveTab; label: string; icon: React.ReactNode };
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'home',          label: 'Ana Sayfa',       icon: <Home className="w-[15px] h-[15px]" /> },
-  { id: 'documents',     label: 'Belgeler',        icon: <FileText className="w-[15px] h-[15px]" /> },
-  { id: 'receipts',      label: 'Fişler',          icon: <Receipt className="w-[15px] h-[15px]" /> },
-  { id: 'subscriptions', label: 'Abonelikler',     icon: <CreditCard className="w-[15px] h-[15px]" /> },
-  { id: 'warranties',    label: 'Garantiler',      icon: <ShieldCheck className="w-[15px] h-[15px]" /> },
-  { id: 'notes',         label: 'Notlar',          icon: <StickyNote className="w-[15px] h-[15px]" /> },
-  { id: 'bookmarks',     label: 'Yer İmleri',      icon: <Bookmark className="w-[15px] h-[15px]" /> },
-  { id: 'timeline',      label: 'Zaman Akışı',     icon: <Clock className="w-[15px] h-[15px]" /> },
+  { id: 'home', label: 'Ana Sayfa', icon: <Home className="w-[15px] h-[15px]" /> },
+  { id: 'documents', label: 'Belgeler', icon: <FileText className="w-[15px] h-[15px]" /> },
+  { id: 'receipts', label: 'Fişler', icon: <Receipt className="w-[15px] h-[15px]" /> },
+  { id: 'subscriptions', label: 'Abonelikler', icon: <CreditCard className="w-[15px] h-[15px]" /> },
+  { id: 'warranties', label: 'Garantiler', icon: <ShieldCheck className="w-[15px] h-[15px]" /> },
+  { id: 'notes', label: 'Notlar', icon: <StickyNote className="w-[15px] h-[15px]" /> },
+  { id: 'bookmarks', label: 'Yer İmleri', icon: <Bookmark className="w-[15px] h-[15px]" /> },
+  { id: 'timeline', label: 'Zaman Akışı', icon: <Clock className="w-[15px] h-[15px]" /> },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -48,10 +48,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="px-6 pt-8 pb-6">
         <button
           onClick={() => onTabChange('home')}
-          className="flex items-center gap-3 group"
+          className="flex items-center gap-3 group text-left"
         >
-          <div className="w-10 h-10 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold tracking-tight shadow-soft shrink-0 group-hover:scale-105 transition-transform">
-            K
+          <div className="w-10 h-10 rounded-2xl bg-surface border border-border/80 flex items-center justify-center p-1.5 shadow-soft shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
+            <img src="/src/assets/logo.png" alt="Kapsule Logo" className="w-full h-full object-contain dark:invert" />
           </div>
           <div className="leading-tight">
             <p className="text-base font-bold text-primary tracking-tight">Kapsule</p>

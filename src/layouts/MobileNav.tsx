@@ -12,11 +12,11 @@ export interface MobileNavProps {
 }
 
 const MAIN_TABS: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-  { id: 'home',      label: 'Ana Sayfa', icon: <Home className="w-5 h-5" /> },
-  { id: 'documents', label: 'Belgeler',  icon: <FileText className="w-5 h-5" /> },
-  { id: 'warranties',label: 'Garanti',   icon: <ShieldCheck className="w-5 h-5" /> },
+  { id: 'home', label: 'Ana Sayfa', icon: <Home className="w-5 h-5" /> },
+  { id: 'documents', label: 'Belgeler', icon: <FileText className="w-5 h-5" /> },
+  { id: 'warranties', label: 'Garanti', icon: <ShieldCheck className="w-5 h-5" /> },
   { id: 'subscriptions', label: 'Diğer', icon: <CreditCard className="w-5 h-5" /> },
-  { id: 'settings',  label: 'Ayarlar',   icon: <Settings className="w-5 h-5" /> },
+  { id: 'settings', label: 'Ayarlar', icon: <Settings className="w-5 h-5" /> },
 ];
 
 export const MobileNav: React.FC<MobileNavProps> = ({
@@ -24,7 +24,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   onTabChange,
 }) => {
   const activeIndex = MAIN_TABS.findIndex(
-    tab => tab.id === activeTab || (tab.id === 'subscriptions' && ['subscriptions','receipts','notes','bookmarks','timeline'].includes(activeTab))
+    tab => tab.id === activeTab || (tab.id === 'subscriptions' && ['subscriptions', 'receipts', 'notes', 'bookmarks', 'timeline'].includes(activeTab))
   );
 
   return (
@@ -36,7 +36,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
       >
         <FluidTabs.List className="w-full justify-around bg-surface/90 backdrop-blur-2xl border border-border/80 shadow-2xl p-1.5 rounded-full">
           {MAIN_TABS.map((tab) => (
-            <FluidTabs.Tab key={tab.id} label={tab.label} className="py-2 px-1 justify-center min-h-[40px]">
+            <FluidTabs.Tab key={tab.id} label={tab.label} className="py-2.5 px-1 justify-center min-h-[44px]">
               <FluidTabsIcon>{tab.icon}</FluidTabsIcon>
             </FluidTabs.Tab>
           ))}

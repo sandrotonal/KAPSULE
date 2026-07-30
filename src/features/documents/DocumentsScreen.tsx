@@ -99,6 +99,7 @@ export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, sel
         <div className="max-w-md">
           <Input
             placeholder="Belge, etiket veya içerik ara..."
+            aria-label="Belgelerde ara"
             className="rounded-2xl bg-surface/40 border-border/60 h-12"
             icon={<Search className="w-4 h-4 opacity-40" />}
             value={searchQuery}
@@ -163,6 +164,8 @@ export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, sel
                     <button
                       onClick={e => { e.stopPropagation(); handleToggleFavorite(doc.id); }}
                       className="w-10 h-10 flex items-center justify-center rounded-2xl bg-white/80 dark:bg-black/80 backdrop-blur-xl border border-white/20 text-secondary hover:text-amber-500 transition-colors shadow-soft active:scale-90"
+                      aria-label={doc.isFavorite ? `${doc.title} favorilerden çıkar` : `${doc.title} favorilere ekle`}
+                      aria-pressed={doc.isFavorite}
                     >
                       <Star className={`w-4 h-4 ${doc.isFavorite ? 'fill-amber-400 text-amber-400' : ''}`} />
                     </button>

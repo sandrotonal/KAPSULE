@@ -25,6 +25,14 @@ export const Card: React.FC<CardProps> = ({
     lg: 'p-6',
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!interactive || !props.onClick) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      props.onClick(event as unknown as React.MouseEvent<HTMLDivElement>);
+    }
+  };
+
   return (
     <motion.div
       whileHover={interactive ? { 
@@ -37,10 +45,13 @@ export const Card: React.FC<CardProps> = ({
         selected
           ? "border-accent ring-4 ring-accent/5 shadow-card"
           : "border-border shadow-soft hover:shadow-card hover:border-border-subtle",
-        interactive && "cursor-pointer",
+        interactive && "cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
         paddings[padding],
         className
       )}
+      role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      onKeyDown={handleKeyDown}
       {...props}
     >
       {children}

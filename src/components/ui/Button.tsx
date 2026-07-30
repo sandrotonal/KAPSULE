@@ -8,6 +8,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   icon?: React.ReactNode;
   iconRight?: React.ReactNode;
   loading?: boolean;
+  ariaLabel?: string;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
@@ -19,6 +20,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   iconRight,
   loading,
   disabled,
+  ariaLabel,
   ...props
 }, ref) => {
   const base = [
@@ -49,6 +51,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
       ref={ref}
       className={cn(base, variants[variant], sizes[size], className)}
       disabled={disabled || loading}
+      aria-label={ariaLabel}
+      aria-busy={loading}
       {...props}
     >
       {loading ? (
