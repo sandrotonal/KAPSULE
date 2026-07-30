@@ -42,7 +42,7 @@ export const WarrantyDetailModal: React.FC<WarrantyDetailModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={warranty.productName}
-      subtitle={`${warranty.brand} · Warranty coverage`}
+      subtitle={`${warranty.brand} · Garanti kapsamı`}
       maxWidth="md"
     >
       <div className="space-y-5">
@@ -56,17 +56,17 @@ export const WarrantyDetailModal: React.FC<WarrantyDetailModalProps> = ({
         {/* Days countdown overlay if active */}
         <div className="flex items-center justify-between p-4 bg-surface rounded-xl border border-border">
           <div>
-            <p className="text-xs text-secondary font-medium">Status</p>
+            <p className="text-xs text-secondary font-medium">Durum</p>
             <div className="flex items-center gap-2 mt-0.5">
               <Badge variant={isExpired ? 'danger' : isExpiring ? 'warning' : 'success'} size="sm" dot>
-                {isExpired ? 'Expired' : isExpiring ? 'Expiring soon' : 'Active'}
+                {isExpired ? 'Süresi Doldu' : isExpiring ? 'Yakında Bitiyor' : 'Aktif'}
               </Badge>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-xs text-secondary font-medium">Coverage</p>
+            <p className="text-xs text-secondary font-medium">Kapsam</p>
             <p className="text-sm font-semibold text-primary mt-0.5">
-              {isExpired ? 'No coverage remaining' : `${daysLeft} days remaining`}
+              {isExpired ? 'Kapsam sona erdi' : `${daysLeft} gün kaldı`}
             </p>
           </div>
         </div>
@@ -75,13 +75,13 @@ export const WarrantyDetailModal: React.FC<WarrantyDetailModalProps> = ({
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div className="p-3 bg-surface rounded-xl border border-border">
             <p className="text-secondary font-medium flex items-center gap-1.5 mb-1">
-              <Calendar className="w-3.5 h-3.5 text-secondary/60" /> Purchased
+              <Calendar className="w-3.5 h-3.5 text-secondary/60" /> Satın Alındı
             </p>
             <p className="font-semibold text-primary">{formatDate(warranty.purchaseDate)}</p>
           </div>
           <div className="p-3 bg-surface rounded-xl border border-border">
             <p className="text-secondary font-medium flex items-center gap-1.5 mb-1">
-              <Calendar className="w-3.5 h-3.5 text-secondary/60" /> Expires
+              <Calendar className="w-3.5 h-3.5 text-secondary/60" /> Bitiş
             </p>
             <p className="font-semibold text-primary">{formatDate(warranty.expiryDate)}</p>
           </div>
@@ -90,13 +90,14 @@ export const WarrantyDetailModal: React.FC<WarrantyDetailModalProps> = ({
         {/* Serial Number */}
         {warranty.serialNumber && (
           <div className="space-y-1.5">
-            <p className="text-xs font-medium text-secondary">Serial number</p>
+            <p className="text-xs font-medium text-secondary">Seri numarası</p>
             <div className="flex items-center justify-between px-4 py-3 bg-surface rounded-xl border border-border font-mono text-sm">
               <span className="text-primary truncate">{warranty.serialNumber}</span>
               <button
                 onClick={handleCopySerial}
                 className="p-1 text-secondary hover:text-primary transition-colors shrink-0"
-                title="Copy serial number"
+                title="Seri numarasını kopyala"
+                aria-label={copied ? 'Seri numarası kopyalandı' : 'Seri numarasını kopyala'}
               >
                 {copied ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4" />}
               </button>
@@ -107,7 +108,7 @@ export const WarrantyDetailModal: React.FC<WarrantyDetailModalProps> = ({
         {/* Notes */}
         {warranty.notes && (
           <div className="space-y-1.5">
-            <p className="text-xs font-medium text-secondary">Notes</p>
+            <p className="text-xs font-medium text-secondary">Notlar</p>
             <p className="text-sm text-primary leading-relaxed bg-surface px-4 py-3 rounded-xl border border-border">
               {warranty.notes}
             </p>
@@ -123,7 +124,7 @@ export const WarrantyDetailModal: React.FC<WarrantyDetailModalProps> = ({
             onClick={() => { onDelete(warranty.id); onClose(); }}
             className="text-danger hover:text-danger hover:bg-danger-muted"
           >
-            Delete
+            Sil
           </Button>
           <div className="flex items-center gap-2">
             {warranty.receiptId && onViewReceipt && (
@@ -133,11 +134,11 @@ export const WarrantyDetailModal: React.FC<WarrantyDetailModalProps> = ({
                 icon={<FileText className="w-3.5 h-3.5" />}
                 onClick={() => onViewReceipt(warranty.receiptId!)}
               >
-                View receipt
+                Fişi gör
               </Button>
             )}
             <Button variant="secondary" size="sm" onClick={onClose}>
-              Done
+              Tamam
             </Button>
           </div>
         </div>

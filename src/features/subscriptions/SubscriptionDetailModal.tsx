@@ -32,7 +32,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
       isOpen={isOpen}
       onClose={onClose}
       title={subscription.name}
-      subtitle={`${subscription.category} · Subscription details`}
+      subtitle={`${subscription.category} · Abonelik detayları`}
       maxWidth="md"
     >
       <div className="space-y-5">
@@ -43,12 +43,12 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
               {subscription.name.charAt(0)}
             </div>
             <div>
-              <p className="text-xs text-secondary font-medium">Billing Cycle</p>
-              <p className="text-sm font-medium text-primary capitalize mt-0.5">{subscription.billingCycle}</p>
+              <p className="text-xs text-secondary font-medium">Fatura Döngüsü</p>
+              <p className="text-sm font-medium text-primary capitalize mt-0.5">{subscription.billingCycle === 'monthly' ? 'Aylık' : 'Yıllık'}</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-xs text-secondary font-medium">Cost</p>
+            <p className="text-xs text-secondary font-medium">Maliyet</p>
             <p className="text-base font-bold text-primary mt-0.5 tabular-nums">
               {formatCurrency(subscription.price, subscription.currency)}
             </p>
@@ -59,13 +59,13 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div className="p-3 bg-surface rounded-xl border border-border">
             <p className="text-secondary font-medium flex items-center gap-1.5 mb-1">
-              <Calendar className="w-3.5 h-3.5 text-secondary/60" /> Next Renewal
+              <Calendar className="w-3.5 h-3.5 text-secondary/60" /> Sıradaki Yenileme
             </p>
             <p className="font-semibold text-primary">{formatDate(subscription.renewalDate)}</p>
           </div>
           <div className="p-3 bg-surface rounded-xl border border-border">
             <p className="text-secondary font-medium flex items-center gap-1.5 mb-1">
-              <RefreshCw className="w-3.5 h-3.5 text-secondary/60" /> Est. Annual cost
+              <RefreshCw className="w-3.5 h-3.5 text-secondary/60" /> Tahmini Yıllık
             </p>
             <p className="font-semibold text-primary tabular-nums">{formatCurrency(Math.round(annualCost), 'TL')}</p>
           </div>
@@ -74,7 +74,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
         {/* Notes */}
         {subscription.notes && (
           <div className="space-y-1.5">
-            <p className="text-xs font-medium text-secondary">Notes</p>
+            <p className="text-xs font-medium text-secondary">Notlar</p>
             <p className="text-sm text-primary leading-relaxed bg-surface px-4 py-3 rounded-xl border border-border">
               {subscription.notes}
             </p>
@@ -90,7 +90,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
             onClick={() => { onDelete(subscription.id); onClose(); }}
             className="text-danger hover:text-danger hover:bg-danger-muted"
           >
-            Delete
+            Sil
           </Button>
           <div className="flex items-center gap-2">
             <Button
@@ -98,10 +98,10 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
               size="sm"
               onClick={() => onToggleStatus(subscription.id)}
             >
-              {subscription.status === 'active' ? 'Pause subscription' : 'Activate'}
+              {subscription.status === 'active' ? 'Aboneliği duraklat' : 'Aktifleştir'}
             </Button>
             <Button variant="secondary" size="sm" onClick={onClose}>
-              Done
+              Tamam
             </Button>
           </div>
         </div>

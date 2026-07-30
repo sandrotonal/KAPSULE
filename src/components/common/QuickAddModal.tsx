@@ -155,6 +155,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
             </div>
 
             <Input
+              id="quick-add-title"
               label={type === 'receipt' ? 'Mağaza / Satıcı' : type === 'warranty' ? 'Ürün Adı' : type === 'subscription' ? 'Hizmet Adı' : type === 'bookmark' ? 'Başlık' : 'Başlık'}
               placeholder={
                 type === 'document' ? 'Örn: Pasaport kopyası' :
@@ -171,8 +172,9 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px] px-1">Kategori</label>
+                <label htmlFor="quick-add-category" className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px] px-1">Kategori</label>
                 <select
+                  id="quick-add-category"
                   className="w-full h-12 bg-background text-primary text-sm font-semibold rounded-xl border border-border px-3 transition-colors focus:outline-none focus:border-accent appearance-none"
                   value={category}
                   onChange={e => setCategory(e.target.value)}
@@ -216,8 +218,9 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
 
             {(type === 'document' || type === 'note' || type === 'receipt') && (
               <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px] px-1">{type === 'note' ? 'İçerik' : 'Notlar'}</label>
+                <label htmlFor="quick-add-content" className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px] px-1">{type === 'note' ? 'İçerik' : 'Notlar'}</label>
                 <textarea
+                  id="quick-add-content"
                   className="w-full h-28 bg-background text-primary placeholder:text-secondary/50 text-sm rounded-xl border border-border px-3 py-3 resize-none focus:outline-none focus:border-accent transition-colors"
                   placeholder={type === 'note' ? 'Notunuzu buraya yazın...' : 'İsteğe bağlı açıklama veya notlar...'}
                   value={content}

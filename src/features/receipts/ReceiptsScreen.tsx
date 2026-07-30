@@ -51,7 +51,7 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
 
   return (
     <div className="space-y-10">
-      <div className="flex items-end justify-between gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div className="space-y-1">
           <h1 className="text-4xl font-bold text-primary tracking-tight">Fişler & Faturalar</h1>
           <p className="text-lg text-secondary font-medium">
@@ -67,6 +67,7 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
         <div className="max-w-md">
           <Input
             placeholder="Mağaza, kategori veya not ara..."
+            aria-label="Fişlerde ara"
             className="rounded-2xl bg-surface/40 border-border/60 h-12"
             icon={<Search className="w-4 h-4 opacity-40" />}
             value={searchQuery}
@@ -78,7 +79,8 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`shrink-0 px-5 py-2 rounded-full text-[13px] font-bold transition-all duration-300 ${
+              aria-pressed={selectedCategory === cat}
+              className={`shrink-0 min-h-[44px] px-5 py-2 rounded-full text-[13px] font-bold transition-all duration-300 ${
                 selectedCategory === cat
                   ? 'bg-primary text-primary-foreground shadow-soft'
                   : 'bg-surface/50 text-secondary border border-border/60 hover:text-primary hover:bg-surface-elevated'

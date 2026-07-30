@@ -65,7 +65,7 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
 
   return (
     <div className="space-y-10">
-      <div className="flex items-end justify-between gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div className="space-y-1">
           <h1 className="text-4xl font-bold text-primary tracking-tight">Abonelikler</h1>
           <p className="text-lg text-secondary font-medium">
@@ -103,7 +103,7 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
               <span className="text-xs font-bold uppercase tracking-widest">Sıradaki Yenileme</span>
             </div>
             <p className="text-3xl font-bold text-primary tracking-tight">
-              {subs.length > 0 ? formatDate(subs.sort((a,b) => new Date(a.renewalDate).getTime() - new Date(b.renewalDate).getTime())[0].renewalDate) : '—'}
+              {subs.length > 0 ? formatDate([...subs].sort((a,b) => new Date(a.renewalDate).getTime() - new Date(b.renewalDate).getTime())[0].renewalDate) : '—'}
             </p>
             <p className="text-[11px] text-secondary font-medium">En yakın ödeme tarihi</p>
           </Card>
@@ -124,6 +124,7 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
       <div className="max-w-md">
         <Input
           placeholder="Aboneliklerde ara..."
+          aria-label="Aboneliklerde ara"
           className="rounded-2xl bg-surface/40 border-border/60 h-12"
           icon={<Search className="w-4 h-4 opacity-40" />}
           value={searchQuery}

@@ -87,7 +87,17 @@ export const TimelineScreen: React.FC<TimelineScreenProps> = ({ onNavigateToTab 
                         ease: [0.16, 1, 0.3, 1]
                       }}
                       onClick={() => handleEventClick(event)}
-                      className={`flex gap-6 relative group ${isClickable ? 'cursor-pointer' : ''}`}
+                      onKeyDown={(e) => {
+                        if (!isClickable) return;
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleEventClick(event);
+                        }
+                      }}
+                      role={isClickable ? 'button' : undefined}
+                      tabIndex={isClickable ? 0 : undefined}
+                      aria-label={isClickable ? `${event.title} detaylarını aç` : undefined}
+                      className={`flex gap-6 relative group rounded-3xl focus:outline-none focus:ring-2 focus:ring-accent/30 ${isClickable ? 'cursor-pointer' : ''}`}
                     >
                       {/* Dot */}
                       <div className="relative z-10 mt-2 shrink-0">

@@ -39,23 +39,27 @@ export const BookmarksScreen: React.FC<BookmarksScreenProps> = ({
   };
 
   return (
-    <div className="space-y-7">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-primary tracking-[-0.02em]">Yer İmleri</h1>
-          <p className="text-sm text-secondary mt-0.5">{bookmarks.length} kayıtlı bağlantı</p>
+    <div className="space-y-10">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-bold text-primary tracking-tight">Yer İmleri</h1>
+          <p className="text-lg text-secondary font-medium">{bookmarks.length} kayıtlı bağlantı</p>
         </div>
-        <Button variant="secondary" size="sm" icon={<Plus className="w-3.5 h-3.5" />} onClick={onOpenAdd}>
+        <Button variant="primary" size="md" className="rounded-full px-6" icon={<Plus className="w-4 h-4" />} onClick={onOpenAdd}>
           Ekle
         </Button>
       </div>
 
-      <Input
-        placeholder="Yer imlerinde ara..."
-        icon={<Search className="w-4 h-4" />}
-        value={searchQuery}
-        onChange={e => setSearchQuery(e.target.value)}
-      />
+      <div className="max-w-md">
+        <Input
+          placeholder="Yer imlerinde ara..."
+          aria-label="Yer imlerinde ara"
+          className="rounded-2xl bg-surface/40 border-border/60 h-12"
+          icon={<Search className="w-4 h-4 opacity-40" />}
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+        />
+      </div>
 
       {filtered.length === 0 ? (
         <div className="py-16 text-center space-y-3">
@@ -69,7 +73,7 @@ export const BookmarksScreen: React.FC<BookmarksScreenProps> = ({
           <Button variant="secondary" size="sm" onClick={onOpenAdd}>Yer imi ekle</Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((bm, i) => (
             <motion.div
               key={bm.id}
@@ -109,7 +113,8 @@ export const BookmarksScreen: React.FC<BookmarksScreenProps> = ({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={e => e.stopPropagation()}
-                    className="flex items-center justify-center gap-1.5 w-full py-2 text-xs font-medium text-secondary bg-surface hover:bg-surface-elevated border border-border rounded-lg transition-all duration-100"
+                    className="flex items-center justify-center gap-1.5 w-full min-h-[44px] py-2 text-xs font-medium text-secondary bg-surface hover:bg-surface-elevated border border-border rounded-xl transition-all duration-100"
+                    aria-label={`${bm.title} bağlantısını yeni sekmede aç`}
                   >
                     Aç <ExternalLink className="w-3 h-3" />
                   </a>

@@ -48,15 +48,16 @@ export const BookmarkDetailModal: React.FC<BookmarkDetailModalProps> = ({
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1 text-xs font-semibold text-accent hover:text-accent/80 shrink-0 ml-3"
+            aria-label={`${bookmark.title} bağlantısını yeni sekmede aç`}
           >
-            Open <ExternalLink className="w-3.5 h-3.5" />
+            Aç <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </div>
 
         {/* Date saved */}
         <div className="flex justify-between items-center text-xs p-3 bg-surface rounded-xl border border-border">
           <span className="text-secondary flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-secondary/60" /> Saved
+            <Calendar className="w-3.5 h-3.5 text-secondary/60" /> Kaydedildi
           </span>
           <span className="font-semibold text-primary">{formatDate(bookmark.savedAt)}</span>
         </div>
@@ -64,7 +65,7 @@ export const BookmarkDetailModal: React.FC<BookmarkDetailModalProps> = ({
         {/* Description */}
         {bookmark.description && (
           <div className="space-y-1.5">
-            <p className="text-xs font-medium text-secondary">Description</p>
+            <p className="text-xs font-medium text-secondary">Açıklama</p>
             <p className="text-sm text-primary leading-relaxed bg-surface px-4 py-3 rounded-xl border border-border">
               {bookmark.description}
             </p>
@@ -89,10 +90,10 @@ export const BookmarkDetailModal: React.FC<BookmarkDetailModalProps> = ({
             onClick={() => { onDelete(bookmark.id); onClose(); }}
             className="text-danger hover:text-danger hover:bg-danger-muted"
           >
-            Delete
+            Sil
           </Button>
           <Button variant="secondary" size="sm" onClick={onClose}>
-            Done
+            Tamam
           </Button>
         </div>
       </div>

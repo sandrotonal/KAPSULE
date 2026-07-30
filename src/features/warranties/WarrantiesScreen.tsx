@@ -47,7 +47,7 @@ export const WarrantiesScreen: React.FC<WarrantiesScreenProps> = ({
 
   return (
     <div className="space-y-10">
-      <div className="flex items-end justify-between gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div className="space-y-1">
           <h1 className="text-4xl font-bold text-primary tracking-tight">Garantiler</h1>
           <p className="text-lg text-secondary font-medium">
@@ -62,6 +62,7 @@ export const WarrantiesScreen: React.FC<WarrantiesScreenProps> = ({
       <div className="max-w-md">
         <Input
           placeholder="Ürün veya marka ara..."
+          aria-label="Garantilerde ara"
           className="rounded-2xl bg-surface/40 border-border/60 h-12"
           icon={<Search className="w-4 h-4 opacity-40" />}
           value={searchQuery}
