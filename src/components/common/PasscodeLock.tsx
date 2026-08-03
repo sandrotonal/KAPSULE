@@ -93,6 +93,7 @@ export const PasscodeLock: React.FC<PasscodeLockProps> = ({
             <button
               key={num}
               onClick={() => handleKeyPress(num)}
+              aria-label={`${num} rakamını gir`}
               className="w-16 h-16 rounded-full bg-surface hover:bg-surface-elevated border border-border/80 text-xl font-medium flex items-center justify-center active:scale-90 transition-all select-none mx-auto outline-none focus:ring-2 focus:ring-accent/20"
             >
               {num}
@@ -102,14 +103,16 @@ export const PasscodeLock: React.FC<PasscodeLockProps> = ({
           {/* Bottom row */}
           <button
             onClick={onResetData}
-            title="Reset vault"
+            title="Kasayı sıfırla"
+            aria-label="Kasayı sıfırla"
             className="w-16 h-16 rounded-full text-secondary hover:text-danger flex items-center justify-center active:scale-90 transition-all mx-auto outline-none text-xs"
           >
-            Reset
+            Sıfırla
           </button>
 
           <button
             onClick={() => handleKeyPress('0')}
+            aria-label="0 rakamını gir"
             className="w-16 h-16 rounded-full bg-surface hover:bg-surface-elevated border border-border/80 text-xl font-medium flex items-center justify-center active:scale-90 transition-all select-none mx-auto outline-none focus:ring-2 focus:ring-accent/20"
           >
             0
@@ -117,6 +120,7 @@ export const PasscodeLock: React.FC<PasscodeLockProps> = ({
 
           <button
             onClick={handleDelete}
+            aria-label="Son rakamı sil"
             className="w-16 h-16 rounded-full text-secondary hover:text-primary flex items-center justify-center active:scale-90 transition-all mx-auto outline-none"
           >
             <Delete className="w-5 h-5" />
@@ -125,7 +129,7 @@ export const PasscodeLock: React.FC<PasscodeLockProps> = ({
 
         {/* Hint */}
         <div className="text-center pt-2">
-          <p className="text-[10px] text-secondary/60">Demo passcode is 1234</p>
+          <p className="text-[10px] text-secondary/60">Demo şifre 1234</p>
         </div>
       </div>
     </div>

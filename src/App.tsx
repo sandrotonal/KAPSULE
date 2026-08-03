@@ -16,10 +16,11 @@ import { QuickAddModal } from './components/common/QuickAddModal';
 import { PasscodeLock } from './components/common/PasscodeLock';
 import { OnboardingScreen } from './features/onboarding/OnboardingScreen';
 import { VaultStorageService } from './services/vaultStorage';
+import { ToastProvider, useToast } from './components/ui/Toast';
 
 const ONBOARDING_KEY = 'kapsule_onboarding_complete';
 
-export function App() {
+function AppContent() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
@@ -39,6 +40,7 @@ export function App() {
       return true;
     }
   });
+  const { showToast } = useToast();
 
   const handleOnboardingComplete = () => {
     try {
@@ -217,9 +219,18 @@ export function App() {
         onSuccess={() => {
           // Increment trigger key to refresh active sub-screen data
           setRefreshKey(prev => prev + 1);
+          showToast('Kasaya eklendi.');
         }}
       />
     </MainLayout>
+  );
+}
+
+export function App() {
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
   );
 }
 

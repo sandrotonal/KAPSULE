@@ -34,6 +34,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   const [expiryDate, setExpiryDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState('');
+  const [error, setError] = useState('');
 
   // Modal her açıldığında veya hedef tür değiştiğinde seçili türü senkronla.
   useEffect(() => {
@@ -44,14 +45,19 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
     setTitle(''); setAmount(''); setPrice('');
     setBrand(''); setUrl(''); setContent(''); setExpiryDate('');
     setCategory('');
+    setError('');
   };
 
   const handleClose = () => { reset(); onClose(); };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim()) {
+      setError('Devam etmek için kısa bir başlık gir.');
+      return;
+    }
     setLoading(true);
+    setError('');
 
     try {
       const now = new Date().toISOString().split('T')[0];
@@ -82,8 +88,9 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
       } else if (type === 'note') {
         VaultStorageService.saveNote({ title, content: content || title, tags: [], isPinned: false });
       } else if (type === 'bookmark') {
-        const domain = url ? (() => { try { return new URL(url).hostname; } catch { return url; } })() : '';
-        VaultStorageService.saveBookmark({ title, url: url || 'https://example.com', domain, tags: [] });
+        const normalizedUrl = url ? (/^https?:\/\//i.test(url) ? url : `https://${url}`) : 'https://example.com';
+        const domain = (() => { try { return new URL(normalizedUrl).hostname; } catch { return normalizedUrl; } })();
+        VaultStorageService.saveBookmark({ title, url: normalizedUrl, domain, tags: [] });
       }
       onSuccess();
       handleClose();
@@ -145,6 +152,11 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5 pt-1">
+          {error && (
+            <div className="rounded-xl border border-danger/20 bg-danger-muted px-4 py-3 text-sm font-medium text-danger" role="alert">
+              {error}
+            </div>
+          )}
           <div className="space-y-4">
             <div className="flex items-start justify-between gap-3 border-b border-border/50 pb-3">
               <div>

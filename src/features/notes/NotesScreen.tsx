@@ -9,6 +9,7 @@ import { VaultStorageService } from '../../services/vaultStorage';
 import { NoteItem } from '../../types';
 import { formatDate } from '../../lib/utils';
 import { motion } from 'framer-motion';
+import { useToast } from '../../components/ui/Toast';
 
 export interface NotesScreenProps {
   onOpenAdd: () => void;
@@ -25,6 +26,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd, selectedIte
     }
     return null;
   });
+  const { showToast } = useToast();
 
   const filtered = notes.filter(n =>
     !searchQuery || n.title.toLowerCase().includes(searchQuery.toLowerCase()) || n.content.toLowerCase().includes(searchQuery.toLowerCase())
@@ -37,6 +39,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd, selectedIte
     VaultStorageService.deleteNote(id);
     setNotes(VaultStorageService.getNotes());
     setSelectedNote(null);
+    showToast('Not silindi.');
   };
 
   const NoteCard = ({ note, index }: { note: NoteItem; index: number }) => (

@@ -3,6 +3,7 @@ import { Moon, Bell, Lock, Download, RefreshCw, ChevronRight, Info, Sun, LogOut 
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { VaultStorageService } from '../../services/vaultStorage';
+import { useToast } from '../../components/ui/Toast';
 
 type ToggleProps = { checked: boolean; onChange: () => void; id: string };
 const Toggle: React.FC<ToggleProps> = ({ checked, onChange, id }) => (
@@ -29,7 +30,16 @@ const SettingsRow: React.FC<{
 }> = ({ icon, label, description, right, danger, onClick }) => (
   <div
     onClick={onClick}
-    className={`flex items-center gap-3 px-4 py-3.5 group ${onClick ? 'cursor-pointer' : ''} ${onClick && danger ? 'hover:bg-danger-muted' : onClick ? 'hover:bg-surface-elevated' : ''} transition-colors`}
+    onKeyDown={(event) => {
+      if (!onClick) return;
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        onClick();
+      }
+    }}
+    role={onClick ? 'button' : undefined}
+    tabIndex={onClick ? 0 : undefined}
+    className={`flex items-center gap-3 px-4 py-3.5 group rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 ${onClick ? 'cursor-pointer' : ''} ${onClick && danger ? 'hover:bg-danger-muted' : onClick ? 'hover:bg-surface-elevated' : ''} transition-colors`}
   >
     <span className={danger ? 'text-danger' : 'text-secondary group-hover:text-primary transition-colors'}>
       {icon}
@@ -64,9 +74,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onLock,
 }) => {
   const [settings, setSettingsState] = useState(() => VaultStorageService.getSettings());
-  const [toast, setToast] = useState('');
   const [showPasscodeModal, setShowPasscodeModal] = useState(false);
   const [newPasscode, setNewPasscode] = useState('');
+  const { showToast } = useToast();
 
   const updateSetting = (key: 'darkMode' | 'notifications' | 'autoLock', value: boolean) => {
     const updated = VaultStorageService.saveSettings({ [key]: value });
@@ -94,12 +104,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     a.download = `kapsule_backup_${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    setToast('Backup downloaded.');
-    setTimeout(() => setToast(''), 2500);
+    showToast('Yedek indirildi.');
   };
 
   const handleReset = () => {
-    if (confirm('Reset vault to default demo data? This cannot be undone.')) {
+    if (confirm('Kasayı demo verilerine sıfırlamak istiyor musunuz? Bu işlem geri alınamaz.')) {
       VaultStorageService.resetVault();
       window.location.reload();
     }
@@ -109,16 +118,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     <div className="space-y-7 max-w-lg">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-primary tracking-[-0.02em]">Settings</h1>
-        <p className="text-sm text-secondary mt-0.5">Vault preferences and account details.</p>
+        <h1 className="text-2xl font-bold text-primary tracking-[-0.02em]">Ayarlar</h1>
+        <p className="text-sm text-secondary mt-0.5">Kasa tercihleri, güvenlik ve veri yönetimi.</p>
       </div>
-
-      {/* Success toast */}
-      {toast && (
-        <div className="px-4 py-2.5 bg-success-muted border border-success/20 rounded-xl text-sm font-medium text-success">
-          {toast}
-        </div>
-      )}
 
       {/* Profile */}
       <div className="flex items-center gap-4 p-4 bg-background border border-border rounded-2xl">
@@ -126,8 +128,8 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           {settings.profileName ? settings.profileName.charAt(0) : 'U'}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-base font-semibold text-primary tracking-[-0.01em]">{settings.profileName || 'User'}</p>
-          <p className="text-sm text-secondary">{settings.profileEmail || 'Personal vault'}</p>
+          <p className="text-base font-semibold text-primary tracking-[-0.01em]">{settings.profileName || 'Kullanıcı'}</p>
+          <p className="text-sm text-secondary">{settings.profileEmail || 'Kişisel kasa'}</p>
         </div>
         <div className="flex items-center gap-2">
           {onLock && (
@@ -137,61 +139,61 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               icon={<LogOut className="w-3.5 h-3.5" />}
               onClick={onLock}
             >
-              Lock
+              Kilitle
             </Button>
           )}
-          <Badge variant="success" size="sm" dot>Active</Badge>
+          <Badge variant="success" size="sm" dot>Aktif</Badge>
         </div>
       </div>
 
       {/* Appearance */}
-      <SettingsSection title="Appearance">
+      <SettingsSection title="Görünüm">
         <SettingsRow
           icon={settings.darkMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-          label="Dark mode"
-          description="Switch between light and dark interface"
+          label="Koyu mod"
+          description="Aydınlık ve koyu görünüm arasında geçiş yap"
           right={<Toggle checked={settings.darkMode} onChange={() => updateSetting('darkMode', !settings.darkMode)} id="dark-mode" />}
         />
       </SettingsSection>
 
       {/* Notifications */}
-      <SettingsSection title="Notifications">
+      <SettingsSection title="Bildirimler">
         <SettingsRow
           icon={<Bell className="w-4 h-4" />}
-          label="Warranty and renewal reminders"
-          description="Get notified before important expiry dates"
+          label="Garanti ve yenileme hatırlatmaları"
+          description="Önemli tarihler yaklaşmadan önce haber ver"
           right={<Toggle checked={settings.notifications} onChange={() => updateSetting('notifications', !settings.notifications)} id="notifications" />}
         />
       </SettingsSection>
 
       {/* Security & Passcode */}
-      <SettingsSection title="Security & Passcode">
+      <SettingsSection title="Güvenlik">
         <SettingsRow
           icon={<Lock className="w-4 h-4" />}
-          label="Auto-lock vault on start"
-          description="Require 4-digit passcode when opening app"
+          label="Açılışta kasayı kilitle"
+          description="Kapsule açılırken 4 haneli şifre iste"
           right={<Toggle checked={settings.autoLock} onChange={() => updateSetting('autoLock', !settings.autoLock)} id="autolock" />}
         />
         <SettingsRow
           icon={<Lock className="w-4 h-4" />}
-          label="Change 4-digit Passcode"
-          description={`Current passcode: ${settings.passcode || '1234'}`}
+          label="4 haneli şifreyi değiştir"
+          description="Kasa kilidi için yeni bir şifre belirle"
           onClick={() => setShowPasscodeModal(true)}
         />
       </SettingsSection>
 
       {/* Data */}
-      <SettingsSection title="Data">
+      <SettingsSection title="Veriler">
         <SettingsRow
           icon={<Download className="w-4 h-4" />}
-          label="Export vault"
-          description="Download a JSON backup of all your data"
+          label="Kasayı dışa aktar"
+          description="Tüm kayıtlarının JSON yedeğini indir"
           onClick={handleExport}
         />
         <SettingsRow
           icon={<RefreshCw className="w-4 h-4" />}
-          label="Reset to demo data"
-          description="Restore factory seed content"
+          label="Demo verilerine sıfırla"
+          description="Başlangıç örnek kayıtlarını geri yükle"
           danger
           onClick={handleReset}
         />
@@ -201,18 +203,19 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
       {showPasscodeModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface border border-border rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-2xl">
-            <h3 className="text-base font-bold text-primary">Change Passcode</h3>
-            <p className="text-xs text-secondary">Enter a new 4-digit numeric code for your vault lock.</p>
+            <h3 className="text-base font-bold text-primary">Şifreyi değiştir</h3>
+            <p className="text-xs text-secondary">Kasa kilidi için yeni 4 haneli sayısal şifre gir.</p>
             <input
               type="password"
               maxLength={4}
-              placeholder="e.g. 5678"
+              placeholder="5678"
+              aria-label="Yeni 4 haneli şifre"
               value={newPasscode}
               onChange={(e) => setNewPasscode(e.target.value.replace(/\D/g, '').slice(0, 4))}
               className="w-full text-center text-2xl tracking-[0.5em] font-mono py-3 bg-background border border-border rounded-xl text-primary focus:outline-none focus:border-accent"
             />
             <div className="flex items-center justify-end gap-2 pt-2">
-              <Button variant="ghost" size="sm" onClick={() => setShowPasscodeModal(false)}>Cancel</Button>
+              <Button variant="ghost" size="sm" onClick={() => setShowPasscodeModal(false)}>İptal</Button>
               <Button
                 variant="primary"
                 size="sm"
@@ -222,11 +225,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                   setSettingsState(prev => ({ ...prev, passcode: newPasscode }));
                   setShowPasscodeModal(false);
                   setNewPasscode('');
-                  setToast('Passcode updated successfully.');
-                  setTimeout(() => setToast(''), 2500);
+                  showToast('Şifre güncellendi.');
                 }}
               >
-                Save Passcode
+                Kaydet
               </Button>
             </div>
           </div>

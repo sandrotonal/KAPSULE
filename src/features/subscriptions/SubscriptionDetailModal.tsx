@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { SubscriptionItem } from '../../types';
 import { formatCurrency, formatDate } from '../../lib/utils';
+import { useToast } from '../../components/ui/Toast';
 
 export interface SubscriptionDetailModalProps {
   subscription: SubscriptionItem | null;
@@ -21,6 +22,8 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
   onDelete,
   onToggleStatus,
 }) => {
+  const { showToast } = useToast();
+
   if (!subscription) return null;
 
   // Approximate annual cost
@@ -87,7 +90,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
             variant="ghost"
             size="sm"
             icon={<Trash2 className="w-3.5 h-3.5" />}
-            onClick={() => { onDelete(subscription.id); onClose(); }}
+            onClick={() => { onDelete(subscription.id); onClose(); showToast('Abonelik silindi.'); }}
             className="text-danger hover:text-danger hover:bg-danger-muted"
           >
             Sil
@@ -96,7 +99,10 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => onToggleStatus(subscription.id)}
+              onClick={() => {
+                onToggleStatus(subscription.id);
+                showToast(subscription.status === 'active' ? 'Abonelik duraklatıldı.' : 'Abonelik aktifleştirildi.');
+              }}
             >
               {subscription.status === 'active' ? 'Aboneliği duraklat' : 'Aktifleştir'}
             </Button>

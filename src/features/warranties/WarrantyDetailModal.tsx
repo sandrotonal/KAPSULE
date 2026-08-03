@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { WarrantyItem } from '../../types';
 import { formatDate, getDaysRemaining } from '../../lib/utils';
+import { useToast } from '../../components/ui/Toast';
 
 export interface WarrantyDetailModalProps {
   warranty: WarrantyItem | null;
@@ -22,6 +23,7 @@ export const WarrantyDetailModal: React.FC<WarrantyDetailModalProps> = ({
   onViewReceipt,
 }) => {
   const [copied, setCopied] = useState(false);
+  const { showToast } = useToast();
 
   if (!warranty) return null;
 
@@ -33,6 +35,7 @@ export const WarrantyDetailModal: React.FC<WarrantyDetailModalProps> = ({
     if (warranty.serialNumber) {
       navigator.clipboard.writeText(warranty.serialNumber);
       setCopied(true);
+      showToast('Seri numarası kopyalandı.');
       setTimeout(() => setCopied(false), 2000);
     }
   };
@@ -121,7 +124,7 @@ export const WarrantyDetailModal: React.FC<WarrantyDetailModalProps> = ({
             variant="ghost"
             size="sm"
             icon={<Trash2 className="w-3.5 h-3.5" />}
-            onClick={() => { onDelete(warranty.id); onClose(); }}
+            onClick={() => { onDelete(warranty.id); onClose(); showToast('Garanti silindi.'); }}
             className="text-danger hover:text-danger hover:bg-danger-muted"
           >
             Sil

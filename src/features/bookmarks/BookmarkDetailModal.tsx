@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { BookmarkItem } from '../../types';
 import { formatDate } from '../../lib/utils';
+import { useToast } from '../../components/ui/Toast';
 
 export interface BookmarkDetailModalProps {
   bookmark: BookmarkItem | null;
@@ -19,6 +20,8 @@ export const BookmarkDetailModal: React.FC<BookmarkDetailModalProps> = ({
   onClose,
   onDelete,
 }) => {
+  const { showToast } = useToast();
+
   if (!bookmark) return null;
 
   return (
@@ -87,7 +90,7 @@ export const BookmarkDetailModal: React.FC<BookmarkDetailModalProps> = ({
             variant="ghost"
             size="sm"
             icon={<Trash2 className="w-3.5 h-3.5" />}
-            onClick={() => { onDelete(bookmark.id); onClose(); }}
+            onClick={() => { onDelete(bookmark.id); onClose(); showToast('Yer imi silindi.'); }}
             className="text-danger hover:text-danger hover:bg-danger-muted"
           >
             Sil

@@ -9,7 +9,6 @@ import { VaultStorageService } from '../../services/vaultStorage';
 import { ReceiptItem } from '../../types';
 import { formatCurrency, formatDate } from '../../lib/utils';
 import { motion } from 'framer-motion';
-import { TiltCard } from '../../components/ui/TiltCard';
 
 export interface ReceiptsScreenProps {
   onOpenAdd: () => void;
@@ -114,13 +113,12 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
             >
-              <TiltCard className="rounded-[1.5rem]" intensity={5}>
-                <Card
-                  interactive
-                  padding="none"
-                  onClick={() => setSelectedReceipt(rec)}
-                  className="flex items-center gap-4 p-5 group h-full border-border/60"
-                >
+              <Card
+                interactive
+                padding="none"
+                onClick={() => setSelectedReceipt(rec)}
+                className="flex items-center gap-4 p-5 group h-full border-border/60"
+              >
                   {/* Logo */}
                   <div className="w-12 h-12 rounded-2xl bg-surface border border-border/60 flex items-center justify-center p-2.5 shrink-0 shadow-soft">
                     {rec.merchantLogo ? (
@@ -152,8 +150,7 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
                     </p>
                     <p className="text-xs text-secondary mt-1">{formatDate(rec.date)}</p>
                   </div>
-                </Card>
-              </TiltCard>
+              </Card>
             </motion.div>
           ))}
         </div>
@@ -183,7 +180,7 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
 
             {selectedReceipt.receiptUrl && (
               <div className="h-56 rounded-2xl overflow-hidden border border-border bg-surface shadow-inner">
-                <img src={selectedReceipt.receiptUrl} alt="Receipt" className="w-full h-full object-cover" />
+                <img src={selectedReceipt.receiptUrl} alt={`${selectedReceipt.merchant} fişi`} className="w-full h-full object-cover" />
               </div>
             )}
 

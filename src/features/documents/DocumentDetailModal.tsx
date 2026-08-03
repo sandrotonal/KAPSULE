@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { DocumentItem } from '../../types';
 import { formatDate } from '../../lib/utils';
+import { useToast } from '../../components/ui/Toast';
 
 export interface DocumentDetailModalProps {
   document: DocumentItem | null;
@@ -21,6 +22,8 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
   onToggleFavorite,
   onDelete,
 }) => {
+  const { showToast } = useToast();
+
   if (!document) return null;
 
   return (
@@ -28,7 +31,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={document.title}
-      subtitle={`${document.category} · Added ${formatDate(document.createdAt)}`}
+      subtitle={`${document.category} · ${formatDate(document.createdAt)} tarihinde eklendi`}
       maxWidth="lg"
     >
       <div className="space-y-5">
@@ -40,23 +43,23 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
         {/* Metadata row */}
         <div className="grid grid-cols-3 gap-3 p-3 bg-surface rounded-xl border border-border text-xs">
           <div>
-            <p className="text-secondary font-medium mb-0.5">Type</p>
+            <p className="text-secondary font-medium mb-0.5">Tür</p>
             <p className="font-semibold text-primary uppercase">{document.fileType} · {document.fileSize}</p>
           </div>
           <div>
-            <p className="text-secondary font-medium mb-0.5">Added</p>
+            <p className="text-secondary font-medium mb-0.5">Eklenme</p>
             <p className="font-semibold text-primary">{formatDate(document.createdAt)}</p>
           </div>
           <div>
-            <p className="text-secondary font-medium mb-0.5">Status</p>
-            <p className="font-semibold text-primary">{document.isFavorite ? 'Starred' : 'Active'}</p>
+            <p className="text-secondary font-medium mb-0.5">Durum</p>
+            <p className="font-semibold text-primary">{document.isFavorite ? 'Favori' : 'Aktif'}</p>
           </div>
         </div>
 
         {/* Description */}
         {document.description && (
           <div className="space-y-1.5">
-            <p className="text-xs font-medium text-secondary">Description</p>
+            <p className="text-xs font-medium text-secondary">Açıklama</p>
             <p className="text-sm text-primary leading-relaxed bg-surface px-4 py-3 rounded-xl border border-border">
               {document.description}
             </p>
@@ -67,7 +70,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
         {document.ocrText && (
           <div className="space-y-1.5">
             <p className="text-xs font-medium text-secondary flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-accent" /> Scanned text
+              <Sparkles className="w-3.5 h-3.5 text-accent" /> Taranan metin
             </p>
             <div className="px-4 py-3 bg-surface rounded-xl border border-border text-xs font-mono text-secondary leading-relaxed max-h-28 overflow-y-auto thin-scrollbar">
               {document.ocrText}
@@ -90,26 +93,29 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
             variant="ghost"
             size="sm"
             icon={<Trash2 className="w-3.5 h-3.5" />}
-            onClick={() => { onDelete(document.id); onClose(); }}
+            onClick={() => { onDelete(document.id); onClose(); showToast('Belge silindi.'); }}
             className="text-danger hover:text-danger hover:bg-danger-muted"
           >
-            Delete
+            Sil
           </Button>
           <div className="flex items-center gap-2">
             <Button
               variant="secondary"
               size="sm"
               icon={<Star className={`w-3.5 h-3.5 ${document.isFavorite ? 'fill-amber-400 text-amber-400' : ''}`} />}
-              onClick={() => onToggleFavorite(document.id)}
+              onClick={() => {
+                onToggleFavorite(document.id);
+                showToast(document.isFavorite ? 'Favorilerden çıkarıldı.' : 'Favorilere eklendi.');
+              }}
             >
-              {document.isFavorite ? 'Starred' : 'Star'}
+              {document.isFavorite ? 'Favori' : 'Favorile'}
             </Button>
             <Button
               variant="primary"
               size="sm"
               icon={<Download className="w-3.5 h-3.5" />}
             >
-              Download
+              İndir
             </Button>
           </div>
         </div>

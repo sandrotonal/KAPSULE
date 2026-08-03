@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Search, FileText, Receipt, CreditCard, ShieldCheck, StickyNote, Bookmark, ArrowRight, X } from 'lucide-react';
+import { Search, FileText, Receipt, CreditCard, ShieldCheck, StickyNote, Bookmark, X } from 'lucide-react';
 import { Modal } from '../../components/ui/Modal';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { ActiveTab } from '../../types';
@@ -18,19 +18,26 @@ type ResultItem = {
   subtitle: string;
   meta?: string;
   tab: ActiveTab;
+  group: string;
   icon: React.ReactNode;
 };
 
 export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNavigateToTab }) => {
   const [query, setQuery] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
       setQuery('');
+      setSelectedIndex(0);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [query]);
 
   const allData = useMemo(() => {
     if (!isOpen) return { docs: [], receipts: [], subs: [], warranties: [], notes: [], bookmarks: [] };
@@ -52,87 +59,99 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
 
     allData.docs
       .filter(d => d.title.toLowerCase().includes(q) || d.category.toLowerCase().includes(q) || d.tags.some(t => t.toLowerCase().includes(q)) || (d.ocrText?.toLowerCase().includes(q)))
-      .forEach(d => out.push({ id: d.id, title: d.title, subtitle: d.category, meta: formatDate(d.createdAt), tab: 'documents', icon: <FileText className="w-4 h-4" /> }));
+      .forEach(d => out.push({ id: d.id, title: d.title, subtitle: d.category, meta: formatDate(d.createdAt), tab: 'documents', group: 'Belgeler', icon: <FileText className="w-4 h-4" /> }));
 
     allData.receipts
       .filter(r => r.merchant.toLowerCase().includes(q) || (r.notes?.toLowerCase().includes(q)))
-      .forEach(r => out.push({ id: r.id, title: r.merchant, subtitle: r.notes || r.category, meta: formatCurrency(r.amount, r.currency), tab: 'receipts', icon: <Receipt className="w-4 h-4" /> }));
+      .forEach(r => out.push({ id: r.id, title: r.merchant, subtitle: r.notes || r.category, meta: formatCurrency(r.amount, r.currency), tab: 'receipts', group: 'Fişler', icon: <Receipt className="w-4 h-4" /> }));
 
     allData.subs
       .filter(s => s.name.toLowerCase().includes(q) || s.category.toLowerCase().includes(q))
-      .forEach(s => out.push({ id: s.id, title: s.name, subtitle: s.category, meta: formatCurrency(s.price, s.currency) + '/ay', tab: 'subscriptions', icon: <CreditCard className="w-4 h-4" /> }));
+      .forEach(s => out.push({ id: s.id, title: s.name, subtitle: s.category, meta: formatCurrency(s.price, s.currency) + '/ay', tab: 'subscriptions', group: 'Abonelikler', icon: <CreditCard className="w-4 h-4" /> }));
 
     allData.warranties
       .filter(w => w.productName.toLowerCase().includes(q) || w.brand.toLowerCase().includes(q))
-      .forEach(w => out.push({ id: w.id, title: w.productName, subtitle: w.brand, meta: formatDate(w.expiryDate) + ' tarihine kadar', tab: 'warranties', icon: <ShieldCheck className="w-4 h-4" /> }));
+      .forEach(w => out.push({ id: w.id, title: w.productName, subtitle: w.brand, meta: formatDate(w.expiryDate) + ' tarihine kadar', tab: 'warranties', group: 'Garantiler', icon: <ShieldCheck className="w-4 h-4" /> }));
 
     allData.notes
       .filter(n => n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q))
-      .forEach(n => out.push({ id: n.id, title: n.title, subtitle: n.content.slice(0, 60), tab: 'notes', icon: <StickyNote className="w-4 h-4" /> }));
+      .forEach(n => out.push({ id: n.id, title: n.title, subtitle: n.content.slice(0, 60), tab: 'notes', group: 'Notlar', icon: <StickyNote className="w-4 h-4" /> }));
 
     allData.bookmarks
       .filter(b => b.title.toLowerCase().includes(q) || b.domain.toLowerCase().includes(q))
-      .forEach(b => out.push({ id: b.id, title: b.title, subtitle: b.domain, tab: 'bookmarks', icon: <Bookmark className="w-4 h-4" /> }));
+      .forEach(b => out.push({ id: b.id, title: b.title, subtitle: b.domain, tab: 'bookmarks', group: 'Yer İmleri', icon: <Bookmark className="w-4 h-4" /> }));
 
     return out.slice(0, 12);
   }, [query, allData]);
 
   const QUICK_SEARCHES = ['Pasaport', 'Sigorta', 'Apple', 'Garanti', 'Abonelik', 'Kira'];
 
+  const groupedResults = useMemo(() => {
+    return results.reduce((groups, result) => {
+      if (!groups[result.group]) groups[result.group] = [];
+      groups[result.group].push(result);
+      return groups;
+    }, {} as Record<string, ResultItem[]>);
+  }, [results]);
+
+  const resultIndexById = useMemo(() => {
+    return new Map(results.map((result, index) => [result.id, index]));
+  }, [results]);
+
+  const openResult = (result: ResultItem) => {
+    onNavigateToTab(result.tab, result.id);
+    onClose();
+  };
+
+  const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (results.length === 0) return;
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setSelectedIndex(index => (index + 1) % results.length);
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setSelectedIndex(index => (index - 1 + results.length) % results.length);
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      openResult(results[selectedIndex]);
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} hideHeader maxWidth="lg">
-      {/* Search Orb Container */}
-      <div className="relative w-full h-[100px] flex items-center justify-center -mx-5 -mt-5 mb-4 overflow-hidden rounded-t-[32px] bg-transparent">
-        {/* Gooey Background Layer */}
-        <div className="absolute inset-0 z-0 pointer-events-none" style={{ filter: 'url(#enhanced-goo)' }}>
-          {/* Blob 1 */}
-          <div className="absolute top-2 left-0 w-[140px] h-[72px] bg-gradient-to-br from-[#6366f1] to-[#d946ef] rounded-full animate-blob-float transition-all duration-700 group-focus-within:scale-[1.15] group-focus-within:-translate-x-[20px] group-focus-within:brightness-[1.2]" />
-          {/* Blob 2 */}
-          <div className="absolute top-2 right-0 w-[120px] h-[72px] bg-gradient-to-br from-[#d946ef] to-[#8b5cf6] rounded-full animate-blob-float-reverse transition-all duration-700 group-focus-within:scale-[1.15] group-focus-within:translate-x-[20px] group-focus-within:brightness-[1.2]" />
-          {/* Blob 3 */}
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 w-[200px] h-[72px] bg-gradient-to-br from-[#8b5cf6] to-[#6366f1] rounded-full opacity-90" />
-          {/* Blob Bridge */}
-          <div className="absolute top-6 left-[10%] w-[80%] h-10 bg-[#8b5cf6] rounded-[40px]" />
-        </div>
-
-        {/* Input Overlay */}
-        <div className="group relative z-10 w-[90%] h-[52px] bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 rounded-[26px] flex items-center px-5 shadow-[0_10px_30px_rgba(0,0,0,0.15)] transition-all duration-500 focus-within:-translate-y-1 focus-within:bg-white/15 focus-within:border-white/40 focus-within:shadow-[0_20px_40px_rgba(0,0,0,0.25)]">
-          <div className="text-white opacity-90 shrink-0">
-            <Search className="w-[18px] h-[18px]" strokeWidth={2.5} />
+      <div className="space-y-5">
+        <div className="space-y-2">
+          <p className="text-xs font-semibold text-secondary uppercase tracking-[1.6px]">Kasa Araması</p>
+          <div className="group relative h-14 rounded-2xl border border-border bg-surface/50 px-4 flex items-center gap-3 transition-colors focus-within:border-accent/50 focus-within:bg-background focus-within:shadow-focus">
+            <Search className="w-5 h-5 text-secondary group-focus-within:text-accent transition-colors" />
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+              placeholder="Pasaport, garanti, fiş veya not ara..."
+              aria-label="Kasada ara"
+              aria-activedescendant={results.length > 0 ? `search-result-${results[selectedIndex]?.id}` : undefined}
+              aria-controls="search-results"
+              className="flex-1 bg-transparent border-none outline-none text-primary text-[15px] font-medium placeholder:text-secondary/50"
+            />
+            {query && (
+              <button onClick={() => setQuery('')} className="p-1.5 text-secondary hover:text-primary rounded-lg hover:bg-surface-elevated transition-colors" aria-label="Aramayı temizle">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+            <kbd className="hidden sm:inline-flex text-[10px] font-mono text-secondary/50 bg-background px-1.5 py-0.5 rounded-md border border-border/60">Enter</kbd>
           </div>
-          <input
-            ref={inputRef}
-            type="text"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            placeholder="Dijital boşluğu keşfedin..."
-            aria-label="Kasada ara"
-            className="flex-1 bg-transparent border-none outline-none text-white text-[15px] font-medium px-3 placeholder:text-white/60 tracking-tight"
-          />
-          {query && (
-            <button onClick={() => setQuery('')} className="p-1 text-white/70 hover:text-white transition-colors" aria-label="Aramayı temizle">
-              <X className="w-5 h-5" />
-            </button>
-          )}
-          
-          {/* Focus Indicator */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.5)] transition-all duration-500 w-0 group-focus-within:w-[40%]" />
         </div>
-
-        {/* SVG Filter Definition */}
-        <svg className="absolute invisible w-0 h-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <filter id="enhanced-goo">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
-              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10" result="goo" />
-              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-            </filter>
-          </defs>
-        </svg>
-      </div>
 
       {/* Results */}
-      <div className="mt-2 min-h-[200px]">
+      <div className="min-h-[220px]">
         <AnimatePresence mode="wait">
           {!query.trim() ? (
             <motion.div
@@ -147,7 +166,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
                   <button
                     key={tag}
                     onClick={() => setQuery(tag)}
-                    className="px-4 py-2 text-xs bg-surface border border-border rounded-xl text-secondary hover:text-primary hover:bg-surface-elevated transition-all duration-200"
+                    className="min-h-[40px] px-4 py-2 text-xs bg-surface border border-border rounded-xl text-secondary hover:text-primary hover:bg-surface-elevated transition-all duration-200"
                   >
                     {tag}
                   </button>
@@ -167,30 +186,42 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
             <motion.div
               key="results"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+              id="search-results"
               className="space-y-1"
             >
               <p className="text-xs text-secondary font-medium mb-3 px-1">{results.length} sonuç bulundu</p>
-              {results.map(r => (
-                <button
-                  key={r.id}
-                  onClick={() => { onNavigateToTab(r.tab, r.id); onClose(); }}
-                  className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-surface text-left transition-all duration-200 group border border-transparent hover:border-border"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-surface border border-border flex items-center justify-center text-secondary group-hover:text-primary shrink-0 transition-all group-hover:scale-110">
-                    {r.icon}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-primary truncate">{r.title}</p>
-                    <p className="text-xs text-secondary truncate">{r.subtitle}</p>
-                  </div>
-                  {r.meta && (
-                    <span className="text-xs font-medium text-secondary/60 shrink-0 tabular-nums bg-surface-elevated px-2 py-1 rounded-lg">{r.meta}</span>
-                  )}
-                </button>
+              {Object.entries(groupedResults).map(([group, groupResults]) => (
+                <div key={group} className="space-y-1 pt-2 first:pt-0">
+                  <p className="px-1 text-[11px] font-bold uppercase tracking-[1.4px] text-secondary/60">{group}</p>
+                  {groupResults.map((r) => {
+                    const index = resultIndexById.get(r.id) ?? 0;
+                    return (
+                      <button
+                        key={r.id}
+                        id={`search-result-${r.id}`}
+                        onMouseEnter={() => setSelectedIndex(index)}
+                        onClick={() => openResult(r)}
+                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-left transition-all duration-200 group border ${selectedIndex === index ? 'bg-surface border-border' : 'border-transparent hover:bg-surface hover:border-border'}`}
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-surface border border-border flex items-center justify-center text-secondary group-hover:text-primary shrink-0 transition-colors">
+                          {r.icon}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-primary truncate">{r.title}</p>
+                          <p className="text-xs text-secondary truncate">{r.subtitle}</p>
+                        </div>
+                        {r.meta && (
+                          <span className="text-xs font-medium text-secondary/60 shrink-0 tabular-nums bg-surface-elevated px-2 py-1 rounded-lg">{r.meta}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
               ))}
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
       </div>
     </Modal>
   );
