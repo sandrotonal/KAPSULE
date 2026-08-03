@@ -46,9 +46,8 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   // Modal her açıldığında veya hedef tür değiştiğinde seçili türü senkronla.
   useEffect(() => {
     if (isOpen) {
+      reset();
       setType(initialType);
-      setCategory('');
-      setError('');
     }
   }, [isOpen, initialType]);
 
