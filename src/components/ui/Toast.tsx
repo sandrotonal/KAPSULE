@@ -1,60 +1,78 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { CheckCircle, Info, AlertTriangle } from 'lucide-react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
+import { triggerHaptic } from '../../utils/haptics';
 
-type ToastVariant = 'success' | 'info' | 'warning';
+export type ToastType = 'success' | 'error' | 'info';
 
-type ToastItem = {
+export interface ToastMessage {
   id: string;
   message: string;
-  variant: ToastVariant;
-};
+  type?: ToastType;
+}
 
-type ToastContextValue = {
-  showToast: (message: string, variant?: ToastVariant) => void;
-};
+interface ToastContextType {
+  showToast: (message: string, type?: ToastType) => void;
+}
 
-const ToastContext = createContext<ToastContextValue | null>(null);
-
-const icons: Record<ToastVariant, React.ReactNode> = {
-  success: <CheckCircle className="w-4 h-4" />,
-  info: <Info className="w-4 h-4" />,
-  warning: <AlertTriangle className="w-4 h-4" />,
-};
+const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const showToast = useCallback((message: string, variant: ToastVariant = 'success') => {
-    const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    setToasts(current => [...current, { id, message, variant }].slice(-3));
-    window.setTimeout(() => {
-      setToasts(current => current.filter(toast => toast.id !== id));
-    }, 2600);
+  const showToast = useCallback((message: string, type: ToastType = 'success') => {
+    const id = `${Date.now()}-${Math.random()}`;
+    
+    // Trigger physical haptic feedback on mobile devices
+    if (type === 'success') {
+      triggerHaptic.success();
+    } else if (type === 'error') {
+      triggerHaptic.error();
+    } else {
+      triggerHaptic.light();
+    }
+
+    setToasts(prev => [...prev.slice(-2), { id, message, type }]);
+
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 3000);
   }, []);
 
-  const value = useMemo(() => ({ showToast }), [showToast]);
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
 
   return (
-    <ToastContext.Provider value={value}>
+    <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-24 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-[80] flex flex-col items-center sm:items-end gap-2 pointer-events-none">
-        <AnimatePresence>
-          {toasts.map(toast => (
+      
+      {/* Floating Apple-Grade Subtle Toast Container */}
+      <div className="fixed bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 z-[110] flex flex-col items-center gap-2 pointer-events-none px-4 w-full max-w-sm">
+        <AnimatePresence mode="popLayout">
+          {toasts.map((toast) => (
             <motion.div
               key={toast.id}
-              initial={{ opacity: 0, y: 10, scale: 0.98 }}
+              initial={{ opacity: 0, y: 16, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.98 }}
-              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-              role="status"
-              aria-live="polite"
-              className="pointer-events-auto flex min-h-[44px] items-center gap-2 rounded-2xl border border-border bg-background/95 px-4 py-2.5 text-sm font-medium text-primary shadow-modal backdrop-blur-xl"
+              exit={{ opacity: 0, y: 8, scale: 0.95 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="pointer-events-auto flex items-center gap-3 px-4 py-2.5 rounded-full bg-neutral-900/90 dark:bg-neutral-100/90 text-white dark:text-neutral-900 border border-neutral-800 dark:border-neutral-200 shadow-2xl backdrop-blur-xl select-none"
             >
-              <span className={toast.variant === 'warning' ? 'text-warning' : toast.variant === 'info' ? 'text-accent' : 'text-success'}>
-                {icons[toast.variant]}
+              {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400 dark:text-emerald-600 shrink-0" />}
+              {toast.type === 'error' && <AlertCircle className="w-4 h-4 text-rose-400 dark:text-rose-600 shrink-0" />}
+              {toast.type === 'info' && <Info className="w-4 h-4 text-blue-400 dark:text-blue-600 shrink-0" />}
+              
+              <span className="text-xs font-semibold tracking-tight leading-none">
+                {toast.message}
               </span>
-              <span>{toast.message}</span>
+
+              <button
+                onClick={() => removeToast(toast.id)}
+                className="ml-1 opacity-60 hover:opacity-100 transition-opacity p-0.5"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
             </motion.div>
           ))}
         </AnimatePresence>
@@ -66,7 +84,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 export const useToast = () => {
   const context = useContext(ToastContext);
   if (!context) {
-    throw new Error('useToast must be used inside ToastProvider');
+    throw new Error('useToast must be used within a ToastProvider');
   }
   return context;
 };

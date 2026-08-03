@@ -4,6 +4,7 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { WarrantyItem } from '../../types';
 import { formatDate, getDaysRemaining } from '../../lib/utils';
@@ -71,16 +72,13 @@ export const WarrantiesScreen: React.FC<WarrantiesScreenProps> = ({
       </div>
 
       {filtered.length === 0 ? (
-        <div className="py-24 text-center space-y-6">
-          <div className="w-20 h-20 rounded-[2.5rem] bg-surface border border-border flex items-center justify-center mx-auto shadow-soft">
-            <ShieldCheck className="w-10 h-10 text-secondary opacity-40" />
-          </div>
-          <div className="max-w-xs mx-auto">
-            <p className="text-lg font-bold text-primary">Henüz garanti yok</p>
-            <p className="text-sm text-secondary mt-2 leading-relaxed">Elektronik, beyaz eşya ve ürün korumalarınızı ekleyin, garanti sürelerini kaçırmayın.</p>
-          </div>
-          <Button variant="primary" size="md" className="rounded-full px-8" onClick={onOpenAdd}>Garanti ekle</Button>
-        </div>
+        <EmptyState
+          icon={<ShieldCheck className="w-8 h-8 text-secondary opacity-60" />}
+          title="Henüz garanti yok"
+          description="Elektronik, beyaz eşya ve ürün korumalarınızı ekleyin, garanti sürelerini kaçırmayın."
+          actionLabel="Garanti ekle"
+          onAction={onOpenAdd}
+        />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((war, i) => {

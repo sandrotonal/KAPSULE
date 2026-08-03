@@ -5,6 +5,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { NoteItem } from '../../types';
 import { formatDate } from '../../lib/utils';
@@ -122,16 +123,13 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd, selectedIte
       )}
 
       {filtered.length === 0 && (
-        <div className="py-24 text-center space-y-6">
-          <div className="w-20 h-20 rounded-[2.5rem] bg-surface border border-border flex items-center justify-center mx-auto shadow-soft">
-            <StickyNote className="w-10 h-10 text-secondary opacity-40" />
-          </div>
-          <div className="max-w-xs mx-auto">
-            <p className="text-lg font-bold text-primary">Henüz not yok</p>
-            <p className="text-sm text-secondary mt-2 leading-relaxed">Önemli kodları, kişisel bilgileri ve aklınıza gelen fikirleri güvenle not edin.</p>
-          </div>
-          <Button variant="primary" size="md" className="rounded-full px-8" onClick={onOpenAdd}>Yeni not oluştur</Button>
-        </div>
+        <EmptyState
+          icon={<StickyNote className="w-8 h-8 text-secondary opacity-60" />}
+          title="Henüz not yok"
+          description="Önemli kodları, kişisel bilgileri ve aklınıza gelen fikirleri güvenle not edin."
+          actionLabel="Yeni not oluştur"
+          onAction={onOpenAdd}
+        />
       )}
 
       {/* Note Reader Modal */}

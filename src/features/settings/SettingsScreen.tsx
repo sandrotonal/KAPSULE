@@ -12,7 +12,7 @@ const Toggle: React.FC<ToggleProps> = ({ checked, onChange, id }) => (
     aria-checked={checked}
     id={id}
     onClick={onChange}
-    className={`relative w-9 h-5 rounded-full transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent/30 ${checked ? 'bg-accent' : 'bg-border'}`}
+    className={`relative w-9 h-5 rounded-full transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent/30 ${checked ? 'bg-accent' : 'bg-surface-elevated'}`}
   >
     <span
       className={`absolute top-[2px] left-[2px] w-4 h-4 rounded-full bg-white shadow-soft transition-transform duration-200 ${checked ? 'translate-x-4' : 'translate-x-0'}`}

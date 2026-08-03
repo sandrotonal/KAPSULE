@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Receipt, Search, Plus, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Receipt, Search, Plus, ShieldCheck } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { ReceiptItem } from '../../types';
 import { formatCurrency, formatDate } from '../../lib/utils';
@@ -92,18 +93,13 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
       </div>
 
       {filtered.length === 0 ? (
-        <div className="py-24 text-center space-y-6">
-          <div className="w-20 h-20 rounded-[2.5rem] bg-surface border border-border flex items-center justify-center mx-auto shadow-soft">
-            <Receipt className="w-10 h-10 text-secondary opacity-40" />
-          </div>
-          <div className="max-w-xs mx-auto">
-            <p className="text-lg font-bold text-primary">Fiş bulunamadı</p>
-            <p className="text-sm text-secondary mt-2 leading-relaxed">
-              Alışveriş fişlerinizi, faturalarınızı ve giderlerinizi buraya ekleyerek bütçenizi kontrol edin.
-            </p>
-          </div>
-          <Button variant="primary" size="md" className="rounded-full px-8" onClick={onOpenAdd}>Fiş ekle</Button>
-        </div>
+        <EmptyState
+          icon={<Receipt className="w-8 h-8 text-secondary opacity-60" />}
+          title="Fiş bulunamadı"
+          description="Alışveriş fişlerinizi, faturalarınızı ve giderlerinizi buraya ekleyerek bütçenizi kontrol edin."
+          actionLabel="Fiş ekle"
+          onAction={onOpenAdd}
+        />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {filtered.map((rec, i) => (

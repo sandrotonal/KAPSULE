@@ -15,13 +15,13 @@ export interface QuickAddModalProps {
 }
 
 const TYPES: { id: VaultCategory; label: string; icon: React.ReactNode; hint: string }[] = [
-    { id: 'document',     label: 'Belge',    icon: <FileText className="w-5 h-5" />,    hint: 'Dosya ve evrak kayıtları' },
-    { id: 'receipt',      label: 'Fiş',     icon: <Receipt className="w-5 h-5" />,     hint: 'Satın alım ve harcama' },
-    { id: 'subscription', label: 'Abonelik',icon: <CreditCard className="w-5 h-5" />,  hint: 'Aylık veya yıllık hizmet' },
-    { id: 'warranty',     label: 'Garanti',    icon: <ShieldCheck className="w-5 h-5" />, hint: 'Ürün koruması' },
-    { id: 'note',         label: 'Not',        icon: <StickyNote className="w-5 h-5" />,  hint: 'Hızlı bilgi' },
-    { id: 'bookmark',     label: 'Yer İmi',    icon: <Bookmark className="w-5 h-5" />,    hint: 'Web sitesi kaydet' },
-  ];
+  { id: 'document', label: 'Belge', icon: <FileText className="w-5 h-5" />, hint: 'Dosya ve evrak kayıtları' },
+  { id: 'receipt', label: 'Fiş', icon: <Receipt className="w-5 h-5" />, hint: 'Satın alım ve harcama' },
+  { id: 'subscription', label: 'Abonelik', icon: <CreditCard className="w-5 h-5" />, hint: 'Aylık veya yıllık hizmet' },
+  { id: 'warranty', label: 'Garanti', icon: <ShieldCheck className="w-5 h-5" />, hint: 'Ürün koruması' },
+  { id: 'note', label: 'Not', icon: <StickyNote className="w-5 h-5" />, hint: 'Hızlı bilgi' },
+  { id: 'bookmark', label: 'Yer İmi', icon: <Bookmark className="w-5 h-5" />, hint: 'Web sitesi kaydet' },
+];
 
 const getTodayISO = () => {
   const now = new Date();
@@ -249,10 +249,10 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
               label={type === 'receipt' ? 'Mağaza / Satıcı' : type === 'warranty' ? 'Ürün Adı' : type === 'subscription' ? 'Hizmet Adı' : type === 'bookmark' ? 'Başlık' : 'Başlık'}
               placeholder={
                 type === 'document' ? 'Belgenin başlığı' :
-                type === 'receipt' ? 'Satıcı adı' :
-                type === 'subscription' ? 'Hizmet adı' :
-                type === 'warranty' ? 'Ürün adı' :
-                type === 'note' ? 'Not başlığı' : 'Yer imi başlığı'
+                  type === 'receipt' ? 'Satıcı adı' :
+                    type === 'subscription' ? 'Hizmet adı' :
+                      type === 'warranty' ? 'Ürün adı' :
+                        type === 'note' ? 'Not başlığı' : 'Yer imi başlığı'
               }
               className="rounded-xl h-12 border-border"
               value={title}
@@ -262,20 +262,20 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {['document', 'receipt', 'subscription'].includes(type) && (
-              <div className="space-y-1.5">
-                <label htmlFor="quick-add-category" className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px] px-1">Kategori</label>
-                <select
-                  id="quick-add-category"
-                  className="w-full h-12 bg-background text-primary text-sm font-semibold rounded-xl border border-border px-3 transition-colors focus:outline-none focus:border-accent appearance-none"
-                  value={category}
-                  onChange={e => setCategory(e.target.value)}
-                >
-                  <option value="">Seçiniz</option>
-                  {type === 'document' && [['Personal', 'Kişisel'], ['Finance', 'Finans'], ['Insurance', 'Sigorta'], ['Identity', 'Kimlik'], ['Health', 'Sağlık'], ['Property', 'Mülk'], ['Work', 'İş']].map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                  {type === 'receipt' && [['Tech', 'Teknoloji'], ['Home', 'Ev'], ['Travel', 'Seyahat'], ['Clothing', 'Giyim'], ['Food', 'Yemek'], ['Utilities', 'Faturalar'], ['Services', 'Hizmetler']].map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                  {type === 'subscription' && [['Software', 'Yazılım'], ['Entertainment', 'Eğlence'], ['Work', 'İş'], ['Cloud', 'Bulut'], ['Health', 'Sağlık'], ['Utility', 'Hizmet']].map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                </select>
-              </div>
+                <div className="space-y-1.5">
+                  <label htmlFor="quick-add-category" className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px] px-1">Kategori</label>
+                  <select
+                    id="quick-add-category"
+                    className="w-full h-12 bg-background text-primary text-sm font-semibold rounded-xl border border-border px-3 transition-colors focus:outline-none focus:border-accent appearance-none"
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                  >
+                    <option value="">Seçiniz</option>
+                    {type === 'document' && [['Personal', 'Kişisel'], ['Finance', 'Finans'], ['Insurance', 'Sigorta'], ['Identity', 'Kimlik'], ['Health', 'Sağlık'], ['Property', 'Mülk'], ['Work', 'İş']].map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                    {type === 'receipt' && [['Tech', 'Teknoloji'], ['Home', 'Ev'], ['Travel', 'Seyahat'], ['Clothing', 'Giyim'], ['Food', 'Yemek'], ['Utilities', 'Faturalar'], ['Services', 'Hizmetler']].map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                    {type === 'subscription' && [['Software', 'Yazılım'], ['Entertainment', 'Eğlence'], ['Work', 'İş'], ['Cloud', 'Bulut'], ['Health', 'Sağlık'], ['Utility', 'Hizmet']].map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                  </select>
+                </div>
               )}
 
               {type === 'receipt' && (
@@ -292,7 +292,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
             </div>
 
             {(type === 'subscription' || type === 'warranty') && (
-              <Input 
+              <Input
                 label={type === 'subscription' ? "Sıradaki Yenileme" : "Garanti Bitiş Tarihi"}
                 type="date"
                 className="rounded-xl h-12 border-border"

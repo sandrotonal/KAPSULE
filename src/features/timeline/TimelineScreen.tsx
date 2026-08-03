@@ -5,6 +5,7 @@ import { formatDate, cn } from '../../lib/utils';
 import { motion } from 'framer-motion';
 import { ActiveTab } from '../../types';
 import { Card } from '../../components/ui/Card';
+import { EmptyState } from '../../components/ui/EmptyState';
 
 const ICONS: Record<string, React.ReactNode> = {
   document: <FileText className="w-3.5 h-3.5" />,
@@ -56,13 +57,20 @@ export const TimelineScreen: React.FC<TimelineScreenProps> = ({ onNavigateToTab 
         </div>
       </div>
 
-      <div className="relative pt-6">
-        <div className="absolute left-[13px] top-6 bottom-6 w-0.5 bg-gradient-to-b from-border/80 via-border/20 to-transparent" />
+      {events.length === 0 ? (
+        <EmptyState
+          icon={<Clock className="w-8 h-8 text-secondary opacity-60" />}
+          title="Henüz olay yok"
+          description="Kaydettiğiniz belgeler, fişler ve diğer öğeler zaman akışınızda kronolojik olarak görünecektir."
+        />
+      ) : (
+        <div className="relative pt-6">
+          <div className="absolute left-[13px] top-6 bottom-6 w-0.5 bg-gradient-to-b from-border/80 via-border/20 to-transparent" />
 
-        <div className="space-y-16">
-          {Object.entries(groupedEvents).map(([month, monthEvents], groupIndex) => (
-            <div key={month} className="space-y-8">
-              <motion.div 
+          <div className="space-y-16">
+            {Object.entries(groupedEvents).map(([month, monthEvents], groupIndex) => (
+              <div key={month} className="space-y-8">
+                <motion.div 
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="flex items-center gap-4 ml-10"
@@ -134,7 +142,7 @@ export const TimelineScreen: React.FC<TimelineScreenProps> = ({ onNavigateToTab 
                         </div>
                         
                         {isClickable && (
-                          <div className="flex items-center gap-2 mt-5 pt-5 border-t border-border/40 text-[11px] font-bold text-accent uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity translate-y-1 group-hover:translate-y-0 duration-500">
+                          <div className="flex items-center gap-2 mt-5 pt-5 border-t border-border/40 text-[11px] font-bold text-accent uppercase tracking-widest opacity-80 md:opacity-0 md:group-hover:opacity-100 transition-opacity translate-y-0 md:translate-y-1 md:group-hover:translate-y-0 duration-500">
                             Detayları incele
                             <ArrowUpRight className="w-3.5 h-3.5" />
                           </div>
@@ -144,10 +152,11 @@ export const TimelineScreen: React.FC<TimelineScreenProps> = ({ onNavigateToTab 
                   );
                 })}
               </div>
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
