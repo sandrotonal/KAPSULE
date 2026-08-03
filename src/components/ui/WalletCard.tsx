@@ -18,8 +18,7 @@ interface CardData {
 export const WalletCard = () => {
   const [isHovered, setIsHovered] = useState(false);
   
-  // Real stats from storage
-  const stats = useMemo(() => VaultStorageService.getStats(), [isHovered]); // Re-fetch on hover to be safe, though stats are static here
+  const stats = VaultStorageService.getStats();
 
   const dynamicCards: CardData[] = useMemo(() => [
     {
@@ -184,7 +183,7 @@ export const WalletCard = () => {
                 )}
               </AnimatePresence>
             </div>
-            <div className="text-[#698263] text-[10px] uppercase tracking-[3px] font-bold">Toplam Varlık Değeri</div>
+            <div className="text-[#698263] text-[10px] uppercase tracking-[3px] font-bold">Yıllık Abonelik Toplamı</div>
             
             <motion.div 
               animate={{ opacity: isHovered ? 1 : 0.6, scale: isHovered ? 1.1 : 1 }}

@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Delete, RefreshCw } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Delete } from 'lucide-react';
 
 export interface PasscodeLockProps {
   correctPasscode: string;
   onSuccess: () => void;
-  onResetData: () => void;
 }
 
 export const PasscodeLock: React.FC<PasscodeLockProps> = ({
-  correctPasscode = '1234',
+  correctPasscode,
   onSuccess,
-  onResetData,
 }) => {
   const [code, setCode] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
@@ -101,14 +98,7 @@ export const PasscodeLock: React.FC<PasscodeLockProps> = ({
           ))}
 
           {/* Bottom row */}
-          <button
-            onClick={onResetData}
-            title="Kasayı sıfırla"
-            aria-label="Kasayı sıfırla"
-            className="w-16 h-16 rounded-full text-secondary hover:text-danger flex items-center justify-center active:scale-90 transition-all mx-auto outline-none text-xs"
-          >
-            Sıfırla
-          </button>
+          <div className="w-16 h-16" aria-hidden="true" />
 
           <button
             onClick={() => handleKeyPress('0')}
@@ -127,10 +117,6 @@ export const PasscodeLock: React.FC<PasscodeLockProps> = ({
           </button>
         </div>
 
-        {/* Hint */}
-        <div className="text-center pt-2">
-          <p className="text-[10px] text-secondary/60">Demo şifre 1234</p>
-        </div>
       </div>
     </div>
   );

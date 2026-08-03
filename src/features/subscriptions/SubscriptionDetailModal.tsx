@@ -26,9 +26,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
 
   if (!subscription) return null;
 
-  // Approximate annual cost
-  const price = subscription.currency === 'USD' ? subscription.price * 34 : subscription.price;
-  const annualCost = subscription.billingCycle === 'monthly' ? price * 12 : price;
+  const annualCost = subscription.billingCycle === 'monthly' ? subscription.price * 12 : subscription.price;
 
   return (
     <Modal
@@ -70,7 +68,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
             <p className="text-secondary font-medium flex items-center gap-1.5 mb-1">
               <RefreshCw className="w-3.5 h-3.5 text-secondary/60" /> Tahmini Yıllık
             </p>
-            <p className="font-semibold text-primary tabular-nums">{formatCurrency(Math.round(annualCost), 'TL')}</p>
+            <p className="font-semibold text-primary tabular-nums">{formatCurrency(Math.round(annualCost), subscription.currency)}</p>
           </div>
         </div>
 

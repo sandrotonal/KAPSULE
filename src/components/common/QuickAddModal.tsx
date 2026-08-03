@@ -15,13 +15,19 @@ export interface QuickAddModalProps {
 }
 
 const TYPES: { id: VaultCategory; label: string; icon: React.ReactNode; hint: string }[] = [
-    { id: 'document',     label: 'Belge',    icon: <FileText className="w-5 h-5" />,    hint: 'Pasaport, kontrat, poliçe' },
+    { id: 'document',     label: 'Belge',    icon: <FileText className="w-5 h-5" />,    hint: 'Dosya ve evrak kayıtları' },
     { id: 'receipt',      label: 'Fiş',     icon: <Receipt className="w-5 h-5" />,     hint: 'Satın alım ve harcama' },
     { id: 'subscription', label: 'Abonelik',icon: <CreditCard className="w-5 h-5" />,  hint: 'Aylık veya yıllık hizmet' },
     { id: 'warranty',     label: 'Garanti',    icon: <ShieldCheck className="w-5 h-5" />, hint: 'Ürün koruması' },
     { id: 'note',         label: 'Not',        icon: <StickyNote className="w-5 h-5" />,  hint: 'Hızlı bilgi' },
     { id: 'bookmark',     label: 'Yer İmi',    icon: <Bookmark className="w-5 h-5" />,    hint: 'Web sitesi kaydet' },
   ];
+
+const getTodayISO = () => {
+  const now = new Date();
+  const timezoneOffsetMs = now.getTimezoneOffset() * 60 * 1000;
+  return new Date(now.getTime() - timezoneOffsetMs).toISOString().split('T')[0];
+};
 
 export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, onSuccess, initialType = 'document' }) => {
   const [type, setType] = useState<VaultCategory>(initialType);
@@ -35,65 +41,137 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState('');
   const [error, setError] = useState('');
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
 
   // Modal her açıldığında veya hedef tür değiştiğinde seçili türü senkronla.
   useEffect(() => {
-    if (isOpen) setType(initialType);
+    if (isOpen) {
+      setType(initialType);
+      setCategory('');
+      setError('');
+    }
   }, [isOpen, initialType]);
 
   const reset = () => {
     setTitle(''); setAmount(''); setPrice('');
     setBrand(''); setUrl(''); setContent(''); setExpiryDate('');
-    setCategory('');
+    setCategory(''); setDocumentFile(null);
     setError('');
   };
 
   const handleClose = () => { reset(); onClose(); };
 
+  const handleTypeChange = (nextType: VaultCategory) => {
+    setType(nextType);
+    setCategory('');
+    setError('');
+    if (nextType !== 'document') setDocumentFile(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) {
+    const normalizedTitle = title.trim();
+    if (!normalizedTitle) {
       setError('Devam etmek için kısa bir başlık gir.');
       return;
     }
+
+    if (type === 'document' && !documentFile) {
+      setError('Belge kaydı için dosya seçin.');
+      return;
+    }
+    if (type === 'document' && documentFile && documentFile.size > 3 * 1024 * 1024) {
+      setError('Belge dosyası en fazla 3 MB olabilir.');
+      return;
+    }
+    if (type === 'receipt' && (!amount || Number(amount) <= 0)) {
+      setError('Fiş kaydı için geçerli bir tutar girin.');
+      return;
+    }
+    if (type === 'subscription' && (!price || Number(price) <= 0 || !expiryDate)) {
+      setError('Abonelik için geçerli fiyat ve yenileme tarihini girin.');
+      return;
+    }
+    if (type === 'warranty' && (!brand.trim() || !expiryDate)) {
+      setError('Garanti için marka ve bitiş tarihi girin.');
+      return;
+    }
+    if (type === 'note' && !content.trim()) {
+      setError('Not kaydı için içerik girin.');
+      return;
+    }
+
+    let normalizedUrl = '';
+    if (type === 'bookmark') {
+      try {
+        normalizedUrl = /^https?:\/\//i.test(url.trim()) ? url.trim() : `https://${url.trim()}`;
+        new URL(normalizedUrl);
+      } catch {
+        setError('Geçerli bir web adresi girin.');
+        return;
+      }
+    }
+
     setLoading(true);
     setError('');
 
     try {
-      const now = new Date().toISOString().split('T')[0];
+      const now = getTodayISO();
       if (type === 'document') {
+        const previewUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result));
+          reader.onerror = () => reject(new Error('Belge dosyası okunamadı.'));
+          reader.readAsDataURL(documentFile!);
+        });
+        const fileType = documentFile!.type.startsWith('image/') ? 'img' : documentFile!.type.includes('word') ? 'doc' : 'pdf';
         VaultStorageService.saveDocument({
-          title, category: (category as any) || 'Kişisel', fileType: 'pdf', fileSize: '—',
-          previewUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80',
-          tags: [], description: content, isFavorite: false, isArchived: false,
+          title: normalizedTitle,
+          category: (category || 'Personal') as 'Personal' | 'Finance' | 'Insurance' | 'Vehicle' | 'Identity' | 'Health' | 'Property' | 'Work',
+          fileType,
+          fileSize: `${(documentFile!.size / 1024 / 1024).toLocaleString('tr-TR', { maximumFractionDigits: 1 })} MB`,
+          previewUrl,
+          tags: [],
+          description: content.trim() || undefined,
+          isFavorite: false,
+          isArchived: false,
         });
       } else if (type === 'receipt') {
         VaultStorageService.saveReceipt({
-          merchant: title, amount: parseFloat(amount) || 0,
-          currency: 'TL', date: now, category: (category as any) || 'Teknoloji', notes: content,
+          merchant: normalizedTitle,
+          amount: Number(amount),
+          currency: 'TRY',
+          date: now,
+          category: (category || 'Services') as 'Tech' | 'Home' | 'Travel' | 'Clothing' | 'Food' | 'Utilities' | 'Services',
+          notes: content.trim() || undefined,
         });
       } else if (type === 'subscription') {
         VaultStorageService.saveSubscription({
-          name: title, price: parseFloat(price) || 0, currency: 'TL',
-          billingCycle: 'monthly', renewalDate: expiryDate || now,
-          category: (category as any) || 'Yazılım', status: 'active',
+          name: normalizedTitle,
+          price: Number(price),
+          currency: 'TRY',
+          billingCycle: 'monthly',
+          renewalDate: expiryDate,
+          category: (category || 'Software') as 'Software' | 'Entertainment' | 'Work' | 'Cloud' | 'Health' | 'Utility',
+          status: 'active',
         });
       } else if (type === 'warranty') {
         VaultStorageService.saveWarranty({
-          productName: title, brand: brand || '—',
+          productName: normalizedTitle,
+          brand: brand.trim(),
           purchaseDate: now,
-          expiryDate: expiryDate || new Date(Date.now() + 365 * 86400000).toISOString().split('T')[0],
+          expiryDate,
           status: 'active',
         });
       } else if (type === 'note') {
-        VaultStorageService.saveNote({ title, content: content || title, tags: [], isPinned: false });
+        VaultStorageService.saveNote({ title: normalizedTitle, content: content.trim(), tags: [], isPinned: false });
       } else if (type === 'bookmark') {
-        const normalizedUrl = url ? (/^https?:\/\//i.test(url) ? url : `https://${url}`) : 'https://example.com';
-        const domain = (() => { try { return new URL(normalizedUrl).hostname; } catch { return normalizedUrl; } })();
-        VaultStorageService.saveBookmark({ title, url: normalizedUrl, domain, tags: [] });
+        VaultStorageService.saveBookmark({ title: normalizedTitle, url: normalizedUrl, domain: new URL(normalizedUrl).hostname, tags: [] });
       }
       onSuccess();
       handleClose();
+    } catch (submissionError) {
+      setError(submissionError instanceof Error ? submissionError.message : 'Kayıt sırasında bir sorun oluştu.');
     } finally {
       setLoading(false);
     }
@@ -115,7 +193,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
               <button
                 key={t.id}
                 type="button"
-                onClick={() => setType(t.id)}
+                onClick={() => handleTypeChange(t.id)}
                 className={cn(
                   "group flex items-center gap-3 text-left py-3 px-1 border-b transition-all duration-300",
                   isSelected
@@ -170,11 +248,11 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
               id="quick-add-title"
               label={type === 'receipt' ? 'Mağaza / Satıcı' : type === 'warranty' ? 'Ürün Adı' : type === 'subscription' ? 'Hizmet Adı' : type === 'bookmark' ? 'Başlık' : 'Başlık'}
               placeholder={
-                type === 'document' ? 'Örn: Pasaport kopyası' :
-                type === 'receipt' ? 'Örn: Apple Store' :
-                type === 'subscription' ? 'Örn: Spotify' :
-                type === 'warranty' ? 'Örn: MacBook Pro' :
-                type === 'note' ? 'Örn: Acil durum kişileri' : 'Örn: Apple Geliştirici'
+                type === 'document' ? 'Belgenin başlığı' :
+                type === 'receipt' ? 'Satıcı adı' :
+                type === 'subscription' ? 'Hizmet adı' :
+                type === 'warranty' ? 'Ürün adı' :
+                type === 'note' ? 'Not başlığı' : 'Yer imi başlığı'
               }
               className="rounded-xl h-12 border-border"
               value={title}
@@ -183,6 +261,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {['document', 'receipt', 'subscription'].includes(type) && (
               <div className="space-y-1.5">
                 <label htmlFor="quick-add-category" className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px] px-1">Kategori</label>
                 <select
@@ -192,14 +271,12 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                   onChange={e => setCategory(e.target.value)}
                 >
                   <option value="">Seçiniz</option>
-                  {type === 'document' && ['Kişisel', 'Finans', 'Sigorta', 'Kimlik', 'Sağlık', 'İş'].map(c => <option key={c} value={c}>{c}</option>)}
-                  {type === 'receipt' && ['Teknoloji', 'Ev', 'Seyahat', 'Giyim', 'Yemek', 'Hizmetler'].map(c => <option key={c} value={c}>{c}</option>)}
-                  {type === 'subscription' && ['Yazılım', 'Eğlence', 'İş', 'Bulut', 'Hizmet'].map(c => <option key={c} value={c}>{c}</option>)}
-                  {type === 'warranty' && ['Teknoloji', 'Ev', 'Araç', 'Kişisel'].map(c => <option key={c} value={c}>{c}</option>)}
-                  {type === 'note' && ['Genel', 'Güvenlik', 'Kişisel', 'İş'].map(c => <option key={c} value={c}>{c}</option>)}
-                  {type === 'bookmark' && ['İş', 'Sosyal', 'Kaynak', 'Referans'].map(c => <option key={c} value={c}>{c}</option>)}
+                  {type === 'document' && [['Personal', 'Kişisel'], ['Finance', 'Finans'], ['Insurance', 'Sigorta'], ['Identity', 'Kimlik'], ['Health', 'Sağlık'], ['Property', 'Mülk'], ['Work', 'İş']].map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                  {type === 'receipt' && [['Tech', 'Teknoloji'], ['Home', 'Ev'], ['Travel', 'Seyahat'], ['Clothing', 'Giyim'], ['Food', 'Yemek'], ['Utilities', 'Faturalar'], ['Services', 'Hizmetler']].map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                  {type === 'subscription' && [['Software', 'Yazılım'], ['Entertainment', 'Eğlence'], ['Work', 'İş'], ['Cloud', 'Bulut'], ['Health', 'Sağlık'], ['Utility', 'Hizmet']].map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                 </select>
               </div>
+              )}
 
               {type === 'receipt' && (
                 <Input label="Tutar (TL)" type="number" placeholder="0.00" className="rounded-xl h-12 border-border" value={amount} onChange={e => setAmount(e.target.value)} />
@@ -210,7 +287,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
               )}
 
               {type === 'warranty' && (
-                <Input label="Marka" placeholder="Örn: Apple" className="rounded-xl h-12 border-border" value={brand} onChange={e => setBrand(e.target.value)} />
+                <Input label="Marka" placeholder="Marka adı" className="rounded-xl h-12 border-border" value={brand} onChange={e => setBrand(e.target.value)} required />
               )}
             </div>
 
@@ -221,11 +298,27 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                 className="rounded-xl h-12 border-border"
                 value={expiryDate}
                 onChange={e => setExpiryDate(e.target.value)}
+                required
               />
             )}
 
+            {type === 'document' && (
+              <div className="space-y-1.5">
+                <label htmlFor="quick-add-file" className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px] px-1">Dosya</label>
+                <input
+                  id="quick-add-file"
+                  type="file"
+                  accept="application/pdf,image/*,.doc,.docx"
+                  required
+                  onChange={(event) => setDocumentFile(event.target.files?.[0] || null)}
+                  className="block w-full text-sm text-secondary file:mr-4 file:rounded-xl file:border-0 file:bg-surface-elevated file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-primary hover:file:bg-border"
+                />
+                <p className="text-xs text-secondary">PDF, görsel veya Word dosyası; en fazla 3 MB.</p>
+              </div>
+            )}
+
             {type === 'bookmark' && (
-              <Input label="URL" placeholder="https://..." className="rounded-xl h-12 border-border" value={url} onChange={e => setUrl(e.target.value)} />
+              <Input label="URL" type="url" placeholder="https://..." className="rounded-xl h-12 border-border" value={url} onChange={e => setUrl(e.target.value)} required />
             )}
 
             {(type === 'document' || type === 'note' || type === 'receipt') && (
@@ -237,6 +330,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                   placeholder={type === 'note' ? 'Notunuzu buraya yazın...' : 'İsteğe bağlı açıklama veya notlar...'}
                   value={content}
                   onChange={e => setContent(e.target.value)}
+                  required={type === 'note'}
                 />
               </div>
             )}

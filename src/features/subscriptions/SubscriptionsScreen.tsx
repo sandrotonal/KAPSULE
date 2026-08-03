@@ -34,10 +34,10 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
     !searchQuery || s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Approximate monthly total in TL
   const monthlyTotal = subs.reduce((acc, s) => {
     if (s.status !== 'active') return acc;
-    const price = s.currency === 'USD' ? s.price * 34 : s.price;
+    if (s.currency !== 'TL' && s.currency !== 'TRY') return acc;
+    const price = s.price;
     const monthly = s.billingCycle === 'yearly' ? price / 12 : price;
     return acc + monthly;
   }, 0);
@@ -49,18 +49,10 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
   };
 
   const handleToggleStatus = (id: string) => {
-    const list = VaultStorageService.getSubscriptions();
-    const updated = list.map(s => {
-      if (s.id === id) {
-        const nextStatus: SubscriptionItem['status'] = s.status === 'active' ? 'paused' : 'active';
-        return { ...s, status: nextStatus };
-      }
-      return s;
-    });
-    // Write back to storage
-    localStorage.setItem('kapsule_subscriptions', JSON.stringify(updated));
-    setSubs(updated);
-    setSelectedSub(prev => prev ? { ...prev, status: prev.status === 'active' ? 'paused' : 'active' } : null);
+    const updated = VaultStorageService.toggleSubscriptionStatus(id);
+    if (!updated) return;
+    setSubs(VaultStorageService.getSubscriptions());
+    setSelectedSub(updated);
   };
 
   return (
