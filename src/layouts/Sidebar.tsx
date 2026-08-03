@@ -80,7 +80,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onItemClick={(idx, item) => onTabChange(item.id as ActiveTab)}
           accentColor="#4F46E5"
           textColor="var(--text-secondary)"
-          markerColor="var(--border)"
+          markerColor="rgb(var(--border))"
           showIndex={false}
           showMarker={true}
           markerLength={12}

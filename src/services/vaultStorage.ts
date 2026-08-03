@@ -1,3 +1,4 @@
+import { storageAdapter } from './storageAdapter';
 import {
   DocumentItem,
   ReceiptItem,
@@ -41,22 +42,11 @@ function daysUntil(date: string): number {
 }
 
 function getStored<T>(key: string, initial: T): T {
-  try {
-    const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : initial;
-  } catch (error) {
-    console.error(`Error reading ${key} from localStorage`, error);
-    return initial;
-  }
+  return storageAdapter.getSync(key, initial);
 }
 
 function setStored<T>(key: string, value: T): void {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch (error) {
-    console.error(`Error writing ${key} to localStorage`, error);
-    throw new Error('Kayıt tarayıcı depolamasına yazılamadı. Dosya boyutunu azaltıp tekrar deneyin.');
-  }
+  storageAdapter.setSync(key, value);
 }
 
 export class VaultStorageService {

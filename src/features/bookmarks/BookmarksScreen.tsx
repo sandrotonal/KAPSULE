@@ -4,6 +4,7 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { BookmarkItem } from '../../types';
 import { BookmarkDetailModal } from './BookmarkDetailModal';
@@ -62,16 +63,13 @@ export const BookmarksScreen: React.FC<BookmarksScreenProps> = ({
       </div>
 
       {filtered.length === 0 ? (
-        <div className="py-16 text-center space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-surface border border-border flex items-center justify-center mx-auto">
-            <Bookmark className="w-5 h-5 text-secondary" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-primary">Henüz yer imi yok.</p>
-            <p className="text-xs text-secondary mt-1">Önemli kaynakları, resmi portalları veya referans linklerini saklayın.</p>
-          </div>
-          <Button variant="secondary" size="sm" onClick={onOpenAdd}>Yer imi ekle</Button>
-        </div>
+        <EmptyState
+          icon={<Bookmark className="w-8 h-8 text-secondary opacity-60" />}
+          title="Henüz yer imi yok"
+          description="Önemli kaynakları, resmi portalları veya referans linklerini güvenle saklayın."
+          actionLabel="Yer imi ekle"
+          onAction={onOpenAdd}
+        />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((bm, i) => (

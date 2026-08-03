@@ -11,8 +11,8 @@ export default {
         background: "var(--background)",
         surface: "var(--surface)",
         "surface-elevated": "var(--surface-elevated)",
-        border: "var(--border)",
-        "border-subtle": "var(--border-subtle)",
+        border: "rgb(var(--border) / <alpha-value>)",
+        "border-subtle": "rgb(var(--border-subtle) / <alpha-value>)",
         primary: {
           DEFAULT: "var(--text-primary)",
           foreground: "var(--background)",
@@ -22,9 +22,9 @@ export default {
           light: "#9B9B9B",
         },
         accent: {
-          DEFAULT: "#4F46E5",
-          muted: "#EEF2FF",
-          soft: "#F5F3FF",
+          DEFAULT: "var(--accent)",
+          muted: "color-mix(in srgb, var(--accent) 8%, transparent)",
+          soft: "color-mix(in srgb, var(--accent) 12%, transparent)",
           foreground: "#FFFFFF",
         },
         success: {
@@ -68,7 +68,7 @@ export default {
         display: [
           "Inter",
           "-apple-system",
-          "BlinkMacSystemFont", 
+          "BlinkMacSystemFont",
           "SF Pro Display",
           "sans-serif"
         ],
@@ -98,8 +98,8 @@ export default {
         "card": "0 2px 8px -2px rgba(0,0,0,0.06), 0 1px 3px -1px rgba(0,0,0,0.04)",
         "card-hover": "0 8px 24px -6px rgba(0,0,0,0.10), 0 2px 8px -2px rgba(0,0,0,0.06)",
         "modal": "0 24px 64px -12px rgba(0,0,0,0.18), 0 8px 24px -6px rgba(0,0,0,0.10)",
-        "sidebar": "1px 0 0 0 #E8E8E8",
-        "focus": "0 0 0 3px rgba(79,70,229,0.12)",
+        "sidebar": "1px 0 0 0 rgb(var(--border) / 0.5)",
+        "focus": "0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent)",
       },
       spacing: {
         "18": "4.5rem",

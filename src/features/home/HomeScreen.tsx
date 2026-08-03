@@ -19,6 +19,7 @@ import { formatCurrency, cn } from '../../lib/utils';
 import { motion } from 'framer-motion';
 import { WalletCard } from '../../components/ui/WalletCard';
 import { TiltCard } from '../../components/ui/TiltCard';
+import { staggerContainer, staggerItem } from '../../lib/motion';
 
 export interface HomeScreenProps {
   onNavigateToTab: (tab: ActiveTab, linkedItemId?: string) => void;
@@ -27,14 +28,7 @@ export interface HomeScreenProps {
   onOpenQuickAddFor: (category: VaultCategory) => void;
 }
 
-const stagger = {
-  container: { transition: { staggerChildren: 0.06 } },
-  item: {
-    initial: { opacity: 0, y: 14 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
-  },
-};
+
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onNavigateToTab,
@@ -130,10 +124,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       className="space-y-10"
       initial="initial"
       animate="animate"
-      variants={stagger.container}
+      variants={staggerContainer}
     >
       {/* Greeting */}
-      <motion.div variants={stagger.item} className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-2">
+      <motion.div variants={staggerItem} className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-2">
         <div className="space-y-2">
           <p className="text-[13px] text-secondary font-medium tracking-wide uppercase opacity-70">{dateStr}</p>
           <h1 className="text-4xl sm:text-5xl font-bold text-primary tracking-tight leading-[1.1]">
@@ -151,7 +145,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       </motion.div>
 
       {/* Vault Insights — Premium Stats */}
-      <motion.div variants={stagger.item} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+      <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
         <div className="lg:col-span-1 flex flex-col gap-6 order-2 lg:order-1">
           <TiltCard className="rounded-3xl" intensity={8}>
             <Card className="bg-primary dark:bg-accent text-primary-foreground border-none overflow-hidden relative group p-8 min-h-[160px] flex flex-col justify-between shadow-2xl shadow-primary/20">
@@ -205,7 +199,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       </motion.div>
 
       {/* Collections — Minimal Modern Grid */}
-      <motion.div variants={stagger.item} className="space-y-5">
+      <motion.div variants={staggerItem} className="space-y-5">
         <header className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-primary tracking-tight">Koleksiyonlar</h2>
@@ -260,7 +254,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       </motion.div>
 
       {/* Archive Summary */}
-      <motion.div variants={stagger.item} className="pb-2">
+      <motion.div variants={staggerItem} className="pb-2">
         <Card className="p-5 bg-background border-border" interactive onClick={() => onNavigateToTab('timeline')}>
           <div className="flex items-center justify-between gap-4">
             <div>
