@@ -84,7 +84,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
     return out.slice(0, 12);
   }, [query, allData]);
 
-  const QUICK_SEARCHES = ['Pasaport', 'Sigorta', 'Apple', 'Garanti', 'Abonelik', 'Kira'];
+  const QUICK_SEARCHES = ['Belge', 'Fiş', 'Garanti', 'Abonelik', 'Not', 'Yer imi'];
 
   const groupedResults = useMemo(() => {
     return results.reduce((groups, result) => {
@@ -135,7 +135,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleSearchKeyDown}
-              placeholder="Pasaport, garanti, fiş veya not ara..."
+              placeholder="Belge, fiş, garanti veya not ara..."
               aria-label="Kasada ara"
               aria-activedescendant={results.length > 0 ? `search-result-${results[selectedIndex]?.id}` : undefined}
               aria-controls="search-results"

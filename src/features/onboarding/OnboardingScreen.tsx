@@ -10,9 +10,6 @@ import {
   CreditCard,
   Lock,
   ChevronRight,
-  Sparkles,
-  Shield,
-  Key,
 } from 'lucide-react';
 
 /* ─── Types ─── */
@@ -25,34 +22,6 @@ interface SlideConfig {
   description: string;
   hero: React.ReactNode;
 }
-
-/* ─── SVG Logotypes ─── */
-const AppleIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.32c.67-.82 1.12-1.96.99-3.1-.96.04-2.13.64-2.81 1.44-.61.71-1.14 1.87-.99 3.01 1.08.08 2.19-.53 2.81-1.35z" />
-  </svg>
-);
-
-const GoogleIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
-  <svg className={className} viewBox="0 0 24 24">
-    <path
-      fill="#4285F4"
-      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
-    />
-    <path
-      fill="#34A853"
-      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.31 24 12 24z"
-    />
-    <path
-      fill="#FBBC05"
-      d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.21 0 10.05 0 12s.47 3.79 1.29 5.42l3.99-3.15z"
-    />
-    <path
-      fill="#EA4335"
-      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-    />
-  </svg>
-);
 
 /* ─── Floating Container ─── */
 const FloatingShape: React.FC<{
@@ -76,98 +45,117 @@ const FloatingShape: React.FC<{
   </motion.div>
 );
 
-/* ─── Hero 1: Redesigned Sculptural Vault Passbook Composition ─── */
-const HeroComposition: React.FC = () => (
-  <div className="relative w-full h-[360px] sm:h-[420px] flex items-center justify-center overflow-visible">
-    {/* Background Glow Ring */}
-    <div className="absolute w-[280px] h-[280px] rounded-full bg-neutral-200/40 dark:bg-neutral-800/30 blur-3xl -z-10" />
+const VAULT_PREVIEW_ITEMS = [
+  { label: 'Belge', icon: FileText },
+  { label: 'Fiş', icon: Receipt },
+  { label: 'Garanti', icon: ShieldCheck },
+  { label: 'Abonelik', icon: CreditCard },
+];
 
-    {/* Layer 1: Back Card - Passport Vault Badge */}
-    <FloatingShape className="absolute top-2 left-6 sm:left-14 z-10" delay={0.4} duration={7} y={8}>
-      <div className="w-[180px] sm:w-[200px] h-[120px] rounded-3xl bg-neutral-900 text-white p-5 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.3)] rotate-[-12deg] border border-neutral-800 flex flex-col justify-between backdrop-blur-md">
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase">PASSPORT // VAULT</span>
-          <div className="w-5 h-5 rounded-full border border-neutral-700 flex items-center justify-center text-[10px]"></div>
-        </div>
-        <div>
-          <p className="text-xs font-semibold tracking-tight text-neutral-200">Republic Passport</p>
-          <p className="text-[10px] text-neutral-500 font-mono mt-0.5">TR-98402941-B</p>
-        </div>
-        <div className="flex items-center justify-between border-t border-neutral-800/80 pt-2">
-          <span className="text-[9px] text-emerald-400 font-mono flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> ENCRYPTED
-          </span>
-          <span className="text-[9px] text-neutral-500 font-mono">2032 EXP</span>
-        </div>
-      </div>
-    </FloatingShape>
+/* ─── Hero 1: Minimal Vault Mechanism ─── */
+const HeroComposition: React.FC = () => {
+  const [activeItem, setActiveItem] = useState(0);
 
-    {/* Layer 2: Right Card - Insurance / Titanium Card */}
-    <FloatingShape className="absolute top-10 right-4 sm:right-12 z-20" delay={1.2} duration={8} y={12}>
-      <div className="w-[170px] sm:w-[190px] h-[130px] rounded-3xl bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 p-5 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.15)] rotate-[10deg] border border-neutral-200 dark:border-neutral-700/80 flex flex-col justify-between">
-        <div className="flex items-center justify-between">
-          <div className="w-6 h-4 rounded-md bg-amber-400/80 dark:bg-amber-500/80 border border-amber-300 dark:border-amber-600 shadow-sm" />
-          <span className="text-[9px] font-mono font-bold tracking-wider text-neutral-400 uppercase">POLICY</span>
-        </div>
-        <div className="space-y-1">
-          <p className="text-xs font-bold tracking-tight">Kapsule Total Health</p>
-          <p className="text-[10px] text-neutral-400 dark:text-neutral-500">Coverage: ₺500.000</p>
-        </div>
-        <div className="flex items-center justify-between text-[10px] text-neutral-400 dark:text-neutral-500 font-mono">
-          <span>**** 8841</span>
-          <Shield className="w-3.5 h-3.5 text-neutral-400" />
-        </div>
-      </div>
-    </FloatingShape>
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setActiveItem((current) => (current + 1) % VAULT_PREVIEW_ITEMS.length);
+    }, 1800);
+    return () => window.clearInterval(interval);
+  }, []);
 
-    {/* Layer 3: Central Hero Floating Vault Capsule Card */}
-    <FloatingShape className="absolute z-30" delay={0} duration={6} y={6}>
-      <div className="w-[220px] sm:w-[240px] h-[160px] rounded-[32px] bg-white dark:bg-neutral-900 border border-neutral-200/90 dark:border-neutral-700/90 p-6 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.2)] flex flex-col justify-between relative overflow-hidden group">
-        {/* Decorative inner light effect */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-neutral-100 dark:bg-neutral-800/40 rounded-full blur-2xl -mr-10 -mt-10" />
+  return (
+    <div className="relative w-full h-[350px] sm:h-[410px] flex items-center justify-center overflow-visible" aria-label="Kapsule kasa açılış animasyonu">
+      <div className="absolute h-[286px] w-[286px] rounded-full bg-[radial-gradient(circle,rgba(23,23,23,0.08)_0%,rgba(245,245,245,0)_68%)] dark:bg-[radial-gradient(circle,rgba(255,255,255,0.1)_0%,rgba(10,10,10,0)_68%)]" />
 
-        <div className="flex items-center justify-between relative z-10">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-surface border border-border flex items-center justify-center p-1 shadow-sm overflow-hidden">
-              <img src="/src/assets/logo.png" alt="Kapsule Logo" className="w-full h-full object-contain dark:invert" />
-            </div>
-            <div>
-              <p className="text-xs font-bold tracking-tight text-neutral-900 dark:text-neutral-100">Kapsule Vault</p>
-              <p className="text-[9px] font-medium text-neutral-400">Master Record</p>
-            </div>
-          </div>
-          <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+      <motion.div
+        className="relative h-[262px] w-[262px] rounded-full"
+        animate={{ rotate: [0, 0.8, -0.8, 0] }}
+        transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        {Array.from({ length: 48 }).map((_, index) => (
+          <span
+            key={index}
+            className={`absolute left-1/2 top-1/2 h-3 w-px rounded-full ${
+              index % 4 === 0 ? 'bg-neutral-400 dark:bg-neutral-600' : 'bg-neutral-200 dark:bg-neutral-800'
+            }`}
+            style={{ transform: `rotate(${index * 7.5}deg) translateY(-128px)` }}
+          />
+        ))}
+
+        <motion.div
+          className="absolute inset-5 rounded-full border border-neutral-300 dark:border-neutral-800"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 42, repeat: Infinity, ease: 'linear' }}
+        />
+        <motion.div
+          className="absolute inset-12 rounded-full border border-dashed border-neutral-300/80 dark:border-neutral-700"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 36, repeat: Infinity, ease: 'linear' }}
+        />
+
+        <div className="absolute inset-[76px] rounded-full bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 shadow-[0_30px_70px_-28px_rgba(0,0,0,0.7)] flex items-center justify-center">
+          <motion.div
+            className="absolute inset-3 rounded-full border border-white/10 dark:border-neutral-950/10"
+            animate={{ scale: [1, 1.04, 1], opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <img src="/src/assets/logo.png" alt="Kapsule Logo" className="relative h-12 w-12 object-contain dark:invert" />
         </div>
 
-        <div className="relative z-10 my-1 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">Saklanan Öğeler</span>
-            <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 font-mono">148 Öğe</span>
-          </div>
-          <div className="w-full bg-neutral-100 dark:bg-neutral-800 h-2 rounded-full overflow-hidden p-0.5 border border-neutral-200/50 dark:border-neutral-700/50">
-            <div className="w-[85%] h-full bg-neutral-900 dark:bg-neutral-100 rounded-full" />
-          </div>
-        </div>
+        {VAULT_PREVIEW_ITEMS.map((item, index) => {
+          const Icon = item.icon;
+          const isActive = index === activeItem;
+          const angle = index * 90 - 90;
+          const radius = 104;
+          const x = Math.cos((angle * Math.PI) / 180) * radius;
+          const y = Math.sin((angle * Math.PI) / 180) * radius;
 
-        <div className="flex items-center justify-between relative z-10 text-[10px] text-neutral-400 font-mono">
-          <span className="flex items-center gap-1"><Key className="w-3 h-3 text-neutral-400" /> End-to-End</span>
-          <span className="text-neutral-900 dark:text-neutral-100 font-semibold">AES-256</span>
-        </div>
-      </div>
-    </FloatingShape>
+          return (
+            <motion.button
+              key={item.label}
+              type="button"
+              aria-label={item.label}
+              aria-pressed={isActive}
+              onClick={() => setActiveItem(index)}
+              className={`absolute left-1/2 top-1/2 h-12 w-12 rounded-full border flex items-center justify-center transition-colors ${
+                isActive
+                  ? 'border-neutral-950 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950'
+                  : 'border-neutral-200 bg-white text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400'
+              }`}
+              style={{ x: x - 24, y: y - 24 }}
+              animate={{
+                scale: isActive ? 1.16 : 0.92,
+                opacity: isActive ? 1 : 0.72,
+              }}
+              transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Icon className="w-4 h-4" />
+            </motion.button>
+          );
+        })}
 
-    {/* Layer 4: Bottom Left Floating Note Pill */}
-    <FloatingShape className="absolute bottom-4 left-4 sm:left-10 z-40" delay={1.8} duration={7.5} y={10}>
-      <div className="px-4 py-2.5 rounded-full bg-amber-50 dark:bg-amber-950/80 border border-amber-200/80 dark:border-amber-700/50 text-amber-900 dark:text-amber-200 text-xs font-semibold shadow-lg flex items-center gap-2 backdrop-blur-md rotate-[-5deg]">
-        <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-        <span>Aklındaki her not güvende</span>
-      </div>
-    </FloatingShape>
-  </div>
-);
+        <div className="absolute -bottom-7 left-1/2 flex -translate-x-1/2 items-center gap-2">
+          {VAULT_PREVIEW_ITEMS.map((item, index) => (
+            <button
+              key={item.label}
+              type="button"
+              aria-label={`${item.label} göstergesi`}
+              onClick={() => setActiveItem(index)}
+              className={`h-2 rounded-full transition-all ${
+                index === activeItem
+                  ? 'w-7 bg-neutral-950 dark:bg-white'
+                  : 'w-2 bg-neutral-200 dark:bg-neutral-800'
+              }`}
+            />
+          ))}
+        </div>
+      </motion.div>
+    </div>
+  );
+};
 
 /* ─── Hero 2: Search Experience (Unchanged as requested) ─── */
-const SEARCH_SUGGESTIONS = ['Pasaport', 'Apple fişi', 'Ev sigortası', 'MacBook garanti'];
+const SEARCH_SUGGESTIONS = ['Belge başlığı', 'Satıcı adı', 'Garanti kaydı', 'Not içeriği'];
 
 const HeroSearch: React.FC = () => {
   const [activeSuggestion, setActiveSuggestion] = useState(0);
@@ -332,8 +320,8 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 
   const slides: SlideConfig[] = [
     {
-      headline: ['Everything important.', 'One place.'],
-      description: 'Hayatındaki önemli her şeyi tek bir dijital kasada güvenle sakla.',
+      headline: ['Her önemli şey.', 'Tek kasada.'],
+      description: 'Belgelerini, fişlerini ve hatırlatmalarını sakin bir düzende tut.',
       hero: <HeroComposition />,
     },
     {
@@ -343,7 +331,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
     },
     {
       headline: ['Your digital vault.', 'Ready when you are.'],
-      description: 'Her şey düzenli, uçtan uca şifreli ve dilediğin an hazır.',
+      description: 'Her şey düzenli; kayıtlarını dilediğin an ekleyip bulabilirsin.',
       hero: <HeroVault />,
     },
   ];
@@ -367,11 +355,11 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
         transition={{ duration: 0.8, delay: 0.2 }}
         className="flex items-center justify-center pt-10 pb-2"
       >
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-2xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 flex items-center justify-center p-1.5 shadow-sm overflow-hidden">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-[22px] bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 flex items-center justify-center p-2 shadow-sm overflow-hidden">
             <img src="/src/assets/logo.png" alt="Kapsule" className="w-full h-full object-contain dark:invert" />
           </div>
-          <span className="text-sm font-bold text-neutral-900 dark:text-neutral-100 tracking-wider uppercase">
+          <span className="text-base font-bold text-neutral-900 dark:text-neutral-100 tracking-wider uppercase">
             Kapsule
           </span>
         </div>
@@ -421,30 +409,11 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
               transition={{ duration: 0.4 }}
               className="w-full flex flex-col gap-3"
             >
-              {/* Apple Auth */}
               <button
                 onClick={onComplete}
                 className="w-full h-14 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-base font-bold tracking-tight hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.3)]"
               >
-                <AppleIcon className="w-5 h-5" />
-                <span>Apple ile Devam Et</span>
-              </button>
-
-              {/* Google Auth */}
-              <button
-                onClick={onComplete}
-                className="w-full h-14 rounded-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700/80 text-neutral-900 dark:text-neutral-100 text-base font-bold tracking-tight hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.08)]"
-              >
-                <GoogleIcon className="w-5 h-5" />
-                <span>Google ile Devam Et</span>
-              </button>
-
-              {/* Email / Start option */}
-              <button
-                onClick={onComplete}
-                className="w-full text-center text-xs font-bold text-neutral-400 dark:text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 py-1 transition-colors"
-              >
-                E-posta ile Hesap Oluştur ya da Giriş Yap
+                <span>Kasamı Oluştur</span>
               </button>
             </motion.div>
           ) : (

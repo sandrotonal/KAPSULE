@@ -3,7 +3,7 @@ import { FileText, Star, Download, Trash2, X, Sparkles, Tag } from 'lucide-react
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { DocumentItem } from '../../types';
+import { DocumentItem, DOCUMENT_CATEGORY_LABELS } from '../../types';
 import { formatDate } from '../../lib/utils';
 import { useToast } from '../../components/ui/Toast';
 
@@ -26,18 +26,39 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
 
   if (!document) return null;
 
+  const handleDownload = () => {
+    if (!document.previewUrl) {
+      showToast('Bu belge için indirilebilir dosya bulunamadı.');
+      return;
+    }
+    const extension = document.fileType === 'img' ? 'png' : document.fileType;
+    const link = window.document.createElement('a');
+    link.href = document.previewUrl;
+    link.download = `${document.title}.${extension}`;
+    link.click();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title={document.title}
-      subtitle={`${document.category} · ${formatDate(document.createdAt)} tarihinde eklendi`}
+      subtitle={`${DOCUMENT_CATEGORY_LABELS[document.category]} · ${formatDate(document.createdAt)} tarihinde eklendi`}
       maxWidth="lg"
     >
       <div className="space-y-5">
         {/* Preview */}
         <div className="w-full h-52 sm:h-64 rounded-xl overflow-hidden border border-border bg-surface">
-          <img src={document.previewUrl} alt={document.title} className="w-full h-full object-cover" />
+          {document.fileType === 'img' && document.previewUrl ? (
+            <img src={document.previewUrl} alt={document.title} className="w-full h-full object-cover" />
+          ) : document.fileType === 'pdf' && document.previewUrl ? (
+            <iframe title={`${document.title} önizlemesi`} src={document.previewUrl} className="w-full h-full" />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-secondary">
+              <FileText className="w-10 h-10" />
+              <p className="text-sm font-medium">Bu dosya türü önizlenemiyor.</p>
+            </div>
+          )}
         </div>
 
         {/* Metadata row */}
@@ -114,6 +135,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
               variant="primary"
               size="sm"
               icon={<Download className="w-3.5 h-3.5" />}
+              onClick={handleDownload}
             >
               İndir
             </Button>

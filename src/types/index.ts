@@ -13,7 +13,7 @@ export interface DocumentItem {
   category: 'Personal' | 'Finance' | 'Insurance' | 'Vehicle' | 'Identity' | 'Health' | 'Property' | 'Work';
   fileType: 'pdf' | 'img' | 'doc';
   fileSize: string;
-  previewUrl: string;
+  previewUrl?: string;
   tags: string[];
   ocrText?: string;
   description?: string;
@@ -22,6 +22,17 @@ export interface DocumentItem {
   isFavorite: boolean;
   isArchived: boolean;
 }
+
+export const DOCUMENT_CATEGORY_LABELS: Record<DocumentItem['category'], string> = {
+  Personal: 'Kişisel',
+  Finance: 'Finans',
+  Insurance: 'Sigorta',
+  Vehicle: 'Araç',
+  Identity: 'Kimlik',
+  Health: 'Sağlık',
+  Property: 'Mülk',
+  Work: 'İş',
+};
 
 export interface ReceiptItem {
   id: string;
@@ -116,7 +127,6 @@ export interface VaultSettings {
   notifications: boolean;
   autoLock: boolean;
   passcode?: string;
-  isLocked?: boolean;
 }
 
 export interface VaultStats {
@@ -128,4 +138,3 @@ export interface VaultStats {
   documentCount: number;
   currencyDistribution: Record<string, number>;
 }
-

@@ -64,6 +64,12 @@ const SettingsSection: React.FC<{ title?: string; children: React.ReactNode }> =
   </div>
 );
 
+const getTodayISO = () => {
+  const now = new Date();
+  const timezoneOffsetMs = now.getTimezoneOffset() * 60 * 1000;
+  return new Date(now.getTime() - timezoneOffsetMs).toISOString().split('T')[0];
+};
+
 export interface SettingsScreenProps {
   onSettingsChange?: () => void;
   onLock?: () => void;
@@ -76,6 +82,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const [settings, setSettingsState] = useState(() => VaultStorageService.getSettings());
   const [showPasscodeModal, setShowPasscodeModal] = useState(false);
   const [newPasscode, setNewPasscode] = useState('');
+  const [enableLockAfterPasscode, setEnableLockAfterPasscode] = useState(false);
   const { showToast } = useToast();
 
   const updateSetting = (key: 'darkMode' | 'notifications' | 'autoLock', value: boolean) => {
@@ -84,6 +91,21 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     if (onSettingsChange) {
       onSettingsChange();
     }
+  };
+
+  const handleAutoLockChange = () => {
+    if (settings.autoLock) {
+      updateSetting('autoLock', false);
+      return;
+    }
+
+    if (!settings.passcode) {
+      setEnableLockAfterPasscode(true);
+      setShowPasscodeModal(true);
+      return;
+    }
+
+    updateSetting('autoLock', true);
   };
 
   const handleExport = () => {
@@ -101,15 +123,15 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `kapsule_backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `kapsule_backup_${getTodayISO()}.json`;
     a.click();
     URL.revokeObjectURL(url);
     showToast('Yedek indirildi.');
   };
 
   const handleReset = () => {
-    if (confirm('Kasayı demo verilerine sıfırlamak istiyor musunuz? Bu işlem geri alınamaz.')) {
-      VaultStorageService.resetVault();
+    if (confirm('Kasadaki tüm kayıtları silmek istiyor musunuz? Bu işlem geri alınamaz.')) {
+      VaultStorageService.clearVaultData();
       window.location.reload();
     }
   };
@@ -132,7 +154,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           <p className="text-sm text-secondary">{settings.profileEmail || 'Kişisel kasa'}</p>
         </div>
         <div className="flex items-center gap-2">
-          {onLock && (
+          {onLock && settings.passcode && (
             <Button
               variant="ghost"
               size="xs"
@@ -142,7 +164,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               Kilitle
             </Button>
           )}
-          <Badge variant="success" size="sm" dot>Aktif</Badge>
+          <Badge variant="muted" size="sm">Yerel kasa</Badge>
         </div>
       </div>
 
@@ -172,7 +194,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           icon={<Lock className="w-4 h-4" />}
           label="Açılışta kasayı kilitle"
           description="Kapsule açılırken 4 haneli şifre iste"
-          right={<Toggle checked={settings.autoLock} onChange={() => updateSetting('autoLock', !settings.autoLock)} id="autolock" />}
+          right={<Toggle checked={settings.autoLock} onChange={handleAutoLockChange} id="autolock" />}
         />
         <SettingsRow
           icon={<Lock className="w-4 h-4" />}
@@ -192,8 +214,8 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         />
         <SettingsRow
           icon={<RefreshCw className="w-4 h-4" />}
-          label="Demo verilerine sıfırla"
-          description="Başlangıç örnek kayıtlarını geri yükle"
+          label="Tüm kayıtları sil"
+          description="Kasadaki kayıtları kalıcı olarak kaldır"
           danger
           onClick={handleReset}
         />
@@ -208,23 +230,28 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             <input
               type="password"
               maxLength={4}
-              placeholder="5678"
+              placeholder="••••"
               aria-label="Yeni 4 haneli şifre"
               value={newPasscode}
               onChange={(e) => setNewPasscode(e.target.value.replace(/\D/g, '').slice(0, 4))}
               className="w-full text-center text-2xl tracking-[0.5em] font-mono py-3 bg-background border border-border rounded-xl text-primary focus:outline-none focus:border-accent"
             />
             <div className="flex items-center justify-end gap-2 pt-2">
-              <Button variant="ghost" size="sm" onClick={() => setShowPasscodeModal(false)}>İptal</Button>
+              <Button variant="ghost" size="sm" onClick={() => { setShowPasscodeModal(false); setEnableLockAfterPasscode(false); }}>İptal</Button>
               <Button
                 variant="primary"
                 size="sm"
                 disabled={newPasscode.length !== 4}
                 onClick={() => {
-                  VaultStorageService.saveSettings({ passcode: newPasscode });
-                  setSettingsState(prev => ({ ...prev, passcode: newPasscode }));
+                  const updated = VaultStorageService.saveSettings({
+                    passcode: newPasscode,
+                    autoLock: enableLockAfterPasscode || settings.autoLock,
+                  });
+                  setSettingsState(updated);
+                  onSettingsChange?.();
                   setShowPasscodeModal(false);
                   setNewPasscode('');
+                  setEnableLockAfterPasscode(false);
                   showToast('Şifre güncellendi.');
                 }}
               >

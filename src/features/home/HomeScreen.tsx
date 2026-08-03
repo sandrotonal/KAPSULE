@@ -73,7 +73,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       label: 'Belgeler',
       count: docs.length,
       icon: <FileText className="w-4 h-4" />,
-      desc: 'Pasaport, poliçe, kontrat',
+      desc: 'Dosya ve evrak kayıtları',
       color: 'from-blue-500/20 to-blue-600/5',
     },
     {
@@ -209,7 +209,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         <header className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-primary tracking-tight">Koleksiyonlar</h2>
-            <p className="text-xs text-secondary/60 mt-0.5">{totalItems} öğe güvende saklanıyor</p>
+            <p className="text-xs text-secondary/60 mt-0.5">{totalItems} kayıt</p>
           </div>
           <button
             onClick={onOpenQuickAdd}
@@ -266,7 +266,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <div>
               <p className="text-xs font-semibold text-secondary uppercase tracking-[1.4px]">Arşiv Özeti</p>
               <h3 className="text-lg font-semibold text-primary mt-1">
-                Toplam {totalItems} öğe güvenle saklanıyor
+                Toplam {totalItems} kayıt
               </h3>
             </div>
             <ArrowRight className="w-4 h-4 text-secondary" />

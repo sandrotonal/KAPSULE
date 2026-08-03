@@ -5,12 +5,20 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { VaultStorageService } from '../../services/vaultStorage';
-import { DocumentItem } from '../../types';
+import { DocumentItem, DOCUMENT_CATEGORY_LABELS } from '../../types';
 import { formatDate } from '../../lib/utils';
 import { DocumentDetailModal } from './DocumentDetailModal';
 import { motion } from 'framer-motion';
 
-const CATEGORIES = ['Hepsi', 'Kimlik', 'Mülk', 'Araç', 'Sağlık', 'Finans', 'Sigorta'] as const;
+const CATEGORIES = [
+  { value: 'all', label: 'Hepsi' },
+  { value: 'Identity', label: 'Kimlik' },
+  { value: 'Property', label: 'Mülk' },
+  { value: 'Vehicle', label: 'Araç' },
+  { value: 'Health', label: 'Sağlık' },
+  { value: 'Finance', label: 'Finans' },
+  { value: 'Insurance', label: 'Sigorta' },
+] as const;
 
 export interface DocumentsScreenProps {
   onOpenAdd: () => void;
@@ -20,7 +28,7 @@ export interface DocumentsScreenProps {
 export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, selectedItemId }) => {
   const [documents, setDocuments] = useState<DocumentItem[]>(() => VaultStorageService.getDocuments());
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('Hepsi');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedDoc, setSelectedDoc] = useState<DocumentItem | null>(() => {
     if (selectedItemId) {
       const list = VaultStorageService.getDocuments();
@@ -32,7 +40,7 @@ export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, sel
   const filtered = documents.filter(doc => {
     const q = searchQuery.toLowerCase();
     const matchQ = !q || doc.title.toLowerCase().includes(q) || doc.tags.some(t => t.toLowerCase().includes(q));
-    const matchC = selectedCategory === 'Hepsi' || doc.category === selectedCategory;
+    const matchC = selectedCategory === 'all' || doc.category === selectedCategory;
     return matchQ && matchC && !doc.isArchived;
   });
 
@@ -51,7 +59,7 @@ export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, sel
   };
 
   const totalSize = documents.reduce((acc, d) => {
-    const size = parseFloat(d.fileSize) || 0.5; // fallback for mock
+    const size = parseFloat(d.fileSize) || 0;
     return acc + size;
   }, 0);
 
@@ -62,7 +70,7 @@ export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, sel
         <div className="space-y-1">
           <h1 className="text-4xl font-bold text-primary tracking-tight">Belgeler</h1>
           <p className="text-lg text-secondary font-medium">
-            Arşivinizde {documents.filter(d => !d.isArchived).length} güvenli öğe var
+            Arşivinizde {documents.filter(d => !d.isArchived).length} kayıt var
           </p>
         </div>
         <Button variant="primary" size="md" className="rounded-full px-6" icon={<Plus className="w-4 h-4" />} onClick={onOpenAdd}>
@@ -109,15 +117,15 @@ export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, sel
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
           {CATEGORIES.map(cat => (
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
+              key={cat.value}
+              onClick={() => setSelectedCategory(cat.value)}
               className={`shrink-0 px-5 py-2 rounded-full text-[13px] font-bold transition-all duration-300 ${
-                selectedCategory === cat
+                selectedCategory === cat.value
                   ? 'bg-primary text-primary-foreground shadow-soft'
                   : 'bg-surface/50 text-secondary border border-border/60 hover:text-primary hover:bg-surface-elevated'
               }`}
             >
-              {cat === 'Hepsi' ? 'Tüm Belgeler' : cat}
+              {cat.value === 'all' ? 'Tüm Belgeler' : cat.label}
             </button>
           ))}
         </div>
@@ -177,7 +185,7 @@ export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, sel
                   <div>
                     <p className="text-base font-bold text-primary line-clamp-1 tracking-tight group-hover:text-accent transition-colors">{doc.title}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <Badge variant="muted" size="xs" className="opacity-70">{doc.category}</Badge>
+                      <Badge variant="muted" size="xs" className="opacity-70">{DOCUMENT_CATEGORY_LABELS[doc.category]}</Badge>
                       <span className="text-[11px] font-bold text-secondary uppercase tracking-widest opacity-40">{doc.fileType} · {doc.fileSize}</span>
                     </div>
                   </div>

@@ -10,17 +10,6 @@ import {
   VaultSettings,
   VaultStats
 } from '../types';
-import {
-  INITIAL_DOCUMENTS,
-  INITIAL_RECEIPTS,
-  INITIAL_SUBSCRIPTIONS,
-  INITIAL_WARRANTIES,
-  INITIAL_NOTES,
-  INITIAL_BOOKMARKS,
-  INITIAL_TIMELINE,
-  INITIAL_SUGGESTIONS
-} from './mockData';
-
 const STORAGE_KEYS = {
   DOCUMENTS: 'kapsule_documents',
   RECEIPTS: 'kapsule_receipts',
@@ -31,6 +20,25 @@ const STORAGE_KEYS = {
   TIMELINE: 'kapsule_timeline',
   SETTINGS: 'kapsule_settings',
 };
+
+const LEGACY_DEMO_MIGRATION_KEY = 'kapsule_demo_content_removed_v1';
+const LEGACY_DEMO_ID = /^(doc|rec|sub|war|note|bm|tl)-[1-9]\d*$/;
+
+function createId(prefix: string): string {
+  return `${prefix}-${crypto.randomUUID()}`;
+}
+
+function todayISO(): string {
+  const now = new Date();
+  const timezoneOffsetMs = now.getTimezoneOffset() * 60 * 1000;
+  return new Date(now.getTime() - timezoneOffsetMs).toISOString().split('T')[0];
+}
+
+function daysUntil(date: string): number {
+  const today = new Date(`${todayISO()}T00:00:00`);
+  const target = new Date(`${date}T00:00:00`);
+  return Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+}
 
 function getStored<T>(key: string, initial: T): T {
   try {
@@ -47,18 +55,46 @@ function setStored<T>(key: string, value: T): void {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
     console.error(`Error writing ${key} to localStorage`, error);
+    throw new Error('Kayıt tarayıcı depolamasına yazılamadı. Dosya boyutunu azaltıp tekrar deneyin.');
   }
 }
 
 export class VaultStorageService {
+  private static removeLegacyDemoContent(): void {
+    try {
+      if (localStorage.getItem(LEGACY_DEMO_MIGRATION_KEY)) return;
+
+      Object.values(STORAGE_KEYS).forEach((key) => {
+        if (key === STORAGE_KEYS.SETTINGS) return;
+        const items = getStored<unknown[]>(key, []);
+        const userItems = items.filter((item) => {
+          return !item || typeof item !== 'object' || !('id' in item) || typeof item.id !== 'string' || !LEGACY_DEMO_ID.test(item.id);
+        });
+        setStored(key, userItems);
+      });
+
+      const settings = getStored<VaultSettings>(STORAGE_KEYS.SETTINGS, {} as VaultSettings);
+      if (settings.profileName === 'Ali Can') {
+        delete settings.profileName;
+        delete settings.profileEmail;
+      }
+      if (settings.passcode === '1234') delete settings.passcode;
+      setStored(STORAGE_KEYS.SETTINGS, settings);
+      localStorage.setItem(LEGACY_DEMO_MIGRATION_KEY, 'true');
+    } catch (error) {
+      console.error('Error removing legacy demo content', error);
+    }
+  }
+
   // Documents
   static getDocuments(): DocumentItem[] {
-    return getStored(STORAGE_KEYS.DOCUMENTS, INITIAL_DOCUMENTS);
+    this.removeLegacyDemoContent();
+    return getStored(STORAGE_KEYS.DOCUMENTS, []);
   }
 
   static saveDocument(doc: Omit<DocumentItem, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }): DocumentItem {
     const docs = this.getDocuments();
-    const now = new Date().toISOString().split('T')[0];
+    const now = todayISO();
     if (doc.id) {
       const index = docs.findIndex(d => d.id === doc.id);
       if (index !== -1) {
@@ -69,7 +105,7 @@ export class VaultStorageService {
     }
     const newDoc: DocumentItem = {
       ...doc,
-      id: `doc-${Date.now()}`,
+      id: createId('doc'),
       createdAt: now,
       updatedAt: now,
       isFavorite: doc.isFavorite ?? false,
@@ -104,16 +140,18 @@ export class VaultStorageService {
   static deleteDocument(id: string): void {
     const docs = this.getDocuments().filter(d => d.id !== id);
     setStored(STORAGE_KEYS.DOCUMENTS, docs);
+    this.removeTimelineEventsForItem(id);
   }
 
   // Receipts
   static getReceipts(): ReceiptItem[] {
-    return getStored(STORAGE_KEYS.RECEIPTS, INITIAL_RECEIPTS);
+    this.removeLegacyDemoContent();
+    return getStored(STORAGE_KEYS.RECEIPTS, []);
   }
 
   static saveReceipt(receipt: Omit<ReceiptItem, 'id'> & { id?: string }): ReceiptItem {
     const receipts = this.getReceipts();
-    const now = new Date().toISOString().split('T')[0];
+    const now = todayISO();
     if (receipt.id) {
       const index = receipts.findIndex(r => r.id === receipt.id);
       if (index !== -1) {
@@ -124,7 +162,7 @@ export class VaultStorageService {
     }
     const newReceipt: ReceiptItem = {
       ...receipt,
-      id: `rec-${Date.now()}`,
+      id: createId('rec'),
     };
     receipts.unshift(newReceipt);
     setStored(STORAGE_KEYS.RECEIPTS, receipts);
@@ -144,11 +182,17 @@ export class VaultStorageService {
   static deleteReceipt(id: string): void {
     const receipts = this.getReceipts().filter(r => r.id !== id);
     setStored(STORAGE_KEYS.RECEIPTS, receipts);
+    const warranties = this.getWarranties().map((warranty) => (
+      warranty.receiptId === id ? { ...warranty, receiptId: undefined } : warranty
+    ));
+    setStored(STORAGE_KEYS.WARRANTIES, warranties);
+    this.removeTimelineEventsForItem(id);
   }
 
   // Subscriptions
   static getSubscriptions(): SubscriptionItem[] {
-    return getStored(STORAGE_KEYS.SUBSCRIPTIONS, INITIAL_SUBSCRIPTIONS);
+    this.removeLegacyDemoContent();
+    return getStored(STORAGE_KEYS.SUBSCRIPTIONS, []);
   }
 
   static saveSubscription(sub: Omit<SubscriptionItem, 'id'> & { id?: string }): SubscriptionItem {
@@ -163,21 +207,41 @@ export class VaultStorageService {
     }
     const newSub: SubscriptionItem = {
       ...sub,
-      id: `sub-${Date.now()}`,
+      id: createId('sub'),
     };
     subs.unshift(newSub);
     setStored(STORAGE_KEYS.SUBSCRIPTIONS, subs);
+    this.addTimelineEvent({
+      title: `${newSub.name} aboneliği eklendi`,
+      description: 'Abonelik kaydı kasaya eklendi.',
+      category: 'subscription',
+      date: todayISO(),
+      linkedItemId: newSub.id,
+      itemType: 'subscription',
+    });
     return newSub;
   }
 
   static deleteSubscription(id: string): void {
     const subs = this.getSubscriptions().filter(s => s.id !== id);
     setStored(STORAGE_KEYS.SUBSCRIPTIONS, subs);
+    this.removeTimelineEventsForItem(id);
+  }
+
+  static toggleSubscriptionStatus(id: string): SubscriptionItem | undefined {
+    const subscriptions = this.getSubscriptions();
+    const subscription = subscriptions.find((item) => item.id === id);
+    if (!subscription) return undefined;
+
+    subscription.status = subscription.status === 'active' ? 'paused' : 'active';
+    setStored(STORAGE_KEYS.SUBSCRIPTIONS, subscriptions);
+    return subscription;
   }
 
   // Warranties
   static getWarranties(): WarrantyItem[] {
-    return getStored(STORAGE_KEYS.WARRANTIES, INITIAL_WARRANTIES);
+    this.removeLegacyDemoContent();
+    return getStored(STORAGE_KEYS.WARRANTIES, []);
   }
 
   static saveWarranty(war: Omit<WarrantyItem, 'id'> & { id?: string }): WarrantyItem {
@@ -192,26 +256,36 @@ export class VaultStorageService {
     }
     const newWar: WarrantyItem = {
       ...war,
-      id: `war-${Date.now()}`,
+      id: createId('war'),
     };
     warranties.unshift(newWar);
     setStored(STORAGE_KEYS.WARRANTIES, warranties);
+    this.addTimelineEvent({
+      title: `${newWar.productName} garantisi eklendi`,
+      description: 'Garanti kaydı kasaya eklendi.',
+      category: 'warranty',
+      date: todayISO(),
+      linkedItemId: newWar.id,
+      itemType: 'warranty',
+    });
     return newWar;
   }
 
   static deleteWarranty(id: string): void {
     const warranties = this.getWarranties().filter(w => w.id !== id);
     setStored(STORAGE_KEYS.WARRANTIES, warranties);
+    this.removeTimelineEventsForItem(id);
   }
 
   // Notes
   static getNotes(): NoteItem[] {
-    return getStored(STORAGE_KEYS.NOTES, INITIAL_NOTES);
+    this.removeLegacyDemoContent();
+    return getStored(STORAGE_KEYS.NOTES, []);
   }
 
   static saveNote(note: Omit<NoteItem, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }): NoteItem {
     const notes = this.getNotes();
-    const now = new Date().toISOString().split('T')[0];
+    const now = todayISO();
     if (note.id) {
       const index = notes.findIndex(n => n.id === note.id);
       if (index !== -1) {
@@ -222,7 +296,7 @@ export class VaultStorageService {
     }
     const newNote: NoteItem = {
       ...note,
-      id: `note-${Date.now()}`,
+      id: createId('note'),
       createdAt: now,
       updatedAt: now,
       isPinned: note.isPinned ?? false,
@@ -235,16 +309,18 @@ export class VaultStorageService {
   static deleteNote(id: string): void {
     const notes = this.getNotes().filter(n => n.id !== id);
     setStored(STORAGE_KEYS.NOTES, notes);
+    this.removeTimelineEventsForItem(id);
   }
 
   // Bookmarks
   static getBookmarks(): BookmarkItem[] {
-    return getStored(STORAGE_KEYS.BOOKMARKS, INITIAL_BOOKMARKS);
+    this.removeLegacyDemoContent();
+    return getStored(STORAGE_KEYS.BOOKMARKS, []);
   }
 
   static saveBookmark(bm: Omit<BookmarkItem, 'id' | 'savedAt'> & { id?: string }): BookmarkItem {
     const bookmarks = this.getBookmarks();
-    const now = new Date().toISOString().split('T')[0];
+    const now = todayISO();
     if (bm.id) {
       const index = bookmarks.findIndex(b => b.id === bm.id);
       if (index !== -1) {
@@ -255,7 +331,7 @@ export class VaultStorageService {
     }
     const newBm: BookmarkItem = {
       ...bm,
-      id: `bm-${Date.now()}`,
+      id: createId('bm'),
       savedAt: now,
     };
     bookmarks.unshift(newBm);
@@ -266,18 +342,20 @@ export class VaultStorageService {
   static deleteBookmark(id: string): void {
     const bookmarks = this.getBookmarks().filter(b => b.id !== id);
     setStored(STORAGE_KEYS.BOOKMARKS, bookmarks);
+    this.removeTimelineEventsForItem(id);
   }
 
   // Timeline
   static getTimeline(): TimelineEvent[] {
-    return getStored(STORAGE_KEYS.TIMELINE, INITIAL_TIMELINE);
+    this.removeLegacyDemoContent();
+    return getStored(STORAGE_KEYS.TIMELINE, []);
   }
 
   static addTimelineEvent(event: Omit<TimelineEvent, 'id'>): TimelineEvent {
     const timeline = this.getTimeline();
     const newEvent: TimelineEvent = {
       ...event,
-      id: `tl-${Date.now()}`,
+      id: createId('tl'),
     };
     timeline.unshift(newEvent);
     setStored(STORAGE_KEYS.TIMELINE, timeline);
@@ -287,20 +365,18 @@ export class VaultStorageService {
   // Suggestions
   static getSuggestions(): VaultSuggestion[] {
     const suggestions: VaultSuggestion[] = [];
-    const now = new Date();
 
     // Warranty expiries
     const warranties = this.getWarranties();
     warranties.forEach(war => {
-      const expiry = new Date(war.expiryDate);
-      const diffDays = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const diffDays = daysUntil(war.expiryDate);
       if (diffDays > 0 && diffDays <= 45) {
         suggestions.push({
           id: `sug-war-${war.id}`,
-          title: `${war.productName} Warranty Expiring Soon`,
-          description: `Warranty ends in ${diffDays} days. Consider booking a service if needed.`,
+          title: `${war.productName} garantisi yaklaşıyor`,
+          description: `Garanti bitimine ${diffDays} gün kaldı.`,
           type: 'urgent',
-          actionLabel: 'View Warranty',
+          actionLabel: 'Garantiyi Gör',
           targetScreen: 'warranties',
           linkedItemId: war.id,
           date: war.expiryDate,
@@ -311,15 +387,15 @@ export class VaultStorageService {
     // Subscriptions renewals
     const subscriptions = this.getSubscriptions();
     subscriptions.forEach(sub => {
-      const renewal = new Date(sub.renewalDate);
-      const diffDays = Math.ceil((renewal.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      if (sub.status !== 'active') return;
+      const diffDays = daysUntil(sub.renewalDate);
       if (diffDays > 0 && diffDays <= 7) {
         suggestions.push({
           id: `sug-sub-${sub.id}`,
-          title: `${sub.name} Renews Soon`,
-          description: `Subscription renews in ${diffDays} days.`,
+          title: `${sub.name} yenilenmek üzere`,
+          description: `Abonelik yenilemesine ${diffDays} gün kaldı.`,
           type: 'reminder',
-          actionLabel: 'View Sub',
+          actionLabel: 'Aboneliği Gör',
           targetScreen: 'subscriptions',
           linkedItemId: sub.id,
           date: sub.renewalDate,
@@ -327,8 +403,7 @@ export class VaultStorageService {
       }
     });
 
-    // Return dynamic or fallback to INITIAL_SUGGESTIONS if empty so UI looks alive for new users
-    return suggestions.length > 0 ? suggestions : INITIAL_SUGGESTIONS;
+    return suggestions.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
   }
 
   // Stats calculation
@@ -344,9 +419,8 @@ export class VaultStorageService {
     subs.forEach(s => {
       if (s.status !== 'active') return;
       
-      // Basic normalization to TRY for stats (can be expanded)
-      const rate = s.currency === 'USD' ? 34 : 1;
-      const priceInBase = s.price * rate;
+      if (s.currency !== 'TL' && s.currency !== 'TRY') return;
+      const priceInBase = s.price;
 
       if (s.billingCycle === 'monthly') {
         monthly += priceInBase;
@@ -359,10 +433,8 @@ export class VaultStorageService {
       distribution[s.currency] = (distribution[s.currency] || 0) + s.price;
     });
 
-    const now = new Date();
     const expiringWarranties = warranties.filter(w => {
-      const expiry = new Date(w.expiryDate);
-      const diffDays = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const diffDays = daysUntil(w.expiryDate);
       return diffDays > 0 && diffDays <= 60;
     }).length;
 
@@ -370,7 +442,7 @@ export class VaultStorageService {
       totalMonthlyCost: Math.round(monthly),
       totalAnnualCost: Math.round(annual),
       activeSubscriptions: subs.filter(s => s.status === 'active').length,
-      activeWarranties: warranties.filter(w => w.status === 'active').length,
+      activeWarranties: warranties.filter(w => daysUntil(w.expiryDate) >= 0).length,
       expiringWarrantiesCount: expiringWarranties,
       documentCount: docs.length,
       currencyDistribution: distribution,
@@ -379,14 +451,11 @@ export class VaultStorageService {
 
   // Settings
   static getSettings(): VaultSettings {
+    this.removeLegacyDemoContent();
     const defaultSettings: VaultSettings = {
-      profileName: 'Ali Can',
-      profileEmail: 'Personal vault · Kapsule',
       darkMode: false,
       notifications: true,
       autoLock: false,
-      passcode: '1234',
-      isLocked: true,
     };
     return getStored(STORAGE_KEYS.SETTINGS, defaultSettings);
   }
@@ -398,8 +467,7 @@ export class VaultStorageService {
     return updated;
   }
 
-  // Reset to initial mock state if requested
-  static resetVault(): void {
+  static clearVaultData(): void {
     localStorage.removeItem(STORAGE_KEYS.DOCUMENTS);
     localStorage.removeItem(STORAGE_KEYS.RECEIPTS);
     localStorage.removeItem(STORAGE_KEYS.SUBSCRIPTIONS);
@@ -407,6 +475,10 @@ export class VaultStorageService {
     localStorage.removeItem(STORAGE_KEYS.NOTES);
     localStorage.removeItem(STORAGE_KEYS.BOOKMARKS);
     localStorage.removeItem(STORAGE_KEYS.TIMELINE);
-    localStorage.removeItem(STORAGE_KEYS.SETTINGS);
+  }
+
+  private static removeTimelineEventsForItem(id: string): void {
+    const timeline = this.getTimeline().filter((event) => event.linkedItemId !== id);
+    setStored(STORAGE_KEYS.TIMELINE, timeline);
   }
 }

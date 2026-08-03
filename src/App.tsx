@@ -30,9 +30,8 @@ function AppContent() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedItemId, setSelectedItemId] = useState<string | undefined>(undefined);
   
-  // Settings & Simulated Lock state
   const [settings, setSettings] = useState(() => VaultStorageService.getSettings());
-  const [isLocked, setIsLocked] = useState(() => settings.autoLock);
+  const [isLocked, setIsLocked] = useState(() => settings.autoLock && Boolean(settings.passcode));
   const [showOnboarding, setShowOnboarding] = useState(() => {
     try {
       return localStorage.getItem(ONBOARDING_KEY) !== 'true';
@@ -80,13 +79,6 @@ function AppContent() {
   const handleTabChange = (tab: ActiveTab) => {
     setSelectedItemId(undefined); // Clear deep link target when navigating away manually
     setActiveTab(tab);
-  };
-
-  const handleResetData = () => {
-    if (confirm('Reset all vault data to initial mock seed?')) {
-      VaultStorageService.resetVault();
-      window.location.reload();
-    }
   };
 
   const renderActiveScreen = () => {
@@ -182,12 +174,11 @@ function AppContent() {
     return <OnboardingScreen onComplete={handleOnboardingComplete} />;
   }
 
-  if (isLocked) {
+  if (isLocked && settings.passcode) {
     return (
       <PasscodeLock
-        correctPasscode={settings.passcode || '1234'}
+        correctPasscode={settings.passcode}
         onSuccess={() => setIsLocked(false)}
-        onResetData={handleResetData}
       />
     );
   }
