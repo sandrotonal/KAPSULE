@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Info, X, Printer } from 'lucide-react';
 import { triggerHaptic } from '../../utils/haptics';
 
-export type ToastType = 'success' | 'error' | 'info';
+export type ToastType = 'success' | 'error' | 'info' | 'print';
 
 export interface ToastMessage {
   id: string;
@@ -62,6 +62,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400 dark:text-emerald-600 shrink-0" />}
               {toast.type === 'error' && <AlertCircle className="w-4 h-4 text-rose-400 dark:text-rose-600 shrink-0" />}
               {toast.type === 'info' && <Info className="w-4 h-4 text-blue-400 dark:text-blue-600 shrink-0" />}
+              {toast.type === 'print' && <Printer className="w-4 h-4 text-violet-400 dark:text-violet-600 shrink-0" />}
               
               <span className="text-xs font-semibold tracking-tight leading-none">
                 {toast.message}

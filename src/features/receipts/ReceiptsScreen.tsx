@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { Receipt, Search, Plus, ShieldCheck } from 'lucide-react';
+import { Receipt, Search, Plus, ShieldCheck, Printer } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { ReceiptPrintPreview } from '../../components/ui/ReceiptPrintPreview';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { ReceiptItem } from '../../types';
 import { formatCurrency, formatDate } from '../../lib/utils';
 import { motion } from 'framer-motion';
+import { useToast } from '../../components/ui/Toast';
 
 export interface ReceiptsScreenProps {
   onOpenAdd: () => void;
@@ -39,6 +41,8 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
     }
     return null;
   });
+  const [showPrintPreview, setShowPrintPreview] = useState(false);
+  const { showToast } = useToast();
 
   const filtered = receipts.filter(r => {
     const q = searchQuery.toLowerCase();
@@ -152,9 +156,26 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
         </div>
       )}
 
+      {/* Print Preview Modal */}
+      <Modal
+        isOpen={showPrintPreview && !!selectedReceipt}
+        onClose={() => setShowPrintPreview(false)}
+        title="Fiş Önizleme"
+        maxWidth="2xl"
+      >
+        {selectedReceipt && (
+          <div className="min-h-[600px] flex items-center justify-center">
+            <ReceiptPrintPreview 
+              receipt={selectedReceipt}
+              onPrintComplete={() => showToast('Fiş yazdırıldı', 'print')}
+            />
+          </div>
+        )}
+      </Modal>
+
       {/* Receipt Detail */}
       <Modal
-        isOpen={!!selectedReceipt}
+        isOpen={!!selectedReceipt && !showPrintPreview}
         onClose={() => setSelectedReceipt(null)}
         title={selectedReceipt?.merchant}
         subtitle={selectedReceipt ? formatDate(selectedReceipt.date) : ''}
@@ -189,7 +210,16 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
               </div>
             )}
 
-            <div className="flex justify-end pt-2 border-t border-border/40">
+            <div className="flex justify-between gap-3 pt-2 border-t border-border/40">
+              <Button 
+                variant="ghost" 
+                size="md" 
+                className="rounded-xl px-6" 
+                icon={<Printer className="w-4 h-4" />}
+                onClick={() => setShowPrintPreview(true)}
+              >
+                Yazdır
+              </Button>
               <Button variant="secondary" size="md" className="rounded-xl px-6" onClick={() => setSelectedReceipt(null)}>Tamam</Button>
             </div>
           </div>
