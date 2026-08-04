@@ -25,29 +25,49 @@ export const Modal: React.FC<ModalProps> = ({
 }) => {
   const firstFocusRef = useRef<HTMLButtonElement>(null);
 
+  const onCloseRef = useRef(onClose);
   useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  // Handle Escape key
+  useEffect(() => {
+    if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        onClose();
+        onCloseRef.current();
       }
     };
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      window.addEventListener('keydown', handleKeyDown);
-      // Focus trap - improved timing
-      const timer = setTimeout(() => firstFocusRef.current?.focus(), 100);
-      return () => {
-        clearTimeout(timer);
-        document.body.style.overflow = '';
-        window.removeEventListener('keydown', handleKeyDown);
-      };
-    }
+    window.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
+
+  // Focus management & body overflow lock
+  useEffect(() => {
+    if (!isOpen) {
+      document.body.style.overflow = '';
+      return;
+    }
+    document.body.style.overflow = 'hidden';
+    const timer = setTimeout(() => {
+      const active = document.activeElement;
+      const isInputActive = active && (
+        active.tagName === 'INPUT' ||
+        active.tagName === 'TEXTAREA' ||
+        active.tagName === 'SELECT'
+      );
+      if (!isInputActive) {
+        firstFocusRef.current?.focus();
+      }
+    }, 100);
+    return () => {
+      clearTimeout(timer);
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   const widths = {
     sm: 'max-w-sm',

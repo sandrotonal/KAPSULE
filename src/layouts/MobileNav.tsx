@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, FileText, ShieldCheck, Settings, Plus, Search, CreditCard } from 'lucide-react';
+import { Home, Receipt, ShieldCheck, Settings, Plus, Search, CreditCard } from 'lucide-react';
 import { ActiveTab } from '../types';
 import { cn } from '../lib/utils';
 import FluidTabs, { FluidTabsIcon, FluidTabsLabel } from '../components/ui/FluidTabs';
@@ -13,7 +13,7 @@ export interface MobileNavProps {
 
 const MAIN_TABS: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
   { id: 'home', label: 'Ana Sayfa', icon: <Home className="w-5 h-5" /> },
-  { id: 'documents', label: 'Belgeler', icon: <FileText className="w-5 h-5" /> },
+  { id: 'receipts', label: 'Fişler', icon: <Receipt className="w-5 h-5" /> },
   { id: 'warranties', label: 'Garanti', icon: <ShieldCheck className="w-5 h-5" /> },
   { id: 'subscriptions', label: 'Diğer', icon: <CreditCard className="w-5 h-5" /> },
   { id: 'settings', label: 'Ayarlar', icon: <Settings className="w-5 h-5" /> },
