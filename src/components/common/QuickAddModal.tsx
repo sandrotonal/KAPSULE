@@ -46,27 +46,35 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   // Modal her açıldığında veya hedef tür değiştiğinde seçili türü senkronla.
   useEffect(() => {
     if (isOpen) {
-      setType(initialType);
+      setTitle('');
+      setAmount('');
+      setPrice('');
+      setBrand('');
+      setUrl('');
+      setContent('');
+      setExpiryDate('');
       setCategory('');
+      setDocumentFile(null);
       setError('');
+      setType(initialType);
     }
   }, [isOpen, initialType]);
 
-  const reset = () => {
+  const reset = React.useCallback(() => {
     setTitle(''); setAmount(''); setPrice('');
     setBrand(''); setUrl(''); setContent(''); setExpiryDate('');
     setCategory(''); setDocumentFile(null);
     setError('');
-  };
+  }, []);
 
-  const handleClose = () => { reset(); onClose(); };
+  const handleClose = React.useCallback(() => { reset(); onClose(); }, [reset, onClose]);
 
-  const handleTypeChange = (nextType: VaultCategory) => {
+  const handleTypeChange = React.useCallback((nextType: VaultCategory) => {
     setType(nextType);
     setCategory('');
     setError('');
     if (nextType !== 'document') setDocumentFile(null);
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

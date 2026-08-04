@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { Receipt, Search, Plus, ShieldCheck } from 'lucide-react';
+import { Receipt, Search, Plus, ShieldCheck, Printer } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { ReceiptPrintPreview } from '../../components/ui/ReceiptPrintPreview';
+import { ReceiptTicket } from '../../components/ui/ReceiptTicket';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { ReceiptItem } from '../../types';
 import { formatCurrency, formatDate } from '../../lib/utils';
 import { motion } from 'framer-motion';
+import { useToast } from '../../components/ui/Toast';
 
 export interface ReceiptsScreenProps {
   onOpenAdd: () => void;
@@ -39,6 +42,8 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
     }
     return null;
   });
+  const [showPrintPreview, setShowPrintPreview] = useState(false);
+  const { showToast } = useToast();
 
   const filtered = receipts.filter(r => {
     const q = searchQuery.toLowerCase();
@@ -101,60 +106,49 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
           onAction={onOpenAdd}
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="flex flex-wrap gap-6 justify-center">
           {filtered.map((rec, i) => (
             <motion.div
               key={rec.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+              onClick={() => setSelectedReceipt(rec)}
             >
-              <Card
-                interactive
-                padding="none"
-                onClick={() => setSelectedReceipt(rec)}
-                className="flex items-center gap-4 p-5 group h-full border-border/60"
-              >
-                  {/* Logo */}
-                  <div className="w-12 h-12 rounded-2xl bg-surface border border-border/60 flex items-center justify-center p-2.5 shrink-0 shadow-soft">
-                    {rec.merchantLogo ? (
-                      <img src={rec.merchantLogo} alt={rec.merchant} className="w-full h-full object-contain" />
-                    ) : (
-                      <Receipt className="w-5 h-5 text-secondary" />
-                    )}
-                  </div>
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-base font-bold text-primary truncate tracking-tight">{rec.merchant}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="muted" size="xs" className="opacity-70">
-                        {CATEGORY_LABELS[rec.category] || rec.category}
-                      </Badge>
-                      {rec.warrantyId && (
-                        <span className="flex items-center gap-0.5 text-[10px] font-bold text-success uppercase tracking-wider">
-                          <ShieldCheck className="w-3.5 h-3.5" /> Garanti
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Right */}
-                  <div className="text-right shrink-0">
-                    <p className="text-base font-bold text-primary tabular-nums tracking-tight">
-                      {formatCurrency(rec.amount, rec.currency)}
-                    </p>
-                    <p className="text-xs text-secondary mt-1">{formatDate(rec.date)}</p>
-                  </div>
-              </Card>
+              <ReceiptTicket
+                merchant={rec.merchant}
+                merchantLogo={rec.merchantLogo}
+                amount={rec.amount}
+                currency={rec.currency}
+                date={rec.date}
+                category={CATEGORY_LABELS[rec.category] || rec.category}
+                orderId={rec.id}
+              />
             </motion.div>
           ))}
         </div>
       )}
 
+      {/* Print Preview Modal */}
+      <Modal
+        isOpen={showPrintPreview && !!selectedReceipt}
+        onClose={() => setShowPrintPreview(false)}
+        title="Fiş Önizleme"
+        maxWidth="2xl"
+      >
+        {selectedReceipt && (
+          <div className="min-h-[600px] flex items-center justify-center">
+            <ReceiptPrintPreview 
+              receipt={selectedReceipt}
+              onPrintComplete={() => showToast('Fiş yazdırıldı', 'print')}
+            />
+          </div>
+        )}
+      </Modal>
+
       {/* Receipt Detail */}
       <Modal
-        isOpen={!!selectedReceipt}
+        isOpen={!!selectedReceipt && !showPrintPreview}
         onClose={() => setSelectedReceipt(null)}
         title={selectedReceipt?.merchant}
         subtitle={selectedReceipt ? formatDate(selectedReceipt.date) : ''}
@@ -189,7 +183,16 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
               </div>
             )}
 
-            <div className="flex justify-end pt-2 border-t border-border/40">
+            <div className="flex justify-between gap-3 pt-2 border-t border-border/40">
+              <Button 
+                variant="ghost" 
+                size="md" 
+                className="rounded-xl px-6" 
+                icon={<Printer className="w-4 h-4" />}
+                onClick={() => setShowPrintPreview(true)}
+              >
+                Yazdır
+              </Button>
               <Button variant="secondary" size="md" className="rounded-xl px-6" onClick={() => setSelectedReceipt(null)}>Tamam</Button>
             </div>
           </div>
