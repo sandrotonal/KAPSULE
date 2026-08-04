@@ -25,8 +25,20 @@ const STORAGE_KEYS = {
 const LEGACY_DEMO_MIGRATION_KEY = 'kapsule_demo_content_removed_v1';
 const LEGACY_DEMO_ID = /^(doc|rec|sub|war|note|bm|tl)-[1-9]\d*$/;
 
+function generateUUID(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+    return (([1e7] as any) + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c: number) =>
+      (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
+    );
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
 function createId(prefix: string): string {
-  return `${prefix}-${crypto.randomUUID()}`;
+  return `${prefix}-${generateUUID()}`;
 }
 
 function todayISO(): string {
