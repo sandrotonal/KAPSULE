@@ -6,6 +6,7 @@ import { Input } from '../ui/Input';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { VaultCategory } from '../../types';
 import { cn } from '../../lib/utils';
+import { LiveBrandBadge } from '../ui/BrandAvatar';
 
 export interface QuickAddModalProps {
   isOpen: boolean;
@@ -252,21 +253,28 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
               <X className="w-4 h-4 text-secondary/60" />
             </div>
 
-            <Input
-              id="quick-add-title"
-              label={type === 'receipt' ? 'Mağaza / Satıcı' : type === 'warranty' ? 'Ürün Adı' : type === 'subscription' ? 'Hizmet Adı' : type === 'bookmark' ? 'Başlık' : 'Başlık'}
-              placeholder={
-                type === 'document' ? 'Belgenin başlığı' :
-                  type === 'receipt' ? 'Satıcı adı' :
-                    type === 'subscription' ? 'Hizmet adı' :
-                      type === 'warranty' ? 'Ürün adı' :
-                        type === 'note' ? 'Not başlığı' : 'Yer imi başlığı'
-              }
-              className="rounded-xl h-12 border-border"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              required
-            />
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label htmlFor="quick-add-title" className="text-sm font-medium text-primary/80">
+                  {type === 'receipt' ? 'Mağaza / Satıcı' : type === 'warranty' ? 'Ürün Adı' : type === 'subscription' ? 'Hizmet Adı' : type === 'bookmark' ? 'Başlık' : 'Başlık'}
+                </label>
+                <LiveBrandBadge text={title || brand} />
+              </div>
+              <Input
+                id="quick-add-title"
+                placeholder={
+                  type === 'document' ? 'Belgenin başlığı' :
+                    type === 'receipt' ? 'Satıcı adı (Örn. Apple, Migros, Trendyol)' :
+                      type === 'subscription' ? 'Hizmet adı (Örn. Spotify, Netflix, YouTube)' :
+                        type === 'warranty' ? 'Ürün adı (Örn. iPhone 15, Dyson V15)' :
+                          type === 'note' ? 'Not başlığı' : 'Yer imi başlığı'
+                }
+                className="rounded-xl h-12 bg-surface/50 border-border/60"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                required
+              />
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {['document', 'receipt', 'subscription'].includes(type) && (
@@ -287,15 +295,21 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
               )}
 
               {type === 'receipt' && (
-                <Input label="Tutar (TL)" type="number" placeholder="0.00" className="rounded-xl h-12 border-border" value={amount} onChange={e => setAmount(e.target.value)} />
+                <Input label="Tutar (TL)" type="number" placeholder="0.00" className="rounded-xl h-12 bg-surface/50 border-border/60" value={amount} onChange={e => setAmount(e.target.value)} />
               )}
 
               {type === 'subscription' && (
-                <Input label="Aylık fiyat (TL)" type="number" placeholder="0.00" className="rounded-xl h-12 border-border" value={price} onChange={e => setPrice(e.target.value)} />
+                <Input label="Aylık fiyat (TL)" type="number" placeholder="0.00" className="rounded-xl h-12 bg-surface/50 border-border/60" value={price} onChange={e => setPrice(e.target.value)} />
               )}
 
               {type === 'warranty' && (
-                <Input label="Marka" placeholder="Marka adı" className="rounded-xl h-12 border-border" value={brand} onChange={e => setBrand(e.target.value)} required />
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-secondary">Marka</label>
+                    <LiveBrandBadge text={brand} />
+                  </div>
+                  <Input placeholder="Marka adı (Örn. Apple, Samsung, Bosch)" className="rounded-xl h-12 bg-surface/50 border-border/60" value={brand} onChange={e => setBrand(e.target.value)} required />
+                </div>
               )}
             </div>
 

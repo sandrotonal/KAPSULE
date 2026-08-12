@@ -127,7 +127,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
       <div className="space-y-5">
         <div className="space-y-2">
           <p className="text-xs font-semibold text-secondary uppercase tracking-[1.6px]">Kasa Araması</p>
-          <div className="group relative h-14 rounded-2xl border border-border bg-surface/50 px-4 flex items-center gap-3 transition-colors focus-within:border-accent/50 focus-within:bg-background focus-within:shadow-focus">
+          <div className="group relative h-14 rounded-2xl border border-border/60 bg-surface px-4 flex items-center gap-3 transition-colors focus-within:border-accent focus-within:bg-surface">
             <Search className="w-5 h-5 text-secondary group-focus-within:text-accent transition-colors" />
             <input
               ref={inputRef}

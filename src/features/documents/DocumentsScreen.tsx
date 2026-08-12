@@ -109,8 +109,8 @@ export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, sel
           <Input
             placeholder="Belge, etiket veya içerik ara..."
             aria-label="Belgelerde ara"
-            className="rounded-2xl bg-surface/40 border-border/60 h-12"
-            icon={<Search className="w-4 h-4 opacity-40" />}
+            className="rounded-2xl bg-surface border-border/60 text-primary placeholder:text-secondary/50 focus:border-accent h-12"
+            icon={<Search className="w-4 h-4 text-secondary opacity-60" />}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />

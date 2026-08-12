@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, Store } from 'lucide-react';
 import { formatCurrency } from '../../lib/utils';
+import { BrandAvatar } from './BrandAvatar';
 
 interface ReceiptTicketProps {
   merchant: string;
@@ -126,23 +127,25 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
 
         <div className="relative flex-1 flex flex-col justify-between p-4 pl-16 z-10">
           <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                {merchantLogo ? (
-                  <img src={merchantLogo} alt={merchant} className="w-6 h-6 object-contain" />
-                ) : (
-                  <Store className="w-5 h-5 text-gray-500" />
-                )}
-                <h3 className="font-bold text-sm text-gray-800 truncate">{merchant}</h3>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2.5 mb-1">
+                <BrandAvatar
+                  name={merchant}
+                  brand={merchant}
+                  imageUrl={merchantLogo}
+                  size="sm"
+                  className="w-7 h-7 rounded-lg shrink-0"
+                />
+                <h3 className="font-bold text-gray-900 text-sm tracking-tight capitalize line-clamp-1">{merchant}</h3>
               </div>
               <p className="text-[10px] text-gray-400 uppercase tracking-wide">{category}</p>
             </div>
             
-            <div className="text-right">
+            <div className="text-right shrink-0 pl-2">
               <p className="text-lg font-bold text-gray-900 tabular-nums">
                 {formatCurrency(amount, currency)}
               </p>
-              <div className="flex items-center gap-1 text-[9px] text-gray-400 mt-0.5">
+              <div className="flex items-center justify-end gap-1 text-[9px] text-gray-400 mt-0.5">
                 <Clock className="w-3 h-3" />
                 <span>{currentTime.toLocaleTimeString('tr-TR')}</span>
               </div>

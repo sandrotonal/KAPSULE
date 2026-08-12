@@ -5,25 +5,25 @@
 @layer base {
   :root {
     --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
-    --background: #FFFFFF;
-    --surface: #F8F9FA;
-    --surface-elevated: #F1F3F5;
+    --background: 255 255 255;
+    --surface: 248 249 250;
+    --surface-elevated: 241 243 245;
     --border: 229 231 235;
     --border-subtle: 243 244 246;
-    --text-primary: #1A1A1A;
-    --text-secondary: #6B7280;
-    --accent: #5227FF;
+    --text-primary: 26 26 26;
+    --text-secondary: 107 114 128;
+    --accent: 99 102 241;
   }
 
   .dark {
-    --background: #000000;
-    --surface: #0A0A0A;
-    --surface-elevated: #141414;
-    --border: 24 24 27;
-    --border-subtle: 14 14 16;
-    --text-primary: #F5F5F7;
-    --text-secondary: #86868B;
-    --accent: #8B5CF6;
+    --background: 0 0 0;
+    --surface: 15 15 17;
+    --surface-elevated: 24 24 27;
+    --border: 39 39 42;
+    --border-subtle: 24 24 27;
+    --text-primary: 245 245 247;
+    --text-secondary: 156 163 175;
+    --accent: 139 92 246;
   }
 
   * {

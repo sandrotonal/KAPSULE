@@ -12,11 +12,11 @@ export interface BadgeProps {
 const dotColors = {
   default: 'bg-secondary',
   accent: 'bg-accent',
-  success: 'bg-success',
-  warning: 'bg-warning',
-  danger: 'bg-danger',
+  success: 'bg-emerald-500',
+  warning: 'bg-amber-500',
+  danger: 'bg-rose-500',
   outline: 'bg-secondary',
-  muted: 'bg-secondary/50',
+  muted: 'bg-secondary/60',
 };
 
 export const Badge: React.FC<BadgeProps> = ({
@@ -27,24 +27,24 @@ export const Badge: React.FC<BadgeProps> = ({
   className,
 }) => {
   const variants = {
-    default: "bg-vault-100 text-vault-600 border-transparent",
-    accent: "bg-accent-soft text-accent border-transparent",
-    success: "bg-success-muted text-success border-transparent",
-    warning: "bg-warning-muted text-warning border-transparent",
-    danger: "bg-danger-muted text-danger border-transparent",
-    outline: "bg-transparent text-secondary border border-border",
-    muted: "bg-surface text-secondary/70 border-transparent",
+    default: "bg-surface/80 text-primary border border-border/60",
+    accent: "bg-accent/10 text-accent border border-accent/20",
+    success: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
+    warning: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20",
+    danger: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20",
+    outline: "bg-transparent text-secondary border border-border/80",
+    muted: "bg-surface/60 text-secondary border border-border/40",
   };
 
   const sizes = {
-    xs: "text-[10px] px-1.5 py-0.5 rounded font-medium gap-1",
-    sm: "text-xs px-2 py-0.5 rounded-md font-medium gap-1.5",
+    xs: "text-[11px] px-2 py-0.5 rounded-full font-medium gap-1.5",
+    sm: "text-xs px-2.5 py-1 rounded-full font-medium gap-1.5",
   };
 
   return (
     <span
       className={cn(
-        "inline-flex items-center whitespace-nowrap select-none",
+        "inline-flex items-center whitespace-nowrap select-none font-medium tracking-tight transition-colors",
         variants[variant],
         sizes[size],
         className
@@ -57,3 +57,5 @@ export const Badge: React.FC<BadgeProps> = ({
     </span>
   );
 };
+
+export default Badge;

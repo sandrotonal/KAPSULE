@@ -8,39 +8,39 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        surface: "var(--surface)",
-        "surface-elevated": "var(--surface-elevated)",
+        background: "rgb(var(--background) / <alpha-value>)",
+        surface: "rgb(var(--surface) / <alpha-value>)",
+        "surface-elevated": "rgb(var(--surface-elevated) / <alpha-value>)",
         border: "rgb(var(--border) / <alpha-value>)",
         "border-subtle": "rgb(var(--border-subtle) / <alpha-value>)",
         primary: {
-          DEFAULT: "var(--text-primary)",
-          foreground: "var(--background)",
+          DEFAULT: "rgb(var(--text-primary) / <alpha-value>)",
+          foreground: "rgb(var(--background) / <alpha-value>)",
         },
         secondary: {
-          DEFAULT: "var(--text-secondary)",
+          DEFAULT: "rgb(var(--text-secondary) / <alpha-value>)",
           light: "#9B9B9B",
         },
         accent: {
-          DEFAULT: "var(--accent)",
-          muted: "color-mix(in srgb, var(--accent) 8%, transparent)",
-          soft: "color-mix(in srgb, var(--accent) 12%, transparent)",
+          DEFAULT: "rgb(var(--accent) / <alpha-value>)",
+          muted: "rgb(var(--accent) / 0.08)",
+          soft: "rgb(var(--accent) / 0.15)",
           foreground: "#FFFFFF",
         },
         success: {
-          DEFAULT: "#16A34A",
-          muted: "#F0FDF4",
-          soft: "#DCFCE7",
+          DEFAULT: "#10B981",
+          muted: "rgba(16, 185, 129, 0.1)",
+          soft: "rgba(16, 185, 129, 0.18)",
         },
         warning: {
-          DEFAULT: "#B45309",
-          muted: "#FFFBEB",
-          soft: "#FEF3C7",
+          DEFAULT: "#F59E0B",
+          muted: "rgba(245, 158, 11, 0.1)",
+          soft: "rgba(245, 158, 11, 0.18)",
         },
         danger: {
-          DEFAULT: "#DC2626",
-          muted: "#FEF2F2",
-          soft: "#FEE2E2",
+          DEFAULT: "#EF4444",
+          muted: "rgba(239, 68, 68, 0.1)",
+          soft: "rgba(239, 68, 68, 0.18)",
         },
         vault: {
           50: "#FAFAFA",
