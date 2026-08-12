@@ -123,4 +123,4 @@ Yeni özellikler ayrı branch'lerde geliştirilir ve kullanılabilir hale gelinc
 
 ## Teşekkürler
 
-Bu proje [GucluYum](https://gucluyumhe.dev/) tarafından geliştirilmektedir.
+Bu proje [gucluyumhe(https://gucluyumhe.dev/) tarafından geliştirilmektedir.
