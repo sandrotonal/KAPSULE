@@ -5,6 +5,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { BrandAvatar } from '../../components/ui/BrandAvatar';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { SubscriptionItem } from '../../types';
 import { formatCurrency, formatDate } from '../../lib/utils';
@@ -118,8 +119,8 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
         <Input
           placeholder="Aboneliklerde ara..."
           aria-label="Aboneliklerde ara"
-          className="rounded-2xl bg-surface/40 border-border/60 h-12"
-          icon={<Search className="w-4 h-4 opacity-40" />}
+          className="rounded-2xl bg-surface border-border/60 text-primary placeholder:text-secondary/50 focus:border-accent h-12"
+          icon={<Search className="w-4 h-4 text-secondary opacity-60" />}
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
         />
@@ -151,13 +152,16 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
                 >
                 {/* Header */}
                 <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-surface border border-border flex items-center justify-center text-lg font-bold text-accent shrink-0 shadow-soft">
-                      {sub.name.charAt(0)}
-                    </div>
-                    <div className="min-w-0">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <BrandAvatar
+                      name={sub.name}
+                      brand={sub.name}
+                      imageUrl={sub.logoUrl}
+                      size="md"
+                    />
+                    <div className="min-w-0 flex-1">
                       <p className="text-base font-bold text-primary line-clamp-1 tracking-tight">{sub.name}</p>
-                      <Badge variant="muted" size="xs" className="mt-1 opacity-70">{sub.category}</Badge>
+                      <Badge variant="muted" size="xs" className="mt-1 opacity-80">{sub.category}</Badge>
                     </div>
                   </div>
                   <Badge variant={sub.status === 'active' ? 'success' : 'default'} size="xs" dot className="rounded-full">

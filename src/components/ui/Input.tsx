@@ -37,7 +37,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
       )}
       <div className="relative flex items-center w-full group">
         {icon && (
-          <div className="absolute left-3 text-secondary pointer-events-none z-10 group-focus-within:text-primary transition-colors duration-150">
+          <div className="absolute left-3.5 text-secondary pointer-events-none z-10 group-focus-within:text-primary transition-colors duration-150">
             {icon}
           </div>
         )}
@@ -45,13 +45,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           ref={ref}
           className={cn(
             "w-full h-12 bg-surface text-primary placeholder:text-secondary/50",
-            "text-[16px] rounded-xl border border-border",
-            "px-4 transition-all duration-300 cubic-bezier(0.16,1,0.3,1)",
-            "focus:outline-none focus:border-accent/40 focus:bg-background focus:shadow-focus focus:ring-0",
-            "hover:border-border hover:bg-surface-elevated",
-            icon && "pl-9",
-            iconRight && "pr-9",
-            error && "border-danger/40 focus:border-danger/60 focus:shadow-[0_0_0_3px_rgba(220,38,38,0.08)]",
+            "text-[15px] rounded-xl border border-border/60",
+            "px-4 transition-all duration-200 ease-out",
+            "focus:outline-none focus:border-accent focus:bg-surface focus:ring-0",
+            "hover:border-border",
+            icon && "pl-10",
+            iconRight && "pr-10",
+            error && "border-danger focus:border-danger",
             className
           )}
           aria-invalid={error ? 'true' : 'false'}
@@ -59,7 +59,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           {...props}
         />
         {iconRight && (
-          <div className="absolute right-3 text-secondary pointer-events-none z-10">
+          <div className="absolute right-3.5 text-secondary pointer-events-none z-10">
             {iconRight}
           </div>
         )}
@@ -75,3 +75,5 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
 });
 
 Input.displayName = 'Input';
+
+export default Input;

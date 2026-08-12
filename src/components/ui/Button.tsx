@@ -32,11 +32,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   ].join(' ');
 
   const variants = {
-    primary: "bg-primary text-primary-foreground hover:opacity-90 shadow-soft active:scale-95",
-    secondary: "bg-surface/50 backdrop-blur-md text-primary hover:bg-surface-elevated border border-border/60",
-    ghost: "text-secondary hover:text-accent hover:bg-accent/5",
-    danger: "text-danger hover:bg-danger-muted border border-danger/20",
-    outline: "border border-border/80 text-primary hover:bg-surface",
+    primary: "bg-accent text-white hover:bg-accent/90 shadow-soft active:scale-95",
+    secondary: "bg-surface/60 backdrop-blur-md text-primary hover:bg-surface border border-border/60",
+    ghost: "text-secondary hover:text-primary hover:bg-surface/50",
+    danger: "bg-danger text-white hover:bg-danger/90 shadow-soft",
+    outline: "border border-border/80 text-primary hover:bg-surface/60",
   };
 
   const sizes = {

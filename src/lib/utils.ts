@@ -50,3 +50,39 @@ export function getDaysRemaining(expiryDateStr: string): number {
   const diffTime = expiry.getTime() - today.getTime();
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  // Subscriptions & Receipts
+  Software: 'Yazılım',
+  Entertainment: 'Eğlence',
+  Work: 'İş',
+  Cloud: 'Bulut',
+  Health: 'Sağlık',
+  Utility: 'Hizmet',
+  Tech: 'Teknoloji',
+  Home: 'Ev',
+  Travel: 'Seyahat',
+  Clothing: 'Giyim',
+  Food: 'Yemek',
+  Utilities: 'Faturalar',
+  Services: 'Hizmetler',
+
+  // Documents
+  Personal: 'Kişisel',
+  Finance: 'Finans',
+  Insurance: 'Sigorta',
+  Vehicle: 'Araç',
+  Identity: 'Kimlik',
+  Property: 'Mülk',
+
+  // Defaults
+  Subscription: 'Abonelik',
+  Receipt: 'Fiş',
+  Warranty: 'Garanti',
+  Document: 'Belge',
+};
+
+export function getCategoryLabel(rawCategory: string): string {
+  if (!rawCategory) return 'Genel';
+  return CATEGORY_LABELS[rawCategory] || rawCategory;
+}
