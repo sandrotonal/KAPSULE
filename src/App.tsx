@@ -16,6 +16,7 @@ import { QuickAddModal } from './components/common/QuickAddModal';
 import { PasscodeLock } from './components/common/PasscodeLock';
 import { OnboardingScreen } from './features/onboarding/OnboardingScreen';
 import { VaultStorageService } from './services/vaultStorage';
+import { NotificationService } from './services/notificationService';
 import { ToastProvider, useToast } from './components/ui/Toast';
 
 const ONBOARDING_KEY = 'kapsule_onboarding_complete';
@@ -58,6 +59,15 @@ function AppContent() {
       document.documentElement.classList.remove('dark');
     }
   }, [settings.darkMode]);
+
+  // Run background notification check for warranty expiries & subscription renewals
+  useEffect(() => {
+    try {
+      NotificationService.runDailyCheck();
+    } catch (e) {
+      console.error('Failed to run notification check', e);
+    }
+  }, []);
 
   // Global Cmd+K search hotkey handler
   useEffect(() => {

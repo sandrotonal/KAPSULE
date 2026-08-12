@@ -19,6 +19,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   onOpenQuickAdd,
   children,
 }) => {
+  const mainRef = React.useRef<HTMLElement>(null);
+
+  // Always reset scroll to top when changing pages/tabs
+  React.useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTo({ top: 0, behavior: 'instant' });
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [activeTab]);
+
   return (
     <div className="min-h-screen bg-background text-primary flex selection:bg-accent/10 selection:text-accent">
       {/* Desktop Sidebar */}
@@ -32,7 +42,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       {/* Content */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen">
         {/* Main scrollable area */}
-        <main className="flex-1 overflow-y-auto thin-scrollbar scroll-smooth">
+        <main ref={mainRef} className="flex-1 overflow-y-auto thin-scrollbar">
           <div className="max-w-5xl mx-auto px-6 sm:px-10 py-10 sm:py-16 pb-32 md:pb-16">
             <AnimatePresence mode="wait">
               <motion.div

@@ -3,6 +3,7 @@ import { Moon, Bell, Lock, Download, RefreshCw, ChevronRight, Info, Sun, LogOut 
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { VaultStorageService } from '../../services/vaultStorage';
+import { NotificationService } from '../../services/notificationService';
 import { useToast } from '../../components/ui/Toast';
 
 type ToggleProps = { checked: boolean; onChange: () => void; id: string };
@@ -85,7 +86,15 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const [enableLockAfterPasscode, setEnableLockAfterPasscode] = useState(false);
   const { showToast } = useToast();
 
-  const updateSetting = (key: 'darkMode' | 'notifications' | 'autoLock', value: boolean) => {
+  const updateSetting = async (key: 'darkMode' | 'notifications' | 'autoLock', value: boolean) => {
+    if (key === 'notifications' && value) {
+      const granted = await NotificationService.requestPermission();
+      if (!granted) {
+        showToast('Tarayıcı bildirim izni verilmedi.', 'warning');
+      } else {
+        showToast('Bildirimler ve hatırlatmalar aktif.');
+      }
+    }
     const updated = VaultStorageService.saveSettings({ [key]: value });
     setSettingsState(updated);
     if (onSettingsChange) {

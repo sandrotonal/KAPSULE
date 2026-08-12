@@ -321,17 +321,17 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
   const slides: SlideConfig[] = [
     {
       headline: ['Her önemli şey.', 'Tek kasada.'],
-      description: 'Belgelerini, fişlerini ve hatırlatmalarını sakin bir düzende tut.',
+      description: 'Belgelerini, fişlerini ve hatırlatmalarını sakin ve güvenli bir düzende tut.',
       hero: <HeroComposition />,
     },
     {
-      headline: ['Find anything.', 'Instantly.'],
+      headline: ['Aradığın her an.', 'Anında elinde.'],
       description: 'Her dosya, her fiş, her garanti — tek bir arama uzağında.',
       hero: <HeroSearch />,
     },
     {
-      headline: ['Your digital vault.', 'Ready when you are.'],
-      description: 'Her şey düzenli; kayıtlarını dilediğin an ekleyip bulabilirsin.',
+      headline: ['Kişisel kasan.', 'Her zaman hazır.'],
+      description: 'Tüm önemli kayıtların şifreli ve güvende. Dilediğin an ekle ve yönet.',
       hero: <HeroVault />,
     },
   ];

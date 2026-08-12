@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, AlertCircle, Info, X, Printer } from 'lucide-react';
 import { triggerHaptic } from '../../utils/haptics';
 
-export type ToastType = 'success' | 'error' | 'info' | 'print';
+export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'print';
 
 export interface ToastMessage {
   id: string;
@@ -28,6 +28,8 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       triggerHaptic.success();
     } else if (type === 'error') {
       triggerHaptic.error();
+    } else if (type === 'warning') {
+      triggerHaptic.warning();
     } else {
       triggerHaptic.light();
     }
