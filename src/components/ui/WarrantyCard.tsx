@@ -150,14 +150,10 @@ export const WarrantyCard: React.FC<WarrantyCardProps> = ({
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       onClick={() => onNavigateToTab?.('warranties')}
       className={cn(
-        'w-full rounded-3xl p-6 sm:p-7 shadow-soft transition-all duration-300 relative overflow-hidden cursor-pointer group',
-        'bg-surface/50 text-primary backdrop-blur-xl border border-border/60 hover:border-accent/40',
+        'w-full p-2 transition-all duration-300 relative cursor-pointer group bg-transparent border-0 shadow-none',
         className
       )}
     >
-      {/* Background subtle glow */}
-      <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
-
       {/* Clean Header */}
       <div className="flex items-center justify-between mb-4 relative z-10">
         <span className="text-[11px] font-bold uppercase tracking-[2px] text-secondary opacity-80">

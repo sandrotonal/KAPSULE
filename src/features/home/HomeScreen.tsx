@@ -148,9 +148,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             />
           </TiltCard>
 
-          <TiltCard className="rounded-3xl" intensity={6}>
+          <div className="w-full">
             <WarrantyCard onNavigateToTab={(tab) => onNavigateToTab(tab)} />
-          </TiltCard>
+          </div>
         </div>
 
         <div className="lg:col-span-2 flex items-center justify-center order-1 lg:order-2 py-2">
