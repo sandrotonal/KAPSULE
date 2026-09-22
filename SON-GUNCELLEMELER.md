@@ -55,8 +55,22 @@ Eski karikatür yeşil dikişli cüzdan ve detayları eksik düz kart yapısı t
 
 ---
 
-## 🔔 6. Sistem & Altyapı İyileştirmeleri
-- **Bildirim Servisi (`notificationService.ts`)**: Garanti bitişleri (30, 7, 1 gün) ve abonelik yenilemeleri (3, 1 gün) için tarayıcı bildirim altyapısı entegre edildi.
-- **Sekme Geçişi Scroll Sıfırlama (`MainLayout.tsx`)**: Sekmeler arası geçiş yapıldığında sayfanın en baştan açılmasını sağlayan scroll reset mekanizması eklendi.
-- **Onboarding Türkçe Uyumu (`OnboardingScreen.tsx`)**: Karşılama ekranındaki İngilizce başlıklar tamamen Türkçeleştirildi.
-- **TypeScript Derleme Sağlığı**: Tüm değişiklikler sonrasında `npx tsc --noEmit` çalıştırıldı ➔ **0 Hata**.
+## 🚀 7. "Kasaya Ekle" & Ekleme Ekranları Yeniden Tasarımı (`QuickAddModal.tsx`)
+Eski anket benzeri dikey radyo listesi, kaba kutu/kare arka planlı ikonlar ve hantal 2 adımlı seçim mekanizması tamamen kaldırıldı:
+- **Arka Plansız (Floating) Saf İkonografi:**
+  - Kategori ikonlarının arkasındaki o hantal kutular, kareler ve boyalı arka planlar (`bg-white/5`, `bg-accent`) tamamen temizlendi.
+  - Lucide'in en estetik, 1.8px ince stroke ağırlıklı saf ikonları (`ReceiptText`, `ShieldCheck`, `CreditCard`, `FileText`, `StickyNote`, `Bookmark`) doğrudan kart yüzeyine oturtuldu.
+  - Hover ve aktif durumlarda ikonlar doğal olarak accent rengine bürünmektedir.
+- **2x3 Bento Grid Mimarisi:**
+  - Kullanıcı artık 6 satırlı sıkıcı bir listeyle uğraşmak yerine Apple/Linear standartlarında 2x3 dokunsal (tactile) bir kart ızgarasıyla karşılanıyor.
+  - Her kartta; zarifçe süzülen saf ikon, kategori başlığı, açıklama metni ve interaktif ok göstergesi bulunmaktadır.
+- **Tek Dokunuşla Form Geçişi:**
+  - Kategori seçip en alttaki "Devam Et" butonuna ikinci kez basma gereksinimi kaldırıldı. İlgili kategoriye dokunulduğunda yay (spring) fizik animasyonu ve haptik titreşimle anında form adımına akılmaktadır.
+- **Sleek Form Deneyimi (Adım 2):**
+  - Form başlığında seçili kategorinin saf renkli ikonu ve büyük harf kategori etiketi kutusuz olarak konumlandırıldı.
+  - Input alanları modern yüzey hissi (`bg-surface/50`, `focus:border-accent`, `focus:ring-2 focus:ring-accent/15`) ile yeniden şekillendirildi.
+  - Belge yükleme alanı minimalist bir bırakma alanına dönüştürüldü; seçilen dosyanın adı ve boyutu arka plansız onay işaretiyle listelenmektedir.
+  - Geri dönüp farklı kategori seçmek için sol üstteki şık geri ok butonu entegre edildi.
+- **TypeScript & Performans:**
+  - Sıfır hata ile `npx tsc --noEmit` teyit edildi.
+
