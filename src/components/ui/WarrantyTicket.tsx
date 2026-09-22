@@ -72,7 +72,7 @@ export const WarrantyTicket: React.FC<WarrantyTicketProps> = ({
       onHoverEnd={() => setIsHovered(false)}
     >
       <motion.div
-        className="relative h-[180px] w-[340px] flex bg-gradient-to-br from-white to-blue-50 rounded-2xl overflow-hidden shadow-lg border border-blue-200"
+        className="relative h-[180px] w-[340px] flex bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-md dark:shadow-2xl border border-gray-200/80 dark:border-white/10 text-gray-900 dark:text-zinc-100"
         animate={{
           rotateY: isHovered ? 0 : [0, -5, 5, 0],
           y: isHovered ? -10 : 0
@@ -84,12 +84,11 @@ export const WarrantyTicket: React.FC<WarrantyTicketProps> = ({
         style={{ transformStyle: 'preserve-3d' }}
       >
         <svg
-          className="absolute left-0 top-0 h-full opacity-20"
+          className="absolute left-0 top-0 h-full fill-zinc-200/80 dark:fill-zinc-800"
           xmlns="http://www.w3.org/2000/svg"
           width={64}
           height={180}
           viewBox="0 0 64 180"
-          fill="#dbeafe"
         >
           {Array.from({ length: 35 }).map((_, i) => (
             <motion.path
@@ -103,7 +102,7 @@ export const WarrantyTicket: React.FC<WarrantyTicketProps> = ({
         </svg>
 
         <div className="absolute top-0 left-[50px] w-[2px] h-full flex items-center justify-center z-10">
-          <div className="relative h-full border-l-2 border-dashed border-border/60">
+          <div className="relative h-full border-l-2 border-dashed border-gray-300 dark:border-zinc-700">
             <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background" />
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background" />
           </div>
@@ -118,26 +117,26 @@ export const WarrantyTicket: React.FC<WarrantyTicketProps> = ({
           style={{ 
             width: '80px', 
             height: '100%', 
-            filter: 'blur(10px)',
-            background: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%)'
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)',
+            transform: 'skewX(-20deg)'
           }}
         />
 
         <div className="relative flex-1 flex flex-col justify-between p-4 pl-16 z-10">
           <div className="flex items-start justify-between">
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 {imageUrl ? (
                   <img src={imageUrl} alt={productName} className="w-6 h-6 object-contain rounded" />
                 ) : (
-                  <Shield className="w-5 h-5 text-blue-500" />
+                  <Shield className="w-5 h-5 text-accent" />
                 )}
-                <h3 className="font-bold text-sm text-gray-800 truncate">{productName}</h3>
+                <h3 className="font-bold text-sm text-gray-900 dark:text-zinc-100 truncate">{productName}</h3>
               </div>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wide">{brand}</p>
+              <p className="text-[10px] text-gray-400 dark:text-zinc-500 uppercase tracking-wide">{brand}</p>
             </div>
             
-            <div className="text-right">
+            <div className="text-right shrink-0 pl-2">
               <div className={`flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r ${statusColors[status]} text-white text-[9px] font-bold`}>
                 {statusIcons[status]}
                 <span>{statusText[status]}</span>
@@ -145,18 +144,18 @@ export const WarrantyTicket: React.FC<WarrantyTicketProps> = ({
             </div>
           </div>
 
-          <div className="h-[1px] bg-gradient-to-r from-transparent via-blue-300 to-transparent my-2" />
+          <div className="h-[1px] bg-gradient-to-r from-transparent via-gray-300 dark:via-zinc-700 to-transparent my-2" />
 
           <div className="grid grid-cols-2 gap-2 text-[10px]">
             <div>
-              <p className="text-gray-400 mb-0.5">Satın Alma</p>
-              <p className="font-semibold text-gray-700">
+              <p className="text-gray-400 dark:text-zinc-500 mb-0.5">Satın Alma</p>
+              <p className="font-semibold text-gray-700 dark:text-zinc-300">
                 {purchase.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' })}
               </p>
             </div>
             <div>
-              <p className="text-gray-400 mb-0.5">Bitiş Tarihi</p>
-              <p className="font-semibold text-gray-700">
+              <p className="text-gray-400 dark:text-zinc-500 mb-0.5">Bitiş Tarihi</p>
+              <p className="font-semibold text-gray-700 dark:text-zinc-300">
                 {expiry.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' })}
               </p>
             </div>
@@ -164,29 +163,16 @@ export const WarrantyTicket: React.FC<WarrantyTicketProps> = ({
 
           <div className="flex items-center justify-between mt-2">
             <div className="text-[10px]">
-              <p className="text-gray-400 mb-0.5">Kalan Süre</p>
-              <p className="font-bold text-gray-700 text-base">
+              <p className="text-gray-400 dark:text-zinc-500 mb-0.5">Kalan Süre</p>
+              <p className="font-bold text-gray-900 dark:text-zinc-100 text-base">
                 {daysRemaining > 0 ? `${daysRemaining} gün` : 'Süresi doldu'}
               </p>
             </div>
-            <div className="flex items-center gap-1 text-[9px] text-gray-400">
+            <div className="flex items-center gap-1 text-[9px] text-gray-400 dark:text-zinc-500">
               <Clock className="w-3 h-3" />
               <span>{currentTime.toLocaleTimeString('tr-TR')}</span>
             </div>
           </div>
-
-          <motion.div
-            className="absolute bottom-0 right-0 p-3"
-            animate={{
-              backgroundColor: status === 'active' ? ['#3B82F6', '#10B981', '#3B82F6'] :
-                              status === 'expiring_soon' ? ['#F59E0B', '#EF4444', '#F59E0B'] :
-                              ['#DC2626', '#991B1B', '#DC2626']
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            style={{ zIndex: -1, borderTopLeftRadius: '1rem' }}
-          >
-            <Shield className="w-5 h-5 text-white" />
-          </motion.div>
         </div>
 
         <motion.div

@@ -1,18 +1,19 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, CreditCard, ShieldCheck, FileText, Lock } from 'lucide-react';
+import { Eye, EyeOff, ShieldCheck, FileText, CreditCard } from 'lucide-react';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { formatCurrency, cn } from '../../lib/utils';
 
 interface CardData {
   id: string;
   name: string;
-  label: string;
+  categoryBadge: string;
   value: string;
-  number: string;
-  gradientClass: string;
-  accentTextClass: string;
-  icon: React.ReactNode;
+  cardNumber: string;
+  validThru: string;
+  issuer: string;
+  cardTheme: string;
+  chipColor: 'gold' | 'silver';
   delay: number;
 }
 
@@ -23,35 +24,38 @@ export const WalletCard: React.FC = () => {
   const dynamicCards: CardData[] = useMemo(() => [
     {
       id: 'docs',
-      name: 'Belgeler',
-      label: 'TOPLAM DOSYA',
-      value: `${stats.documentCount} Kayıt`,
-      number: `KPSL ${stats.documentCount.toString().padStart(4, '0')} DOC`,
-      gradientClass: 'bg-zinc-800 dark:bg-zinc-900 border-zinc-700/80 dark:border-white/10 text-white',
-      accentTextClass: 'text-zinc-400',
-      icon: <FileText className="w-5 h-5 text-accent" />,
+      name: 'BELGE KASASI',
+      categoryBadge: 'PLATINUM VAULT',
+      value: `${stats.documentCount} Evrak`,
+      cardNumber: `4192  8830  ${stats.documentCount.toString().padStart(4, '0')}  7710`,
+      validThru: '12/30',
+      issuer: 'TITANIUM',
+      cardTheme: 'bg-gradient-to-tr from-zinc-900 via-neutral-800 to-zinc-700 text-white border-zinc-600/60 shadow-[0_10px_25px_rgba(0,0,0,0.5)]',
+      chipColor: 'silver',
       delay: 0.1,
     },
     {
       id: 'warranties',
-      name: 'Garantiler',
-      label: 'KORUMA PLANI',
+      name: 'GARANTİ KORUMASI',
+      categoryBadge: 'OBSIDIAN SHIELD',
       value: `${stats.activeWarranties} Aktif`,
-      number: `EXP ${stats.expiringWarrantiesCount} YAKINDA`,
-      gradientClass: 'bg-zinc-900 dark:bg-black border-accent/25 text-white',
-      accentTextClass: 'text-accent',
-      icon: <ShieldCheck className="w-5 h-5 text-accent" />,
+      cardNumber: `5412  7500  ${stats.activeWarranties.toString().padStart(4, '0')}  9022`,
+      validThru: '08/29',
+      issuer: 'CENTURION',
+      cardTheme: 'bg-gradient-to-tr from-black via-zinc-950 to-neutral-900 text-white border-amber-500/40 shadow-[0_10px_25px_rgba(0,0,0,0.6)]',
+      chipColor: 'gold',
       delay: 0.2,
     },
     {
       id: 'subs',
-      name: 'Abonelikler',
-      label: 'AYLIK ÖDEME',
+      name: 'ABONELİK KARTI',
+      categoryBadge: 'SAPPHIRE ACCENT',
       value: formatCurrency(stats.totalMonthlyCost, 'TL'),
-      number: `${stats.activeSubscriptions} AKTİF SERVİS`,
-      gradientClass: 'bg-accent text-white border-accent/40 shadow-lg shadow-accent/20',
-      accentTextClass: 'text-white/80',
-      icon: <CreditCard className="w-5 h-5 text-white" />,
+      cardNumber: `4820  1049  ${stats.activeSubscriptions.toString().padStart(4, '0')}  4829`,
+      validThru: '05/28',
+      issuer: 'KAPSÜLE',
+      cardTheme: 'bg-gradient-to-tr from-indigo-900 via-accent to-purple-900 text-white border-white/25 shadow-[0_15px_30px_rgba(99,102,241,0.35)]',
+      chipColor: 'gold',
       delay: 0.3,
     },
   ], [stats]);
@@ -59,7 +63,7 @@ export const WalletCard: React.FC = () => {
   return (
     <div className="flex flex-col items-center gap-5 py-4 w-full max-w-[400px]">
       <motion.div
-        className="relative w-full max-w-[380px] h-[280px] cursor-pointer flex justify-center items-end select-none"
+        className="relative w-full max-w-[380px] h-[300px] cursor-pointer flex justify-center items-end select-none"
         style={{ perspective: "1200px" }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -67,12 +71,12 @@ export const WalletCard: React.FC = () => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       >
-        {/* Vault Sleeve Back Plate */}
-        <div className="absolute bottom-0 w-[350px] sm:w-[360px] h-[220px] bg-surface/50 dark:bg-zinc-950/90 rounded-[28px_28px_44px_44px] z-0 border border-border/50 dark:border-white/5 shadow-[inset_0_12px_24px_rgba(0,0,0,0.2)]" />
+        {/* Leather Cardholder Back Lining */}
+        <div className="absolute bottom-0 w-[350px] sm:w-[360px] h-[230px] rounded-[30px_30px_42px_42px] bg-neutral-900 dark:bg-black border border-neutral-800 dark:border-white/5 z-0 shadow-2xl" />
 
-        {/* Dynamic Cards Stack */}
+        {/* Dynamic Realistic Credit Cards */}
         {dynamicCards.map((card, index) => {
-          const bottom = 48 + (index * 26);
+          const bottom = 52 + (index * 28);
           const zIndex = (index + 1) * 10;
 
           let yOffset = 0;
@@ -81,16 +85,16 @@ export const WalletCard: React.FC = () => {
 
           if (isHovered) {
             if (index === 0) {
-              yOffset = -95;
-              rotate = -8;
+              yOffset = -105;
+              rotate = -7;
               xOffset = -18;
             } else if (index === 1) {
-              yOffset = -65;
+              yOffset = -72;
               rotate = 2;
               xOffset = 0;
             } else if (index === 2) {
-              yOffset = -28;
-              rotate = 6;
+              yOffset = -35;
+              rotate = 7;
               xOffset = 18;
             }
           }
@@ -99,8 +103,8 @@ export const WalletCard: React.FC = () => {
             <motion.div
               key={card.id}
               className={cn(
-                "absolute left-1/2 -translate-x-1/2 w-[330px] sm:w-[340px] h-[165px] rounded-[24px] p-6 shadow-xl group overflow-hidden border",
-                card.gradientClass
+                "absolute left-1/2 -translate-x-1/2 w-[330px] sm:w-[342px] h-[175px] rounded-[22px] p-5 border group overflow-hidden flex flex-col justify-between",
+                card.cardTheme
               )}
               style={{ bottom: `${bottom}px`, zIndex }}
               initial={{ y: -50, opacity: 0 }}
@@ -115,48 +119,111 @@ export const WalletCard: React.FC = () => {
                 scale: 1.08, 
                 rotate: 0, 
                 x: '-50%',
-                y: yOffset - 20,
+                y: yOffset - 22,
                 zIndex: 100,
                 transition: { type: 'spring', stiffness: 400, damping: 25 }
               }}
               transition={{ 
                 type: 'spring', 
-                stiffness: 200, 
+                stiffness: 220, 
                 damping: 22,
                 delay: isHovered ? 0 : card.delay 
               }}
             >
-              <div className="relative flex flex-col justify-between h-full">
-                <div className="flex justify-between items-start">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[10px] uppercase tracking-[2px] opacity-70 font-bold">{card.name}</span>
-                    <span className="text-xl font-bold tracking-tight leading-none">{card.value}</span>
+              {/* Card Holographic Sheen Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/[0.08] to-white/0 pointer-events-none" />
+
+              {/* Card Header: Category Badge + Issuer */}
+              <div className="relative flex justify-between items-center z-10">
+                <span className="text-[9px] uppercase tracking-[2px] font-bold text-white/80 px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10">
+                  {card.categoryBadge}
+                </span>
+                <span className="text-[11px] font-black tracking-widest text-white/90">
+                  {card.issuer}
+                </span>
+              </div>
+
+              {/* Card Middle: EMV Chip + Contactless Wave + Value */}
+              <div className="relative flex items-center justify-between z-10 py-1">
+                <div className="flex items-center gap-2.5">
+                  {/* EMV Metallic IC Chip */}
+                  <div className={cn(
+                    "w-10 h-7 rounded-[5px] border relative overflow-hidden flex items-center justify-center shadow-md",
+                    card.chipColor === 'gold'
+                      ? "bg-gradient-to-br from-[#f3e092] via-[#d4af37] to-[#997300] border-[#fceebb]/80"
+                      : "bg-gradient-to-br from-zinc-200 via-zinc-400 to-zinc-600 border-zinc-100/80"
+                  )}>
+                    <div className="w-full h-[1px] bg-black/30 absolute top-1/2 -translate-y-1/2" />
+                    <div className="h-full w-[1px] bg-black/30 absolute left-1/3" />
+                    <div className="h-full w-[1px] bg-black/30 absolute right-1/3" />
+                    <div className="w-3.5 h-2 rounded-[2px] border border-black/25 bg-white/20" />
                   </div>
-                  <div className="p-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 shrink-0">
-                    {card.icon}
-                  </div>
+
+                  {/* Contactless Wave Icon */}
+                  <svg className="w-4 h-4 text-white/80 rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M5 8a10 10 0 0 1 14 0" />
+                    <path d="M8.5 11.5a5 5 0 0 1 7 0" />
+                    <path d="M12 15h.01" />
+                  </svg>
                 </div>
-                
-                <div className="flex justify-between items-end">
-                  <div>
-                    <span className="text-[8px] uppercase tracking-widest opacity-60 block mb-0.5">{card.label}</span>
-                    <span className="text-[11px] font-mono font-medium tracking-wider">{card.number}</span>
-                  </div>
-                  <div className="flex items-center gap-1 opacity-70">
-                    <div className="w-6 h-4 rounded-sm bg-white/20 border border-white/10" />
-                  </div>
+
+                <div className="text-right">
+                  <span className="text-xs uppercase tracking-wider text-white/60 block font-bold">DEĞER</span>
+                  <span className="text-lg font-black tracking-tight text-white tabular-nums">{card.value}</span>
+                </div>
+              </div>
+
+              {/* Card Embossed Number */}
+              <div className="relative z-10 font-mono text-sm sm:text-[15px] font-bold tracking-[2.5px] text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.9),0_0_1px_rgba(255,255,255,0.4)]">
+                {card.cardNumber}
+              </div>
+
+              {/* Card Footer: Cardholder & Expiry */}
+              <div className="relative flex justify-between items-end z-10 pt-0.5">
+                <div>
+                  <span className="text-[7px] uppercase tracking-[1.5px] text-white/60 block font-bold">KART SAHİBİ</span>
+                  <span className="text-[11px] font-bold tracking-wider text-white uppercase [text-shadow:0_1px_2px_rgba(0,0,0,0.8)]">
+                    ÖMER ÖZBAY
+                  </span>
+                </div>
+
+                <div className="text-right">
+                  <span className="text-[7px] uppercase tracking-[1.5px] text-white/60 block font-bold">GEÇERLİLİK</span>
+                  <span className="text-[11px] font-mono font-bold text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.8)]">
+                    {card.validThru}
+                  </span>
                 </div>
               </div>
             </motion.div>
           );
         })}
 
-        {/* Frosted Titanium Digital Vault Sleeve (Front) */}
-        <div className="absolute bottom-0 w-[350px] sm:w-[360px] h-[175px] z-40 rounded-[28px_28px_44px_44px] bg-surface/90 dark:bg-zinc-900/90 backdrop-blur-2xl border border-border/70 dark:border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.25),inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col items-center justify-center px-6 overflow-hidden">
-          {/* Subtle Top Metallic Bevel Highlight */}
-          <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
-          
-          <div className="w-full flex flex-col items-center gap-1.5 pt-1 text-center">
+        {/* Luxury Saddle Leather Pocket with Ergonomic Thumb Notch */}
+        <div className="absolute bottom-0 w-[350px] sm:w-[360px] h-[180px] z-40 drop-shadow-[0_25px_35px_rgba(0,0,0,0.6)]">
+          <svg className="w-full h-full" viewBox="0 0 360 180" fill="none">
+            {/* Rich Luxury Cardholder Leather Base */}
+            <path
+              d="M 0 32 C 0 16, 12 14, 24 14 L 125 14 C 142 14, 152 38, 180 38 C 208 38, 218 14, 235 14 L 336 14 C 348 14, 360 16, 360 32 L 360 142 C 360 168, 336 178, 305 178 L 55 178 C 24 178, 0 168, 0 142 Z"
+              className="fill-neutral-900 dark:fill-[#121214]"
+            />
+            {/* Fine Saddle Perimeter Stitching */}
+            <path
+              d="M 12 36 C 12 22, 20 22, 28 22 L 123 22 C 143 22, 150 44, 180 44 C 210 44, 217 22, 237 22 L 332 22 C 340 22, 348 22, 348 36 L 348 138 C 348 160, 330 168, 302 168 L 58 168 C 30 168, 12 160, 12 138 Z"
+              className="stroke-neutral-600/70 dark:stroke-neutral-500/50"
+              strokeWidth="1.5"
+              strokeDasharray="5 4"
+            />
+            {/* Debossed Kapsüle Insignia Crest */}
+            <path
+              d="M 172 155 L 188 155 M 180 148 L 180 162"
+              className="stroke-neutral-700 dark:stroke-neutral-600"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+
+          {/* Cardholder Center Face: Privacy Balance Display & Toggle */}
+          <div className="absolute top-[60px] w-full text-center z-50 flex flex-col items-center gap-1.5 px-6">
             <div className="relative h-7 w-full flex items-center justify-center">
               <AnimatePresence mode="wait">
                 {!isHovered ? (
@@ -165,7 +232,7 @@ export const WalletCard: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.1 }}
-                    className="text-secondary/50 text-xl tracking-[6px] font-light"
+                    className="text-neutral-400 text-xl tracking-[6px] font-light"
                   >
                     ••••••
                   </motion.div>
@@ -175,36 +242,36 @@ export const WalletCard: React.FC = () => {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
-                    className="text-2xl font-bold tracking-tight text-primary tabular-nums"
+                    className="text-2xl font-bold tracking-tight text-white tabular-nums"
                   >
                     {formatCurrency(stats.totalAnnualCost, 'TL')}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-            
-            <div className="text-[10px] uppercase tracking-[2.5px] font-bold text-secondary/70">
+
+            <div className="text-neutral-400 text-[10px] uppercase tracking-[2.5px] font-bold">
               Yıllık Tahmini Gider
             </div>
-            
+
             <motion.div 
               animate={{ opacity: isHovered ? 1 : 0.7, scale: isHovered ? 1.05 : 1 }}
-              className="mt-2 w-8 h-8 rounded-full bg-surface border border-border/70 flex items-center justify-center shadow-soft text-accent"
+              className="mt-2 w-8 h-8 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center shadow-lg text-accent"
             >
                {isHovered ? (
-                 <Eye className="w-4 h-4" />
+                 <Eye className="w-4 h-4 text-accent" />
                ) : (
-                 <EyeOff className="w-4 h-4 text-secondary/70" />
+                 <EyeOff className="w-4 h-4 text-neutral-400" />
                )}
             </motion.div>
           </div>
         </div>
       </motion.div>
-      
-      {/* Sleek helper hint */}
-      <div className="flex items-center gap-2 text-xs font-semibold text-secondary/80 bg-surface/60 px-4 py-2 rounded-full border border-border/50 shadow-soft">
-        <Lock className="w-3.5 h-3.5 text-accent" />
-        <span>Kapsül kartlarını görmek için kasaya dokun</span>
+
+      {/* Sleek cardholder instruction badge */}
+      <div className="flex items-center gap-2 text-xs font-semibold text-secondary/80 bg-surface/70 px-4 py-2 rounded-full border border-border/50 shadow-soft">
+        <CreditCard className="w-3.5 h-3.5 text-accent" />
+        <span>Kartları çekmek ve detayları görmek için dokun</span>
       </div>
     </div>
   );
