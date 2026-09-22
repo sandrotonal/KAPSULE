@@ -165,6 +165,7 @@ function AppContent() {
             key={`settings-${refreshKey}`}
             onSettingsChange={() => setSettings(VaultStorageService.getSettings())}
             onLock={() => setIsLocked(true)}
+            onReplayOnboarding={() => setShowOnboarding(true)}
           />
         );
       default:

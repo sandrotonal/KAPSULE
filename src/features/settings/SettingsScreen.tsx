@@ -152,11 +152,13 @@ const SettingsSection: React.FC<{ title?: string; children: React.ReactNode }> =
 export interface SettingsScreenProps {
   onSettingsChange?: () => void;
   onLock?: () => void;
+  onReplayOnboarding?: () => void;
 }
 
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onSettingsChange,
   onLock,
+  onReplayOnboarding,
 }) => {
   const [settings, setSettingsState] = useState(() => VaultStorageService.getSettings());
   const [showPasscodeModal, setShowPasscodeModal] = useState(false);
@@ -618,11 +620,23 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
       </SettingsSection>
 
       {/* ─── 6. App Info ─── */}
-      <div className="p-4 rounded-3xl bg-surface/40 dark:bg-white/[0.015] border border-border/50 dark:border-white/[0.04] text-center space-y-1">
+      <div className="p-4 rounded-3xl bg-surface/40 dark:bg-white/[0.015] border border-border/50 dark:border-white/[0.04] text-center space-y-2">
         <p className="text-xs font-semibold text-primary tracking-tight">Kapsüle v1.0.4</p>
         <p className="text-[11px] text-secondary/60">
           Tamamen Çevrimdışı · Sıfır Takipçi · Yerel Sandbox Güvenliği
         </p>
+        {onReplayOnboarding && (
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={onReplayOnboarding}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-secondary hover:text-primary bg-surface dark:bg-white/[0.04] border border-border/60 hover:border-border transition-colors active:scale-95 shadow-sm"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-accent" />
+              <span>Tanıtım Turunu İzle</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ═══════════════════════════════════════════

@@ -76,7 +76,25 @@ Eski anket benzeri dikey radyo listesi, kaba kutu/kare arka planlı ikonlar ve h
 
 ---
 
-## ⚙️ 8. Ayarlar, Bildirimler (Dynamic Island), Profil Avatarı ve Kasa Hafızası
+## 🚀 8. Onboarding (Karşılama) Ekranları 3D & Apple HIG Mimarisi (`OnboardingScreen.tsx`)
+Eski dağınık, kalabalık ve klişe rozetli onboarding ekranları baştan sona yeniden tasarlandı:
+- **Arka Plansız Şeffaf 3D Görseller (True Transparent PNG Cutout):**
+  - **Slide 1**: Titanyum ve buzlu cam 3D Kapsüle Kasası (`kapsule_vault_3d.png`), arkasında ve çevresinde hiçbir kutu olmadan, zarif bir 3D süzülme fiziği ve zemin gölgesiyle sunuldu.
+  - **Slide 2**: 3D Akıllı Fiş/Belge Tarayıcı (`scanner_3d.png`), üzerindeki hareketli lazer tarama çizgisiyle interaktif hale getirildi.
+  - **Slide 3**: Resmi Kapsüle Logosu (`kapsule_logo_clean.png`), hiçbir kart/kutu çerçevesi olmaksızın büyük ve şeffaf olarak 3D süzülme animasyonuyla merkeze yerleştirildi.
+- **Gereksiz Rozet ve Kalabalığın Temizlenmesi:**
+  - Görsellerin etrafında dikkat dağıtan ve kalitesiz hissettiren tüm uçuşan küçük badge ve hap etiketler tamamen kaldırıldı.
+- **Sol Üst Logo Alanı Arkaplansızlaştırma:**
+  - Sol üstteki "KAPSÜLE" marka yazısının yanındaki kutu/daire çerçeve kaldırıldı; logo doğrudan şeffaf olarak yerleştirildi.
+- **Tipografi & Buton Ergonomisi (Thumb Zone):**
+  - Tüm yeşil tonlu yazılar kaldırılarak Kapsüle'nin minimalist grafit, siyah ve beyaz renk paletine geçildi.
+  - Apple iOS tarzı segmentli hikaye ilerleme çubuğu entegre edildi.
+  - "Kasamı Başlat" butonundaki parlama/yıldız ikonu kaldırılarak yerine sleek `ArrowRight` ikonu getirildi; başparmak erişim bölgesinde (`h-14`) tactile geri bildirim sağlandı.
+  - Ayarlar ekranına "Tanıtım Turunu İzle" butonu eklenerek tanıtımın dilediği zaman tekrar görüntülenebilmesi sağlandı.
+
+---
+
+## ⚙️ 9. Ayarlar, Bildirimler (Dynamic Island), Profil Avatarı ve Kasa Hafızası
 - **Apple Dynamic Island Bildirim Kapsülü (`Toast.tsx`):**
   - Alttaki mobil navigasyon menüsünü örten eski `bottom-20` simsiyah kaba toast kutusu tamamen kaldırıldı.
   - Bildirimler artık ekranın üstünden (`top-6`) yay (spring) animasyonuyla süzülen, akrilik cam efektli (`backdrop-blur-2xl`), aydınlık ve karanlık temayla tam ahenkli Dynamic Island kapsülüne dönüştürüldü.
