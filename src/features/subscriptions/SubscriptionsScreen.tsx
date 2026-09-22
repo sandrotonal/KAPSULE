@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CreditCard, Search, Plus, TrendingDown, Calendar, ArrowUpRight } from 'lucide-react';
+import { CreditCard, Search, Plus, Calendar, ArrowUpRight } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
@@ -75,8 +75,8 @@ export const SubscriptionsScreen: React.FC<SubscriptionsScreenProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <TiltCard className="rounded-2xl">
           <Card className="bg-surface/30 border-border/40 p-6 space-y-4 h-full">
-            <div className="flex items-center gap-2 text-secondary/60">
-              <TrendingDown className="w-4 h-4" />
+            <div className="flex items-center gap-2 text-secondary/70">
+              <CreditCard className="w-4 h-4 text-accent" />
               <span className="text-xs font-bold uppercase tracking-widest">Aylık Harcama</span>
             </div>
             <p className="text-3xl font-bold text-primary tracking-tight">{formatCurrency(Math.round(monthlyTotal), 'TL')}</p>

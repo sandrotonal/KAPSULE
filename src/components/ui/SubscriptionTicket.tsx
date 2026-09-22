@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, Calendar, TrendingUp } from 'lucide-react';
+import { Clock, Calendar, CreditCard } from 'lucide-react';
 import { formatCurrency } from '../../lib/utils';
 
 interface SubscriptionTicketProps {
@@ -105,8 +105,8 @@ export const SubscriptionTicket: React.FC<SubscriptionTicketProps> = ({
 
         <div className="absolute top-0 left-[50px] w-[2px] h-full flex items-center justify-center z-10">
           <div className="relative h-full border-l-2 border-dashed border-gray-300">
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gray-200" />
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gray-200" />
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background" />
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background" />
           </div>
         </div>
 
@@ -119,8 +119,8 @@ export const SubscriptionTicket: React.FC<SubscriptionTicketProps> = ({
           style={{ 
             width: '80px', 
             height: '100%', 
-            filter: 'blur(10px)',
-            background: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%)'
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+            transform: 'skewX(-20deg)'
           }}
         />
 
@@ -131,7 +131,7 @@ export const SubscriptionTicket: React.FC<SubscriptionTicketProps> = ({
                 {logoUrl ? (
                   <img src={logoUrl} alt={name} className="w-6 h-6 object-contain rounded" />
                 ) : (
-                  <TrendingUp className="w-5 h-5 text-indigo-500" />
+                  <CreditCard className="w-5 h-5 text-accent" />
                 )}
                 <h3 className="font-bold text-sm text-gray-800 truncate">{name}</h3>
               </div>

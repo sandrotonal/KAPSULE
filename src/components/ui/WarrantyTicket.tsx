@@ -103,9 +103,9 @@ export const WarrantyTicket: React.FC<WarrantyTicketProps> = ({
         </svg>
 
         <div className="absolute top-0 left-[50px] w-[2px] h-full flex items-center justify-center z-10">
-          <div className="relative h-full border-l-2 border-dashed border-blue-300">
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-blue-200" />
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-blue-200" />
+          <div className="relative h-full border-l-2 border-dashed border-border/60">
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background" />
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background" />
           </div>
         </div>
 

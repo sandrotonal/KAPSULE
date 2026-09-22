@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Plus, TrendingUp, Sparkles } from 'lucide-react';
+import { Plus, CreditCard } from 'lucide-react';
 import { formatCurrency, getCategoryLabel, cn } from '../../lib/utils';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { motion } from 'framer-motion';
@@ -11,12 +11,12 @@ export interface SpendingCardProps {
 }
 
 const CATEGORY_COLORS = [
-  'bg-indigo-500 dark:bg-indigo-400',
-  'bg-emerald-500 dark:bg-emerald-400',
-  'bg-purple-500 dark:bg-purple-400',
-  'bg-amber-500 dark:bg-amber-400',
-  'bg-sky-500 dark:bg-sky-400',
-  'bg-rose-500 dark:bg-rose-400',
+  'bg-accent',
+  'bg-accent/80',
+  'bg-accent/60',
+  'bg-accent/40',
+  'bg-accent/25',
+  'bg-secondary/30',
 ];
 
 export const SpendingCard: React.FC<SpendingCardProps> = ({
@@ -77,11 +77,8 @@ export const SpendingCard: React.FC<SpendingCardProps> = ({
 
       {/* Card Header & Action Toolbar */}
       <div className="flex items-center justify-between gap-4 mb-5 relative z-10">
-        <div className="flex items-center gap-2.5">
-          {/* NO border around trend icon */}
-          <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent shrink-0">
-            <TrendingUp className="w-4 h-4" />
-          </div>
+        <div className="flex items-center gap-2">
+          <CreditCard className="w-4 h-4 text-accent shrink-0" />
           <span className="text-[11px] font-bold uppercase tracking-[1.8px] text-secondary opacity-70">
             Aylık Harcama
           </span>

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText, Receipt, CreditCard, ShieldCheck, StickyNote, Bookmark,
   X, ArrowLeft, Check, Upload, Calendar, Tag, DollarSign,
-  Link2, PenLine, ChevronRight, Store, Sparkles
+  Link2, PenLine, ChevronRight, Store, Plus
 } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { VaultStorageService } from '../../services/vaultStorage';
@@ -507,7 +507,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                           </svg>
                         ) : (
                           <>
-                            <Sparkles className="w-3.5 h-3.5" />
+                            <Plus className="w-3.5 h-3.5" />
                             Kasaya Ekle
                           </>
                         )}

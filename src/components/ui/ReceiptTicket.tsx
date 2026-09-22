@@ -107,8 +107,8 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
 
         <div className="absolute top-0 left-[50px] w-[2px] h-full flex items-center justify-center z-10">
           <div className="relative h-full border-l-2 border-dashed border-gray-300">
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gray-200" />
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gray-200" />
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background" />
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background" />
           </div>
         </div>
 
