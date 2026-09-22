@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Star, Download, Trash2, X, Sparkles, Tag } from 'lucide-react';
+import { FileText, Star, Download, Trash2, X, ScanText, Tag } from 'lucide-react';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -91,7 +91,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
         {document.ocrText && (
           <div className="space-y-1.5">
             <p className="text-xs font-medium text-secondary flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-accent" /> Taranan metin
+              <ScanText className="w-3.5 h-3.5 text-accent" /> Taranan metin
             </p>
             <div className="px-4 py-3 bg-surface rounded-xl border border-border text-xs font-mono text-secondary leading-relaxed max-h-28 overflow-y-auto thin-scrollbar">
               {document.ocrText}

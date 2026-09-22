@@ -8,9 +8,7 @@ import {
   Camera,
   Coffee,
   ShoppingBag,
-  Sparkles,
   ShieldCheck,
-  Zap,
   Car,
   Home,
   Music,
@@ -827,7 +825,7 @@ export function getCategoryFallbackIcon(name: string, brand?: string) {
     return ShoppingCart;
   }
   if (query.match(/elektrik|su|doğalgaz|fatura|enerjisa|igdaş|iski|turkcell|telekom|vodafone/)) {
-    return Zap;
+    return FileText;
   }
   if (query.match(/seyahat|bilet|uçak|otel|thy|pegasus|turna|obilet/)) {
     return Plane;

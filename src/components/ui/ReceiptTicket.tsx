@@ -75,7 +75,7 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
       onHoverEnd={() => setIsHovered(false)}
     >
       <motion.div
-        className="relative h-[180px] w-[340px] flex bg-white rounded-2xl overflow-hidden shadow-lg"
+        className="relative h-[180px] w-[340px] flex bg-white dark:bg-zinc-900 border border-gray-200/80 dark:border-white/10 rounded-2xl overflow-hidden shadow-md dark:shadow-2xl"
         animate={{
           rotateY: isHovered ? 0 : [0, -5, 5, 0],
           y: isHovered ? -10 : 0
@@ -87,12 +87,11 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
         style={{ transformStyle: 'preserve-3d' }}
       >
         <svg
-          className="absolute left-0 top-0 h-full"
+          className="absolute left-0 top-0 h-full fill-zinc-200/80 dark:fill-zinc-800"
           xmlns="http://www.w3.org/2000/svg"
           width={64}
           height={180}
           viewBox="0 0 64 180"
-          fill="#e8e8e8"
         >
           {Array.from({ length: 35 }).map((_, i) => (
             <motion.path
@@ -106,23 +105,24 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
         </svg>
 
         <div className="absolute top-0 left-[50px] w-[2px] h-full flex items-center justify-center z-10">
-          <div className="relative h-full border-l-2 border-dashed border-gray-300">
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gray-200" />
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gray-200" />
+          <div className="relative h-full border-l-2 border-dashed border-gray-300 dark:border-zinc-700">
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background" />
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background" />
           </div>
         </div>
 
         <motion.div
           className="absolute inset-0 pointer-events-none"
           animate={{
-            background: [
-              'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%)',
-              'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%)'
-            ],
             x: [-100, 400]
           }}
           transition={{ duration: 3, repeat: Infinity, repeatDelay: 5 }}
-          style={{ width: '80px', height: '100%', filter: 'blur(10px)' }}
+          style={{ 
+            width: '80px', 
+            height: '100%', 
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)',
+            transform: 'skewX(-20deg)'
+          }}
         />
 
         <div className="relative flex-1 flex flex-col justify-between p-4 pl-16 z-10">
@@ -134,75 +134,62 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
                   brand={merchant}
                   imageUrl={merchantLogo}
                   size="sm"
-                  className="w-7 h-7 rounded-lg shrink-0"
+                  className="w-7 h-7 rounded-lg shrink-0 border border-border/40"
                 />
-                <h3 className="font-bold text-gray-900 text-sm tracking-tight capitalize line-clamp-1">{merchant}</h3>
+                <h3 className="font-bold text-gray-900 dark:text-zinc-100 text-sm tracking-tight capitalize line-clamp-1">{merchant}</h3>
               </div>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wide">{category}</p>
+              <p className="text-[10px] text-gray-400 dark:text-zinc-500 uppercase tracking-wide">{category}</p>
             </div>
             
             <div className="text-right shrink-0 pl-2">
-              <p className="text-lg font-bold text-gray-900 tabular-nums">
+              <p className="text-lg font-bold text-gray-900 dark:text-zinc-100 tabular-nums">
                 {formatCurrency(amount, currency)}
               </p>
-              <div className="flex items-center justify-end gap-1 text-[9px] text-gray-400 mt-0.5">
+              <div className="flex items-center justify-end gap-1 text-[9px] text-gray-400 dark:text-zinc-500 mt-0.5">
                 <Clock className="w-3 h-3" />
                 <span>{currentTime.toLocaleTimeString('tr-TR')}</span>
               </div>
             </div>
           </div>
 
-          <div className="h-[1px] bg-gradient-to-r from-transparent via-gray-300 to-transparent my-2" />
+          <div className="h-[1px] bg-gradient-to-r from-transparent via-gray-300 dark:via-zinc-700 to-transparent my-2" />
 
           <div className="grid grid-cols-3 gap-2 text-[10px]">
             <div>
-              <p className="text-gray-400 mb-0.5">Sipariş No</p>
-              <p className="font-semibold text-gray-700 truncate">#{orderId.slice(0, 6)}</p>
+              <p className="text-gray-400 dark:text-zinc-500 mb-0.5">Sipariş No</p>
+              <p className="font-semibold text-gray-700 dark:text-zinc-300 truncate">#{orderId.slice(0, 6)}</p>
             </div>
             <div>
-              <p className="text-gray-400 mb-0.5">Tarih</p>
-              <p className="font-semibold text-gray-700">{formattedDate}</p>
+              <p className="text-gray-400 dark:text-zinc-500 mb-0.5">Tarih</p>
+              <p className="font-semibold text-gray-700 dark:text-zinc-300">{formattedDate}</p>
             </div>
             <div>
-              <p className="text-gray-400 mb-0.5">Saat</p>
-              <p className="font-semibold text-gray-700">{formattedTime}</p>
+              <p className="text-gray-400 dark:text-zinc-500 mb-0.5">Saat</p>
+              <p className="font-semibold text-gray-700 dark:text-zinc-300">{formattedTime}</p>
             </div>
           </div>
 
           {items.length > 0 && (
             <>
-              <div className="h-[1px] bg-gradient-to-r from-transparent via-gray-300 to-transparent my-2" />
+              <div className="h-[1px] bg-gradient-to-r from-transparent via-gray-300 dark:via-zinc-700 to-transparent my-2" />
               <div className="space-y-1 max-h-12 overflow-y-auto custom-scrollbar">
                 {items.slice(0, 2).map((item, idx) => (
-                  <div key={idx} className="flex justify-between text-[9px] text-gray-600">
+                  <div key={idx} className="flex justify-between text-[9px] text-gray-600 dark:text-zinc-400">
                     <span className="truncate flex-1">{item.name}</span>
                     <span className="ml-2">{item.quantity}x</span>
-                    <span className="ml-2 font-semibold">{item.price.toFixed(2)} {currencySymbol}</span>
+                    <span className="ml-2 font-semibold text-gray-900 dark:text-zinc-200">{item.price.toFixed(2)} {currencySymbol}</span>
                   </div>
                 ))}
                 {items.length > 2 && (
-                  <p className="text-[8px] text-gray-400 italic">+{items.length - 2} ürün daha</p>
+                  <p className="text-[8px] text-gray-400 dark:text-zinc-500 italic">+{items.length - 2} ürün daha</p>
                 )}
               </div>
             </>
           )}
-
-          <motion.div
-            className="absolute bottom-0 right-0 p-3"
-            animate={{
-              backgroundColor: ['#FFD93D', '#FF6B35', '#6BCB77', '#4D96FF', '#FFD93D']
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            style={{ zIndex: -1, borderTopLeftRadius: '1rem' }}
-          >
-            <div className="w-5 h-5 text-white flex items-center justify-center text-xs font-bold">
-              {merchant[0]}
-            </div>
-          </motion.div>
         </div>
 
         <motion.div
-          className="absolute top-0 right-0 w-40 h-full bg-gradient-to-l from-black/10 to-transparent"
+          className="absolute top-0 right-0 w-40 h-full bg-gradient-to-l from-black/5 dark:from-white/5 to-transparent pointer-events-none"
           animate={{
             x: [200, 0],
             scale: [1, 1.2, 1]

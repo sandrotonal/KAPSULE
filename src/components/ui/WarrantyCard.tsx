@@ -114,8 +114,8 @@ export const WarrantyCard: React.FC<WarrantyCardProps> = ({
     {
       label: 'AKTİF',
       value: ring1Value,
-      color: '#8B5CF6',
-      gradientEnd: '#A78BFA',
+      color: 'rgb(var(--accent))',
+      gradientEnd: 'rgb(var(--accent))',
       size: 136,
       current: activeWarranties,
       target: totalWarranties || 1,
@@ -124,8 +124,8 @@ export const WarrantyCard: React.FC<WarrantyCardProps> = ({
     {
       label: 'GÜVENDE',
       value: ring2Value,
-      color: '#10B981',
-      gradientEnd: '#34D399',
+      color: 'rgb(var(--accent) / 0.65)',
+      gradientEnd: 'rgb(var(--accent) / 0.85)',
       size: 108,
       current: safeWarranties,
       target: activeWarranties || 1,
@@ -134,8 +134,8 @@ export const WarrantyCard: React.FC<WarrantyCardProps> = ({
     {
       label: 'KORUMA',
       value: ring3Value,
-      color: expiringWarranties > 0 ? '#F59E0B' : '#06B6D4',
-      gradientEnd: expiringWarranties > 0 ? '#FBBF24' : '#38BDF8',
+      color: expiringWarranties > 0 ? '#f59e0b' : 'rgb(var(--accent) / 0.40)',
+      gradientEnd: expiringWarranties > 0 ? '#fbbf24' : 'rgb(var(--accent) / 0.60)',
       size: 80,
       current: expiringWarranties > 0 ? expiringWarranties : totalWarranties,
       target: totalWarranties || 1,
@@ -150,14 +150,10 @@ export const WarrantyCard: React.FC<WarrantyCardProps> = ({
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       onClick={() => onNavigateToTab?.('warranties')}
       className={cn(
-        'w-full rounded-3xl p-6 sm:p-7 shadow-soft transition-all duration-300 relative overflow-hidden cursor-pointer group',
-        'bg-surface/50 text-primary backdrop-blur-xl border border-border/60 hover:border-accent/40',
+        'w-full p-2 transition-all duration-300 relative cursor-pointer group bg-transparent border-0 shadow-none',
         className
       )}
     >
-      {/* Background subtle glow */}
-      <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
-
       {/* Clean Header */}
       <div className="flex items-center justify-between mb-4 relative z-10">
         <span className="text-[11px] font-bold uppercase tracking-[2px] text-secondary opacity-80">

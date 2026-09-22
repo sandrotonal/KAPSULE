@@ -61,16 +61,10 @@ export const ReturnsCalendar: React.FC<ReturnsCalendarProps> = ({
   const reduced = useReducedMotion();
   const [hot, setHot] = useState<{ y: number; m: number } | null>(null);
 
-  // Fallback demo data if returns not provided
+  // Default empty returns if none provided
   const computedReturns = useMemo(() => {
     if (returns && returns.length > 0) return returns;
-    return DEFAULT_YEARS.map((y) =>
-      INITIALS.map((_, m) => {
-        if (y === 2026 && m <= 7) return Math.floor(Math.random() * 8) + 1;
-        if (y < 2026) return Math.floor(Math.random() * 12);
-        return 0;
-      })
-    );
+    return DEFAULT_YEARS.map(() => INITIALS.map(() => 0));
   }, [returns]);
 
   const totals = useMemo(() => computedReturns.map(compound), [computedReturns]);

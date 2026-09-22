@@ -1,338 +1,195 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  FileText,
-  Receipt,
-  ShieldCheck,
-  StickyNote,
-  Bookmark,
-  Search,
-  CreditCard,
-  Lock,
-  ChevronRight,
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
+import { ChevronRight, ArrowRight } from 'lucide-react';
+import kapsuleVault3D from '../../assets/kapsule_vault_3d.png';
+import scanner3D from '../../assets/scanner_3d.png';
+import kapsuleLogoClean from '../../assets/kapsule_logo_clean.png';
 
 /* ─── Types ─── */
 interface OnboardingScreenProps {
   onComplete: () => void;
 }
 
-interface SlideConfig {
-  headline: [string, string];
-  description: string;
-  hero: React.ReactNode;
-}
-
-/* ─── Floating Container ─── */
-const FloatingShape: React.FC<{
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-  duration?: number;
-  y?: number;
-}> = ({ children, className = '', delay = 0, duration = 6, y = 10 }) => (
-  <motion.div
-    className={className}
-    animate={{ y: [-y, y, -y] }}
-    transition={{
-      duration,
-      repeat: Infinity,
-      ease: 'easeInOut',
-      delay,
-    }}
-  >
-    {children}
-  </motion.div>
-);
-
-const VAULT_PREVIEW_ITEMS = [
-  { label: 'Belge', icon: FileText },
-  { label: 'Fiş', icon: Receipt },
-  { label: 'Garanti', icon: ShieldCheck },
-  { label: 'Abonelik', icon: CreditCard },
-];
-
-/* ─── Hero 1: Minimal Vault Mechanism ─── */
-const HeroComposition: React.FC = () => {
-  const [activeItem, setActiveItem] = useState(0);
-
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      setActiveItem((current) => (current + 1) % VAULT_PREVIEW_ITEMS.length);
-    }, 1800);
-    return () => window.clearInterval(interval);
-  }, []);
-
+/* ─── Slide 1: 3D Capsule Vault (Clean, Centered, Backgroundless) ─── */
+const Slide1Vault: React.FC = () => {
   return (
-    <div className="relative w-full h-[350px] sm:h-[410px] flex items-center justify-center overflow-visible" aria-label="Kapsule kasa açılış animasyonu">
-      <div className="absolute h-[286px] w-[286px] rounded-full bg-[radial-gradient(circle,rgba(23,23,23,0.08)_0%,rgba(245,245,245,0)_68%)] dark:bg-[radial-gradient(circle,rgba(255,255,255,0.1)_0%,rgba(10,10,10,0)_68%)]" />
+    <div className="relative w-full max-w-[340px] h-[310px] sm:h-[350px] flex items-center justify-center">
+      {/* Subtle ambient light pool */}
+      <div className="absolute w-56 h-56 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
 
+      {/* Floating 3D Capsule Vault */}
       <motion.div
-        className="relative h-[262px] w-[262px] rounded-full"
-        animate={{ rotate: [0, 0.8, -0.8, 0] }}
-        transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+        className="relative z-10 flex flex-col items-center justify-center"
+        animate={{
+          y: [-8, 8, -8],
+          rotateZ: [-1, 1, -1],
+        }}
+        transition={{
+          duration: 4.6,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
       >
-        {Array.from({ length: 48 }).map((_, index) => (
-          <span
-            key={index}
-            className={`absolute left-1/2 top-1/2 h-3 w-px rounded-full ${
-              index % 4 === 0 ? 'bg-neutral-400 dark:bg-neutral-600' : 'bg-neutral-200 dark:bg-neutral-800'
-            }`}
-            style={{ transform: `rotate(${index * 7.5}deg) translateY(-128px)` }}
-          />
-        ))}
-
-        <motion.div
-          className="absolute inset-5 rounded-full border border-neutral-300 dark:border-neutral-800"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 42, repeat: Infinity, ease: 'linear' }}
-        />
-        <motion.div
-          className="absolute inset-12 rounded-full border border-dashed border-neutral-300/80 dark:border-neutral-700"
-          animate={{ rotate: -360 }}
-          transition={{ duration: 36, repeat: Infinity, ease: 'linear' }}
+        <img
+          src={kapsuleVault3D}
+          alt="Kapsule 3D Kasa"
+          className="w-[190px] sm:w-[220px] h-auto object-contain drop-shadow-[0_24px_40px_rgba(0,0,0,0.22)] dark:drop-shadow-[0_28px_50px_rgba(0,0,0,0.7)] select-none pointer-events-none"
         />
 
-        <div className="absolute inset-[76px] rounded-full bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 shadow-[0_30px_70px_-28px_rgba(0,0,0,0.7)] flex items-center justify-center">
-          <motion.div
-            className="absolute inset-3 rounded-full border border-white/10 dark:border-neutral-950/10"
-            animate={{ scale: [1, 1.04, 1], opacity: [0.7, 1, 0.7] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <img src="/src/assets/logo.png" alt="Kapsule Logo" className="relative h-12 w-12 object-contain dark:invert" />
-        </div>
-
-        {VAULT_PREVIEW_ITEMS.map((item, index) => {
-          const Icon = item.icon;
-          const isActive = index === activeItem;
-          const angle = index * 90 - 90;
-          const radius = 104;
-          const x = Math.cos((angle * Math.PI) / 180) * radius;
-          const y = Math.sin((angle * Math.PI) / 180) * radius;
-
-          return (
-            <motion.button
-              key={item.label}
-              type="button"
-              aria-label={item.label}
-              aria-pressed={isActive}
-              onClick={() => setActiveItem(index)}
-              className={`absolute left-1/2 top-1/2 h-12 w-12 rounded-full border flex items-center justify-center transition-colors ${
-                isActive
-                  ? 'border-neutral-950 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950'
-                  : 'border-neutral-200 bg-white text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400'
-              }`}
-              style={{ x: x - 24, y: y - 24 }}
-              animate={{
-                scale: isActive ? 1.16 : 0.92,
-                opacity: isActive ? 1 : 0.72,
-              }}
-              transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <Icon className="w-4 h-4" />
-            </motion.button>
-          );
-        })}
-
-        <div className="absolute -bottom-7 left-1/2 flex -translate-x-1/2 items-center gap-2">
-          {VAULT_PREVIEW_ITEMS.map((item, index) => (
-            <button
-              key={item.label}
-              type="button"
-              aria-label={`${item.label} göstergesi`}
-              onClick={() => setActiveItem(index)}
-              className={`h-2 rounded-full transition-all ${
-                index === activeItem
-                  ? 'w-7 bg-neutral-950 dark:bg-white'
-                  : 'w-2 bg-neutral-200 dark:bg-neutral-800'
-              }`}
-            />
-          ))}
-        </div>
+        {/* Ambient Floor Shadow */}
+        <motion.div
+          className="w-28 h-3 rounded-full bg-black/15 dark:bg-white/10 blur-sm -mt-2"
+          animate={{
+            scale: [0.9, 1.1, 0.9],
+            opacity: [0.35, 0.65, 0.35],
+          }}
+          transition={{
+            duration: 4.6,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
       </motion.div>
     </div>
   );
 };
 
-/* ─── Hero 2: Search Experience (Unchanged as requested) ─── */
-const SEARCH_SUGGESTIONS = ['Belge başlığı', 'Satıcı adı', 'Garanti kaydı', 'Not içeriği'];
-
-const HeroSearch: React.FC = () => {
-  const [activeSuggestion, setActiveSuggestion] = useState(0);
-  const [typedText, setTypedText] = useState('');
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveSuggestion((prev) => (prev + 1) % SEARCH_SUGGESTIONS.length);
-      setTypedText('');
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const word = SEARCH_SUGGESTIONS[activeSuggestion];
-    let i = 0;
-    const typeInterval = setInterval(() => {
-      if (i <= word.length) {
-        setTypedText(word.slice(0, i));
-        i++;
-      } else {
-        clearInterval(typeInterval);
-      }
-    }, 80);
-    return () => clearInterval(typeInterval);
-  }, [activeSuggestion]);
-
+/* ─── Slide 2: 3D Holographic AI Scanner (Clean, No Clutter Badges) ─── */
+const Slide2Scanner: React.FC = () => {
   return (
-    <div className="relative w-full h-[340px] sm:h-[400px] flex flex-col items-center justify-center gap-8 px-4">
-      <FloatingShape y={4} duration={8}>
-        <div className="w-full max-w-[360px] relative">
-          <div className="flex items-center gap-3 px-6 py-5 rounded-[28px] bg-neutral-100 dark:bg-neutral-800 border border-neutral-200/60 dark:border-neutral-700/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08)]">
-            <Search className="w-5 h-5 text-neutral-400 dark:text-neutral-500 shrink-0" />
-            <span className="text-lg text-neutral-900 dark:text-neutral-100 font-medium tracking-tight">
-              {typedText}
-              <motion.span
-                animate={{ opacity: [1, 0] }}
-                transition={{ duration: 0.6, repeat: Infinity }}
-                className="inline-block w-[2px] h-5 bg-neutral-400 dark:bg-neutral-500 ml-0.5 align-middle"
-              />
-            </span>
-          </div>
-        </div>
-      </FloatingShape>
+    <div className="relative w-full max-w-[340px] h-[310px] sm:h-[350px] flex items-center justify-center">
+      {/* Subtle ambient light pool */}
+      <div className="absolute w-56 h-56 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
 
-      <div className="flex flex-col gap-2.5 w-full max-w-[320px]">
-        <AnimatePresence mode="wait">
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={`${activeSuggestion}-${i}`}
-              initial={{ opacity: 0, y: 8, scale: 0.97 }}
-              animate={{ opacity: 1 - i * 0.25, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.4, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white dark:bg-neutral-800/80 border border-neutral-200/40 dark:border-neutral-700/40"
-            >
-              <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center shrink-0">
-                {i === 0 && <FileText className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />}
-                {i === 1 && <Receipt className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />}
-                {i === 2 && <ShieldCheck className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />}
-              </div>
-              <div className="flex-1 space-y-1">
-                <div className="h-1.5 w-20 rounded-full bg-neutral-200 dark:bg-neutral-700" />
-                <div className="h-1 w-14 rounded-full bg-neutral-100 dark:bg-neutral-700/60" />
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-};
-
-/* ─── Hero 3: Enhanced Unified Vault ─── */
-const HeroVault: React.FC = () => {
-  const categories = [
-    { icon: <FileText className="w-4 h-4" />, label: 'Belgeler' },
-    { icon: <Receipt className="w-4 h-4" />, label: 'Fişler' },
-    { icon: <CreditCard className="w-4 h-4" />, label: 'Abonelikler' },
-    { icon: <ShieldCheck className="w-4 h-4" />, label: 'Garantiler' },
-    { icon: <StickyNote className="w-4 h-4" />, label: 'Notlar' },
-    { icon: <Bookmark className="w-4 h-4" />, label: 'Yer İmleri' },
-  ];
-
-  return (
-    <div className="relative w-full h-[340px] sm:h-[400px] flex items-center justify-center">
-      <FloatingShape y={6} duration={9}>
-        <div className="relative">
-          {/* Concentric rings */}
-          <div className="absolute inset-0 -m-10 rounded-full border border-dashed border-neutral-200 dark:border-neutral-800 animate-spin-slow opacity-60 pointer-events-none" />
-
-          {/* Central vault circle */}
-          <div className="w-[190px] h-[190px] rounded-full bg-neutral-100 dark:bg-neutral-800/90 border border-neutral-200/80 dark:border-neutral-700/80 flex items-center justify-center shadow-[0_30px_80px_-20px_rgba(0,0,0,0.15)]">
-            <div className="w-[130px] h-[130px] rounded-full bg-white dark:bg-neutral-900 border border-neutral-200/60 dark:border-neutral-700/60 flex flex-col items-center justify-center gap-2 shadow-inner">
-              <Lock className="w-8 h-8 text-neutral-900 dark:text-neutral-100" />
-              <span className="text-[10px] font-mono font-bold tracking-widest text-neutral-400 uppercase">KAPSULE</span>
-            </div>
-          </div>
-
-          {/* Orbiting category pills */}
-          {categories.map((cat, i) => {
-            const angle = i * 60 - 90;
-            const radius = 145;
-            const x = Math.cos((angle * Math.PI) / 180) * radius;
-            const y = Math.sin((angle * Math.PI) / 180) * radius;
-
-            return (
-              <motion.div
-                key={cat.label}
-                className="absolute top-1/2 left-1/2"
-                style={{
-                  x: x - 42,
-                  y: y - 18,
-                }}
-                animate={{
-                  y: [y - 18 - 4, y - 18 + 4, y - 18 - 4],
-                }}
-                transition={{
-                  duration: 5 + i * 0.5,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: i * 0.3,
-                }}
-              >
-                <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/80 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.08)]">
-                  <span className="text-neutral-700 dark:text-neutral-300">{cat.icon}</span>
-                  <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200 whitespace-nowrap">{cat.label}</span>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </FloatingShape>
-    </div>
-  );
-};
-
-/* ─── Page Indicator ─── */
-const PageDots: React.FC<{ total: number; current: number }> = ({ total, current }) => (
-  <div className="flex items-center gap-2">
-    {Array.from({ length: total }).map((_, i) => (
+      {/* Floating 3D Scanner */}
       <motion.div
-        key={i}
-        className="rounded-full"
+        className="relative z-10 flex flex-col items-center justify-center"
         animate={{
-          width: i === current ? 28 : 8,
-          height: 8,
-          backgroundColor:
-            i === current
-              ? 'var(--text-primary, #171717)'
-              : 'var(--border, #e5e5e5)',
+          y: [-7, 7, -7],
+          rotateZ: [-0.8, 0.8, -0.8],
         }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      />
-    ))}
-  </div>
-);
+        transition={{
+          duration: 4.2,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      >
+        <div className="relative">
+          <img
+            src={scanner3D}
+            alt="3D Akıllı Tarayıcı"
+            className="w-[240px] sm:w-[270px] h-auto object-contain drop-shadow-[0_22px_38px_rgba(0,0,0,0.2)] dark:drop-shadow-[0_28px_50px_rgba(0,0,0,0.7)] select-none pointer-events-none"
+          />
 
-/* ─── Main Onboarding Component ─── */
+          {/* Smooth Subtle Scan Light Line */}
+          <motion.div
+            className="absolute left-7 right-7 h-[2px] rounded-full bg-gradient-to-r from-transparent via-neutral-400 to-transparent dark:via-white/80 shadow-[0_0_10px_rgba(255,255,255,0.6)] z-20 pointer-events-none"
+            style={{ top: '25%' }}
+            animate={{
+              top: ['22%', '52%', '22%'],
+              opacity: [0.4, 0.9, 0.4],
+            }}
+            transition={{
+              duration: 2.6,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+        </div>
+
+        {/* Ambient Floor Shadow */}
+        <motion.div
+          className="w-36 h-3 rounded-full bg-black/15 dark:bg-white/10 blur-sm -mt-2"
+          animate={{
+            scale: [0.92, 1.08, 0.92],
+            opacity: [0.35, 0.65, 0.35],
+          }}
+          transition={{
+            duration: 4.2,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      </motion.div>
+    </div>
+  );
+};
+
+/* ─── Slide 3: Large Backgroundless Kapsüle Logo Hero ─── */
+const Slide3LogoHero: React.FC = () => {
+  return (
+    <div className="relative w-full max-w-[340px] h-[310px] sm:h-[350px] flex items-center justify-center">
+      {/* Subtle ambient light pool */}
+      <div className="absolute w-60 h-60 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
+
+      {/* Floating Large Backgroundless Kapsüle Logo */}
+      <motion.div
+        className="relative z-10 flex flex-col items-center justify-center"
+        animate={{
+          y: [-8, 8, -8],
+          rotateZ: [-1, 1, -1],
+        }}
+        transition={{
+          duration: 4.8,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      >
+        <img
+          src={kapsuleLogoClean}
+          alt="Kapsüle Logo"
+          className="w-[170px] sm:w-[200px] h-auto object-contain dark:invert select-none pointer-events-none drop-shadow-[0_20px_35px_rgba(0,0,0,0.18)] dark:drop-shadow-[0_24px_45px_rgba(255,255,255,0.2)]"
+        />
+
+        {/* Ambient Floor Shadow */}
+        <motion.div
+          className="w-32 h-3.5 rounded-full bg-black/15 dark:bg-white/10 blur-sm mt-5"
+          animate={{
+            scale: [0.9, 1.1, 0.9],
+            opacity: [0.35, 0.6, 0.35],
+          }}
+          transition={{
+            duration: 4.8,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      </motion.div>
+    </div>
+  );
+};
+
+/* ─── Main Onboarding Screen ─── */
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const slides: SlideConfig[] = [
+  const slides = [
     {
-      headline: ['Her önemli şey.', 'Tek kasada.'],
-      description: 'Belgelerini, fişlerini ve hatırlatmalarını sakin bir düzende tut.',
-      hero: <HeroComposition />,
+      component: <Slide1Vault />,
+      tag: 'KAPSÜLE KASASI',
+      title: 'Her önemli evrak.',
+      titleAccent: 'Tek güvenli kasada.',
+      description:
+        'Fiş, fatura, garanti belgesi ve aboneliklerini dağınıklıktan kurtar; akıllı kişisel kasan cebinde olsun.',
+      ctaText: 'Devam Et',
     },
     {
-      headline: ['Find anything.', 'Instantly.'],
-      description: 'Her dosya, her fiş, her garanti — tek bir arama uzağında.',
-      hero: <HeroSearch />,
+      component: <Slide2Scanner />,
+      tag: 'AKILLI TARAYICI',
+      title: 'Kameranı doğrult.',
+      titleAccent: 'Saniyeler içinde ayrışsın.',
+      description:
+        'Fiş veya fatura görüntünü yükle; tutar, satıcı ve garanti süresi yapay zekâ ile anında kütüphanene işlensin.',
+      ctaText: 'Devam Et',
     },
     {
-      headline: ['Your digital vault.', 'Ready when you are.'],
-      description: 'Her şey düzenli; kayıtlarını dilediğin an ekleyip bulabilirsin.',
-      hero: <HeroVault />,
+      component: <Slide3LogoHero />,
+      tag: 'GÜVENLİ & ÇEVRİMDIŞI',
+      title: 'Tamamen cihazında.',
+      titleAccent: 'Yalnızca senin gözün için.',
+      description:
+        'Kayıtların sunucularda depolanmaz, cihazından dışarı çıkmaz. Uçtan uca şifreleme ile mutlak gizlilik.',
+      ctaText: 'Kasamı Başlat',
     },
   ];
 
@@ -346,100 +203,152 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
     }
   };
 
+  const handlePrev = () => {
+    if (currentSlide > 0) {
+      setCurrentSlide((prev) => prev - 1);
+    }
+  };
+
+  // Support touch swipe gestures
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (info.offset.x < -40 && currentSlide < slides.length - 1) {
+      handleNext();
+    } else if (info.offset.x > 40 && currentSlide > 0) {
+      handlePrev();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-[100] bg-white dark:bg-neutral-950 flex flex-col overflow-hidden select-none">
-      {/* Top bar — Logo */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="flex items-center justify-center pt-10 pb-2"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-[22px] bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 flex items-center justify-center p-2 shadow-sm overflow-hidden">
-            <img src="/src/assets/logo.png" alt="Kapsule" className="w-full h-full object-contain dark:invert" />
-          </div>
-          <span className="text-base font-bold text-neutral-900 dark:text-neutral-100 tracking-wider uppercase">
-            Kapsule
-          </span>
+    <div className="fixed inset-0 z-[120] bg-white dark:bg-black text-neutral-900 dark:text-neutral-100 flex flex-col justify-between overflow-hidden select-none">
+      {/* ─── Top Bar: Segmented Story Bar + Logo + Skip ─── */}
+      <div className="w-full max-w-lg mx-auto px-6 pt-10 pb-2 flex flex-col gap-5 z-30">
+        {/* Segmented Story Indicators */}
+        <div className="w-full flex items-center gap-1.5">
+          {slides.map((_, i) => (
+            <div
+              key={i}
+              onClick={() => setCurrentSlide(i)}
+              className="flex-1 h-1 rounded-full bg-neutral-200/80 dark:bg-neutral-800/80 overflow-hidden cursor-pointer"
+            >
+              <motion.div
+                className="h-full bg-neutral-900 dark:bg-white rounded-full"
+                initial={false}
+                animate={{
+                  width: i <= currentSlide ? '100%' : '0%',
+                }}
+                transition={{
+                  duration: 0.35,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+              />
+            </div>
+          ))}
         </div>
+
+        {/* Header: Logo mark + Skip button */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <img
+              src={kapsuleLogoClean}
+              alt="Kapsüle Logo"
+              className="h-6 w-auto object-contain dark:invert select-none pointer-events-none"
+            />
+            <span className="text-xs font-bold tracking-widest uppercase text-neutral-900 dark:text-neutral-200">
+              KAPSÜLE
+            </span>
+          </div>
+
+          {!isLastSlide ? (
+            <button
+              type="button"
+              onClick={onComplete}
+              className="px-3.5 py-1.5 rounded-full text-xs font-semibold text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white bg-neutral-100/80 dark:bg-neutral-900/80 border border-neutral-200/60 dark:border-neutral-800/60 transition-colors active:scale-95"
+            >
+              Atla
+            </button>
+          ) : (
+            <span className="text-[11px] font-medium text-neutral-400 dark:text-neutral-500 tracking-wide uppercase">
+              Son Adım
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* ─── Middle Section: Clean 3D Visual Hero + Typography (Swipeable) ─── */}
+      <motion.div
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.2}
+        onDragEnd={handleDragEnd}
+        className="flex-1 w-full max-w-lg mx-auto flex flex-col items-center justify-center px-6 cursor-grab active:cursor-grabbing"
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0, x: 24, scale: 0.98 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -24, scale: 0.98 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full flex flex-col items-center text-center"
+          >
+            {/* 3D Visual Hero (No Floating Badges) */}
+            <div className="w-full flex items-center justify-center">
+              {slides[currentSlide].component}
+            </div>
+
+            {/* Typography — Clean, Neutral, No Green Text */}
+            <div className="mt-3 sm:mt-5 space-y-2.5 max-w-sm">
+              <span className="inline-block text-[11px] font-semibold tracking-widest uppercase text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800/90 border border-neutral-200/60 dark:border-neutral-700/50 px-3 py-1 rounded-full">
+                {slides[currentSlide].tag}
+              </span>
+
+              <h1 className="text-[28px] sm:text-[34px] font-extrabold tracking-tight leading-[1.14] text-neutral-900 dark:text-neutral-50">
+                {slides[currentSlide].title} <br />
+                <span className="text-neutral-400 dark:text-neutral-500">
+                  {slides[currentSlide].titleAccent}
+                </span>
+              </h1>
+
+              <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 font-normal leading-relaxed px-2">
+                {slides[currentSlide].description}
+              </p>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </motion.div>
 
-      {/* Content area */}
-      <div className="flex-1 flex flex-col items-center justify-between px-6 sm:px-10 pb-10">
-        {/* Hero + Text */}
-        <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentSlide}
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full flex flex-col items-center"
-            >
-              {/* Hero */}
-              {slides[currentSlide].hero}
-
-              {/* Text */}
-              <div className="text-center mt-2 space-y-3">
-                <div>
-                  <h1 className="text-[34px] sm:text-[42px] font-extrabold text-neutral-900 dark:text-neutral-50 tracking-tight leading-[1.08]">
-                    {slides[currentSlide].headline[0]}
-                  </h1>
-                  <h1 className="text-[34px] sm:text-[42px] font-extrabold text-neutral-400 dark:text-neutral-500 tracking-tight leading-[1.08]">
-                    {slides[currentSlide].headline[1]}
-                  </h1>
-                </div>
-                <p className="text-base sm:text-lg text-neutral-500 dark:text-neutral-400 font-medium leading-relaxed max-w-xs mx-auto">
-                  {slides[currentSlide].description}
-                </p>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Bottom Controls */}
-        <div className="w-full max-w-md flex flex-col items-center gap-6 mt-6">
-          {/* CTA Buttons — last slide */}
+      {/* ─── Bottom Ergonomic Thumb-Zone: Primary Button (NO Sparkles) ─── */}
+      <div className="w-full max-w-lg mx-auto px-6 pb-10 pt-4 flex flex-col items-center gap-4 z-30">
+        <motion.button
+          type="button"
+          onClick={handleNext}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full h-14 rounded-2xl flex items-center justify-center gap-2 text-base font-bold tracking-tight bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-xl transition-all duration-200 active:scale-[0.98]"
+        >
+          <span>{slides[currentSlide].ctaText}</span>
           {isLastSlide ? (
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="w-full flex flex-col gap-3"
-            >
-              <button
-                onClick={onComplete}
-                className="w-full h-14 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-base font-bold tracking-tight hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.3)]"
-              >
-                <span>Kasamı Oluştur</span>
-              </button>
-            </motion.div>
+            <ArrowRight className="w-5 h-5 stroke-[2]" />
           ) : (
-            <div className="w-full flex items-center justify-center">
-              <button
-                onClick={handleNext}
-                className="w-full sm:w-auto h-14 px-12 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-base font-bold tracking-tight hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-[0_14px_36px_-8px_rgba(0,0,0,0.25)]"
-              >
-                <span>Devam Et</span>
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
+            <ChevronRight className="w-5 h-5 stroke-[2]" />
           )}
+        </motion.button>
 
-          {/* Dots + Skip */}
-          <div className="flex items-center justify-between w-full px-2 pt-1">
-            <PageDots total={3} current={currentSlide} />
-            {!isLastSlide && (
-              <button
-                onClick={onComplete}
-                className="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-              >
-                Atla
-              </button>
-            )}
-          </div>
+        {/* Micro Page Indicator Dots */}
+        <div className="flex items-center justify-center gap-1.5 pt-1">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`Slide ${i + 1}`}
+              onClick={() => setCurrentSlide(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === currentSlide
+                  ? 'w-6 bg-neutral-900 dark:bg-white'
+                  : 'w-1.5 bg-neutral-300 dark:bg-neutral-700'
+              }`}
+            />
+          ))}
         </div>
       </div>
     </div>

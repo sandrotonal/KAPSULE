@@ -7,7 +7,6 @@ import {
   StickyNote,
   Bookmark,
   ArrowRight,
-  TrendingUp,
 } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
@@ -61,7 +60,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     count: number;
     icon: React.ReactNode;
     desc: string;
-    color: string;
   }[] = [
     {
       id: 'documents',
@@ -70,7 +68,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       count: docs.length,
       icon: <FileText className="w-4 h-4" />,
       desc: 'Dosya ve evrak kayıtları',
-      color: 'from-blue-500/20 to-blue-600/5',
     },
     {
       id: 'receipts',
@@ -79,7 +76,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       count: receipts.length,
       icon: <Receipt className="w-4 h-4" />,
       desc: 'Alım geçmişi, faturalar',
-      color: 'from-emerald-500/20 to-emerald-600/5',
     },
     {
       id: 'subscriptions',
@@ -88,7 +84,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       count: subscriptions.length,
       icon: <CreditCard className="w-4 h-4" />,
       desc: 'Aylık & yıllık hizmetler',
-      color: 'from-purple-500/20 to-purple-600/5',
     },
     {
       id: 'warranties',
@@ -97,7 +92,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       count: warranties.length,
       icon: <ShieldCheck className="w-4 h-4" />,
       desc: 'Cihaz & ürün korumaları',
-      color: 'from-orange-500/20 to-orange-600/5',
     },
     {
       id: 'notes',
@@ -106,7 +100,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       count: notes.length,
       icon: <StickyNote className="w-4 h-4" />,
       desc: 'Önemli kodlar & bilgiler',
-      color: 'from-yellow-500/20 to-yellow-600/5',
     },
     {
       id: 'bookmarks',
@@ -115,7 +108,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       count: bookmarks.length,
       icon: <Bookmark className="w-4 h-4" />,
       desc: 'Kaydedilen bağlantılar',
-      color: 'from-pink-500/20 to-pink-600/5',
     },
   ];
 
@@ -156,9 +148,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             />
           </TiltCard>
 
-          <TiltCard className="rounded-3xl" intensity={6}>
+          <div className="w-full">
             <WarrantyCard onNavigateToTab={(tab) => onNavigateToTab(tab)} />
-          </TiltCard>
+          </div>
         </div>
 
         <div className="lg:col-span-2 flex items-center justify-center order-1 lg:order-2 py-2">
@@ -198,15 +190,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               className={cn(
                 'group relative flex flex-col gap-3 p-4 rounded-2xl text-left',
                 'border border-border/60 bg-surface/50 hover:bg-surface',
-                'hover:border-border hover:shadow-md',
+                'hover:border-accent/40 hover:shadow-soft',
                 'transition-all duration-200 overflow-hidden',
               )}
             >
-              {/* Subtle gradient bg on hover */}
-              <div className={cn('absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br', col.color)} />
+              {/* Subtle accent wash on hover */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-accent/[0.07] to-transparent pointer-events-none" />
 
               <div className="relative flex items-center justify-between">
-                <div className="w-8 h-8 rounded-xl bg-background border border-border/80 flex items-center justify-center text-secondary group-hover:text-primary group-hover:border-border transition-colors">
+                <div className="w-8 h-8 rounded-xl bg-background border border-border/80 flex items-center justify-center text-secondary group-hover:text-accent group-hover:border-accent/30 transition-colors">
                   {col.icon}
                 </div>
                 <span className="text-xs font-bold text-secondary/50 group-hover:text-secondary tabular-nums transition-colors">

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, AlertCircle, Info, X, Printer } from 'lucide-react';
 import { triggerHaptic } from '../../utils/haptics';
 
-export type ToastType = 'success' | 'error' | 'info' | 'print';
+export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'print';
 
 export interface ToastMessage {
   id: string;
@@ -28,6 +28,8 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       triggerHaptic.success();
     } else if (type === 'error') {
       triggerHaptic.error();
+    } else if (type === 'warning') {
+      triggerHaptic.warning();
     } else {
       triggerHaptic.light();
     }
@@ -47,32 +49,34 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     <ToastContext.Provider value={{ showToast }}>
       {children}
       
-      {/* Floating Apple-Grade Subtle Toast Container */}
-      <div className="fixed bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 z-[110] flex flex-col items-center gap-2 pointer-events-none px-4 w-full max-w-sm">
+      {/* Floating Apple Dynamic Island Style Toast Container */}
+      <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] flex flex-col items-center gap-2 pointer-events-none px-4 w-full max-w-sm">
         <AnimatePresence mode="popLayout">
           {toasts.map((toast) => (
             <motion.div
               key={toast.id}
-              initial={{ opacity: 0, y: 16, scale: 0.95 }}
+              initial={{ opacity: 0, y: -20, scale: 0.92 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.95 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="pointer-events-auto flex items-center gap-3 px-4 py-2.5 rounded-full bg-neutral-900/90 dark:bg-neutral-100/90 text-white dark:text-neutral-900 border border-neutral-800 dark:border-neutral-200 shadow-2xl backdrop-blur-xl select-none"
+              exit={{ opacity: 0, y: -14, scale: 0.94 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+              className="pointer-events-auto flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-surface/90 dark:bg-[#16181d]/95 text-primary border border-border/80 dark:border-white/10 shadow-2xl shadow-black/10 dark:shadow-black/50 backdrop-blur-2xl select-none"
             >
-              {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400 dark:text-emerald-600 shrink-0" />}
-              {toast.type === 'error' && <AlertCircle className="w-4 h-4 text-rose-400 dark:text-rose-600 shrink-0" />}
-              {toast.type === 'info' && <Info className="w-4 h-4 text-blue-400 dark:text-blue-600 shrink-0" />}
-              {toast.type === 'print' && <Printer className="w-4 h-4 text-violet-400 dark:text-violet-600 shrink-0" />}
+              {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 stroke-[2.2]" />}
+              {toast.type === 'error' && <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 stroke-[2.2]" />}
+              {toast.type === 'info' && <Info className="w-4 h-4 text-accent shrink-0 stroke-[2.2]" />}
+              {toast.type === 'print' && <Printer className="w-4 h-4 text-accent shrink-0 stroke-[2.2]" />}
               
-              <span className="text-xs font-semibold tracking-tight leading-none">
+              <span className="text-xs font-medium tracking-tight text-primary">
                 {toast.message}
               </span>
 
               <button
+                type="button"
                 onClick={() => removeToast(toast.id)}
-                className="ml-1 opacity-60 hover:opacity-100 transition-opacity p-0.5"
+                className="ml-1 text-secondary/40 hover:text-primary transition-colors p-0.5 rounded-full"
+                aria-label="Kapat"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3.5 h-3.5 stroke-[2]" />
               </button>
             </motion.div>
           ))}
