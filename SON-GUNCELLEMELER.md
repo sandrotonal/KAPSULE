@@ -74,3 +74,30 @@ Eski anket benzeri dikey radyo listesi, kaba kutu/kare arka planlı ikonlar ve h
 - **TypeScript & Performans:**
   - Sıfır hata ile `npx tsc --noEmit` teyit edildi.
 
+---
+
+## ⚙️ 8. Ayarlar, Bildirimler (Dynamic Island), Profil Avatarı ve Kasa Hafızası
+- **Apple Dynamic Island Bildirim Kapsülü (`Toast.tsx`):**
+  - Alttaki mobil navigasyon menüsünü örten eski `bottom-20` simsiyah kaba toast kutusu tamamen kaldırıldı.
+  - Bildirimler artık ekranın üstünden (`top-6`) yay (spring) animasyonuyla süzülen, akrilik cam efektli (`backdrop-blur-2xl`), aydınlık ve karanlık temayla tam ahenkli Dynamic Island kapsülüne dönüştürüldü.
+- **Lüks Modal & Portal Mimarisi (`SettingsScreen.tsx`):**
+  - Modallar doğrudan `createPortal(..., document.body)` ile bağlandı; ekrandaki beyaz taşma ve kesilme hataları tamamen yok edildi.
+  - `rounded-3xl` kavisli, derin gölgeli, modern kenar çizgili Apple/Linear modal tasarımı uygulandı.
+- **Profil Resmi (Avatar) & Hesap Özelleştirme:**
+  - Cihazdan doğrudan fotoğraf yükleme (`Base64` sıkıştırma ve anlık dairesel canlı önizleme).
+  - Fotoğraf yüklemek istemeyenler için 6 adet şık minimal avatar seçici (`🛡️, 💎, 🔐, 🚀, 🪐, ⭐`).
+  - Kullanıcı adı ve kasa başlığını kolayca düzenleyip kaydetme.
+- **Kasa & Oturum Hafızası (Session & Form Persistence):**
+  - **"Beni Hatırla & Oturumu Koru":** Tarayıcı veya uygulama kapansa bile kasa oturumunu ve ayarlarını localde güvenle saklar.
+  - **"Form & Taslak Hafızası":** Fiş, garanti, belge veya not eklerken yarıda kalınırsa bilgileri local hafızada hatırlar.
+  - **"Geçici Belleği Temizle":** Kayıtlara dokunmadan form önbelleğini sıfırlama imkanı.
+  - **"Son Giriş / Oturum":** Gerçek aktif giriş zaman damgası takibi.
+- **Gelişmiş Bildirim & Güvenlik:**
+  - Bildirim izin durumu anlık rozeti (`Aktif` / `İzin Bekleniyor`).
+  - Cihaza anlık "Test Bildirimi Gönder" eylemi.
+  - Yedekten Geri Yükle (JSON Import) ile alınan yedekleri tek tıkla geri getirme.
+  - `ReturnsCalendar` içindeki sahte `Math.random()` kaldırıldı; gerçek kasa hareketleri sıfır hatayla yansıtıldı.
+- **TypeScript & Derleme:**
+  - `npx tsc --noEmit` ➔ **0 Hata**.
+
+

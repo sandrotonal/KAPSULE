@@ -9,7 +9,9 @@ import {
   TimelineEvent,
   VaultSuggestion,
   VaultSettings,
-  VaultStats
+  VaultStats,
+  VaultStorageStats,
+  StorageCategoryStat
 } from '../types';
 const STORAGE_KEYS = {
   DOCUMENTS: 'kapsule_documents',
@@ -458,8 +460,33 @@ export class VaultStorageService {
       darkMode: false,
       notifications: true,
       autoLock: false,
+      rememberMe: true,
+      draftMemory: true,
+      reminderDaysBefore: 7,
+      autoLockTimeout: 'immediate',
     };
     return getStored(STORAGE_KEYS.SETTINGS, defaultSettings);
+  }
+
+  static saveDraft(key: string, data: unknown): void {
+    try {
+      localStorage.setItem(`kapsule_draft_${key}`, JSON.stringify(data));
+    } catch {}
+  }
+
+  static getDraft<T>(key: string): T | null {
+    try {
+      const item = localStorage.getItem(`kapsule_draft_${key}`);
+      return item ? JSON.parse(item) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  static clearDraft(key: string): void {
+    try {
+      localStorage.removeItem(`kapsule_draft_${key}`);
+    } catch {}
   }
 
   static saveSettings(settings: Partial<VaultSettings>): VaultSettings {
@@ -467,6 +494,148 @@ export class VaultStorageService {
     const updated = { ...current, ...settings };
     setStored(STORAGE_KEYS.SETTINGS, updated);
     return updated;
+  }
+
+  static recordLogin(): void {
+    const now = new Date();
+    const formatted = now.toLocaleDateString('tr-TR', {
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    this.saveSettings({ lastLoginTime: formatted });
+  }
+
+  static getStorageStats(): VaultStorageStats {
+    const keys: { id: StorageCategoryStat['id']; key: string; label: string }[] = [
+      { id: 'document', key: STORAGE_KEYS.DOCUMENTS, label: 'Belgeler' },
+      { id: 'receipt', key: STORAGE_KEYS.RECEIPTS, label: 'Fişler' },
+      { id: 'subscription', key: STORAGE_KEYS.SUBSCRIPTIONS, label: 'Abonelikler' },
+      { id: 'warranty', key: STORAGE_KEYS.WARRANTIES, label: 'Garantiler' },
+      { id: 'note', key: STORAGE_KEYS.NOTES, label: 'Notlar' },
+      { id: 'bookmark', key: STORAGE_KEYS.BOOKMARKS, label: 'Yer İmleri' },
+      { id: 'timeline', key: STORAGE_KEYS.TIMELINE, label: 'Zaman Akışı' },
+      { id: 'settings', key: STORAGE_KEYS.SETTINGS, label: 'Ayarlar' },
+    ];
+
+    const formatBytes = (bytes: number): string => {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+    };
+
+    let totalBytes = 0;
+    let totalItems = 0;
+
+    const rawCategoryStats = keys.map(({ id, key, label }) => {
+      let rawString = '';
+      let itemCount = 0;
+      try {
+        rawString = localStorage.getItem(key) || '';
+        if (rawString) {
+          const parsed = JSON.parse(rawString);
+          if (Array.isArray(parsed)) {
+            itemCount = parsed.length;
+          } else if (typeof parsed === 'object') {
+            itemCount = 1;
+          }
+        }
+      } catch {
+        rawString = '';
+      }
+
+      // calculate utf-8 byte size
+      const bytes = new Blob([rawString]).size;
+      totalBytes += bytes;
+      totalItems += itemCount;
+
+      return {
+        id,
+        label,
+        count: itemCount,
+        bytes,
+        formattedSize: formatBytes(bytes),
+      };
+    });
+
+    const categories: StorageCategoryStat[] = rawCategoryStats.map(stat => ({
+      ...stat,
+      percentage: totalBytes > 0 ? Math.round((stat.bytes / totalBytes) * 100) : 0,
+    }));
+
+    // Standard mobile browser localStorage quota is ~5 MB (5,242,880 bytes)
+    const quotaBytes = 5 * 1024 * 1024;
+    const percentageUsed = Math.min(Math.round((totalBytes / quotaBytes) * 100 * 10) / 10, 100);
+
+    return {
+      totalBytes,
+      formattedTotalSize: formatBytes(totalBytes),
+      totalItems,
+      percentageUsed: Math.max(percentageUsed, 0.1),
+      categories,
+    };
+  }
+
+  static restoreBackup(jsonData: string): { success: boolean; itemCount: number; message: string } {
+    try {
+      const parsed = JSON.parse(jsonData);
+      if (!parsed || typeof parsed !== 'object') {
+        return { success: false, itemCount: 0, message: 'Geçersiz JSON dosyası.' };
+      }
+
+      let count = 0;
+      if (Array.isArray(parsed.documents)) {
+        setStored(STORAGE_KEYS.DOCUMENTS, parsed.documents);
+        count += parsed.documents.length;
+      }
+      if (Array.isArray(parsed.receipts)) {
+        setStored(STORAGE_KEYS.RECEIPTS, parsed.receipts);
+        count += parsed.receipts.length;
+      }
+      if (Array.isArray(parsed.subscriptions)) {
+        setStored(STORAGE_KEYS.SUBSCRIPTIONS, parsed.subscriptions);
+        count += parsed.subscriptions.length;
+      }
+      if (Array.isArray(parsed.warranties)) {
+        setStored(STORAGE_KEYS.WARRANTIES, parsed.warranties);
+        count += parsed.warranties.length;
+      }
+      if (Array.isArray(parsed.notes)) {
+        setStored(STORAGE_KEYS.NOTES, parsed.notes);
+        count += parsed.notes.length;
+      }
+      if (Array.isArray(parsed.bookmarks)) {
+        setStored(STORAGE_KEYS.BOOKMARKS, parsed.bookmarks);
+        count += parsed.bookmarks.length;
+      }
+      if (Array.isArray(parsed.timeline)) {
+        setStored(STORAGE_KEYS.TIMELINE, parsed.timeline);
+      }
+      if (parsed.settings && typeof parsed.settings === 'object') {
+        const current = this.getSettings();
+        setStored(STORAGE_KEYS.SETTINGS, { ...current, ...parsed.settings });
+      }
+
+      return {
+        success: true,
+        itemCount: count,
+        message: `${count} adet kasa kaydı başarıyla geri yüklendi.`,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        itemCount: 0,
+        message: err instanceof Error ? err.message : 'Yedek dosyası okunurken hata oluştu.',
+      };
+    }
+  }
+
+  static clearCache(): void {
+    // Cleans non-persistent ephemeral keys if any
+    try {
+      sessionStorage.clear();
+    } catch {}
   }
 
   static clearVaultData(): void {

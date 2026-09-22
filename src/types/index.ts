@@ -123,10 +123,33 @@ export type ActiveTab = 'home' | 'documents' | 'receipts' | 'subscriptions' | 'w
 export interface VaultSettings {
   profileName?: string;
   profileEmail?: string;
+  profileAvatar?: string; // base64 data url or predefined avatar key
   darkMode: boolean;
   notifications: boolean;
   autoLock: boolean;
   passcode?: string;
+  autoLockTimeout?: 'immediate' | '1m' | '5m' | '15m';
+  reminderDaysBefore?: number;
+  lastLoginTime?: string;
+  rememberMe?: boolean;
+  draftMemory?: boolean;
+}
+
+export interface StorageCategoryStat {
+  id: VaultCategory | 'timeline' | 'settings';
+  label: string;
+  count: number;
+  bytes: number;
+  formattedSize: string;
+  percentage: number;
+}
+
+export interface VaultStorageStats {
+  totalBytes: number;
+  formattedTotalSize: string;
+  totalItems: number;
+  percentageUsed: number; // relative to 5MB localStorage budget
+  categories: StorageCategoryStat[];
 }
 
 export interface VaultStats {
@@ -138,3 +161,4 @@ export interface VaultStats {
   documentCount: number;
   currencyDistribution: Record<string, number>;
 }
+

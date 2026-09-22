@@ -186,6 +186,29 @@ export class NotificationService {
 
     localStorage.setItem(this.STORAGE_KEY_LAST_CHECK, todayStr);
   }
+
+  static getPermissionStatus(): 'granted' | 'denied' | 'default' | 'unsupported' {
+    if (typeof window === 'undefined' || !('Notification' in window)) return 'unsupported';
+    return Notification.permission;
+  }
+
+  static async sendTestNotification(): Promise<boolean> {
+    const granted = await this.requestPermission();
+    if (!granted) return false;
+
+    try {
+      new Notification('Kapsule Test Bildirimi', {
+        body: 'Kasa bildirim ve hatırlatma sistemi cihazınızda başarıyla çalışıyor!',
+        icon: '/src/assets/logo.png',
+        badge: '/src/assets/logo.png',
+        tag: 'kapsule-test',
+      });
+      triggerHaptic.success();
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }
 
 export default NotificationService;
