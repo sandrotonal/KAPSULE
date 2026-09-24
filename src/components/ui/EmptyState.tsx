@@ -31,12 +31,13 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className="w-full py-16 px-6 flex flex-col items-center justify-center text-center select-none"
     >
-      <div className="w-16 h-16 rounded-3xl bg-surface border border-border/80 flex items-center justify-center text-secondary shadow-soft mb-5 group-hover:scale-105 transition-transform">
+      {/* Pure floating icon (no square background box, no border) */}
+      <div className="mb-4 flex items-center justify-center text-secondary/50 [&>svg]:w-10 [&>svg]:h-10 [&>svg]:stroke-[1.3] transition-colors">
         {icon}
       </div>
 
       <h3 className="text-base font-bold text-primary tracking-tight mb-1">{title}</h3>
-      <p className="text-xs text-secondary max-w-xs leading-relaxed mb-6 opacity-80">
+      <p className="text-xs text-secondary max-w-sm leading-relaxed mb-6 opacity-80">
         {description}
       </p>
 
@@ -45,8 +46,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           onClick={handleAction}
           variant="primary"
           size="sm"
-          className="rounded-2xl px-5 h-10 shadow-md font-semibold text-xs"
-          icon={<Plus className="w-4 h-4" />}
+          className="rounded-full px-5 h-10 shadow-sm font-semibold text-xs"
+          icon={<Plus className="w-3.5 h-3.5 stroke-[2]" />}
         >
           {actionLabel}
         </Button>

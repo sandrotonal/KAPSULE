@@ -198,7 +198,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-accent/[0.07] to-transparent pointer-events-none" />
 
               <div className="relative flex items-center justify-between">
-                <div className="w-8 h-8 rounded-xl bg-background border border-border/80 flex items-center justify-center text-secondary group-hover:text-accent group-hover:border-accent/30 transition-colors">
+                <div className="text-secondary/70 group-hover:text-primary transition-colors flex items-center justify-center [&>svg]:w-5 [&>svg]:h-5 [&>svg]:stroke-[1.8]">
                   {col.icon}
                 </div>
                 <span className="text-xs font-bold text-secondary/50 group-hover:text-secondary tabular-nums transition-colors">

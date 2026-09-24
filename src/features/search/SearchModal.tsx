@@ -203,7 +203,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
                         onClick={() => openResult(r)}
                         className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-left transition-all duration-200 group border ${selectedIndex === index ? 'bg-surface border-border' : 'border-transparent hover:bg-surface hover:border-border'}`}
                       >
-                        <div className="w-10 h-10 rounded-xl bg-surface border border-border flex items-center justify-center text-secondary group-hover:text-primary shrink-0 transition-colors">
+                        <div className="text-secondary/60 group-hover:text-primary shrink-0 transition-colors flex items-center justify-center [&>svg]:w-5 [&>svg]:h-5 [&>svg]:stroke-[1.8] pl-1">
                           {r.icon}
                         </div>
                         <div className="flex-1 min-w-0">

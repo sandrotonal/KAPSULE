@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { MobileNav } from './MobileNav';
 import { ActiveTab } from '../types';
@@ -44,20 +44,17 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         {/* Main scrollable area */}
         <main ref={mainRef} className="flex-1 overflow-y-auto thin-scrollbar">
           <div className="max-w-5xl mx-auto px-6 sm:px-10 py-10 sm:py-16 pb-32 md:pb-16">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 12, scale: 0.99 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -8, scale: 0.99 }}
-                transition={{
-                  duration: 0.4,
-                  ease: [0.16, 1, 0.3, 1]
-                }}
-              >
-                {children}
-              </motion.div>
-            </AnimatePresence>
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.18,
+                ease: [0.16, 1, 0.3, 1]
+              }}
+            >
+              {children}
+            </motion.div>
           </div>
         </main>
 

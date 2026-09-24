@@ -16,6 +16,7 @@ import { QuickAddModal } from './components/common/QuickAddModal';
 import { PasscodeLock } from './components/common/PasscodeLock';
 import { OnboardingScreen } from './features/onboarding/OnboardingScreen';
 import { VaultStorageService } from './services/vaultStorage';
+import { storageAdapter } from './services/storageAdapter';
 import { NotificationService } from './services/notificationService';
 import { ToastProvider, useToast } from './components/ui/Toast';
 
@@ -60,8 +61,9 @@ function AppContent() {
     }
   }, [settings.darkMode]);
 
-  // Run background notification check for warranty expiries & subscription renewals
+  // Hydrate persistent storage and run background notification check
   useEffect(() => {
+    storageAdapter.hydrateFromPreferences().catch(() => {});
     try {
       NotificationService.runDailyCheck();
     } catch (e) {

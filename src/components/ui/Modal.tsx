@@ -88,28 +88,28 @@ export const Modal: React.FC<ModalProps> = ({
           role="dialog"
           aria-modal="true"
         >
-          {/* Backdrop */}
+          {/* Backdrop — Airy, glassmorphic, no heavy black darkening */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px]"
+            className="fixed inset-0 bg-black/15 dark:bg-black/55 backdrop-blur-sm transition-opacity"
           />
 
           {/* Sheet (mobile) / Modal (desktop) */}
           <motion.div
-            initial={{ opacity: 0, y: 16, scale: 0.98 }}
+            initial={{ opacity: 0, y: 22, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.99 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, y: 16, scale: 0.98 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
               "relative w-full bg-background z-10",
-              "border border-border shadow-modal",
+              "border border-border/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.15)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)]",
               "max-h-[90vh] flex flex-col",
               // Mobile: bottom sheet
-              "rounded-t-3xl sm:rounded-2xl",
+              "rounded-t-[32px] sm:rounded-3xl",
               widths[maxWidth]
             )}
           >

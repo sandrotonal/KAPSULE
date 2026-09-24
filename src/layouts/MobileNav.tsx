@@ -15,7 +15,7 @@ const MAIN_TABS: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
   { id: 'home', label: 'Ana Sayfa', icon: <Home className="w-5 h-5" /> },
   { id: 'receipts', label: 'Fişler', icon: <Receipt className="w-5 h-5" /> },
   { id: 'warranties', label: 'Garanti', icon: <ShieldCheck className="w-5 h-5" /> },
-  { id: 'subscriptions', label: 'Diğer', icon: <CreditCard className="w-5 h-5" /> },
+  { id: 'subscriptions', label: 'Abonelik', icon: <CreditCard className="w-5 h-5" /> },
   { id: 'settings', label: 'Ayarlar', icon: <Settings className="w-5 h-5" /> },
 ];
 
@@ -24,7 +24,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   onTabChange,
 }) => {
   const activeIndex = MAIN_TABS.findIndex(
-    tab => tab.id === activeTab || (tab.id === 'subscriptions' && ['subscriptions', 'receipts', 'notes', 'bookmarks', 'timeline'].includes(activeTab))
+    tab => tab.id === activeTab || (tab.id === 'subscriptions' && ['subscriptions', 'documents', 'notes', 'bookmarks', 'timeline'].includes(activeTab))
   );
 
   return (

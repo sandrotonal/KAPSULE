@@ -45,11 +45,11 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd, selectedIte
 
   const NoteCard = ({ note, index }: { note: NoteItem; index: number }) => (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ 
-        duration: 0.4, 
-        delay: index * 0.05,
+        duration: 0.22, 
+        delay: Math.min(index * 0.02, 0.12),
         ease: [0.16, 1, 0.3, 1]
       }}
     >
@@ -62,9 +62,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd, selectedIte
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-lg font-bold text-primary tracking-tight leading-snug group-hover:text-accent transition-colors">{note.title}</h3>
             {note.isPinned && (
-              <div className="w-8 h-8 rounded-xl bg-accent/5 flex items-center justify-center shrink-0">
-                <Pin className="w-4 h-4 text-accent" />
-              </div>
+              <Pin className="w-4 h-4 text-primary fill-primary/20 shrink-0 stroke-[2]" />
             )}
           </div>
           <p className="text-sm text-secondary/80 leading-relaxed line-clamp-4 whitespace-pre-line font-medium">{note.content}</p>
