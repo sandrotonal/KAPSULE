@@ -145,9 +145,9 @@ export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, sel
           {filtered.map((doc, i) => (
             <motion.div
               key={doc.id}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.22, delay: Math.min(i * 0.02, 0.12), ease: [0.16, 1, 0.3, 1] }}
             >
               <Card
                 interactive
@@ -186,8 +186,8 @@ export const DocumentsScreen: React.FC<DocumentsScreenProps> = ({ onOpenAdd, sel
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-border/40">
                     <span className="text-[12px] font-medium text-secondary/60">{formatDate(doc.createdAt)}</span>
-                    <div className="w-6 h-6 rounded-full bg-accent/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0 duration-300">
-                       <Plus className="w-3 h-3 text-accent rotate-45" />
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity translate-x-1 group-hover:translate-x-0 duration-200">
+                      <Plus className="w-3.5 h-3.5 text-secondary group-hover:text-primary rotate-45 transition-colors" />
                     </div>
                   </div>
                 </div>

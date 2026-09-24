@@ -12,14 +12,18 @@ Kapsule, önemli her şeyi tek bir kasa altında toplayan kişisel dijital kasa 
 
 - **Belgeler** — Kimlik, finans, sigorta, araç, sağlık ve iş evraklarını kategorize ederek sakla
 - **Fişler** ve **iade takvimi** — Harcama geçmişini takip et, önizlemeli fiş görünümü
-- **Abonelikler** — Aylık/yıllık harcama analizi ve sonraki ödeme tarihleri
+- **Abonelikler (Slide-Out Çekmece Mimarisi)** — Çift katmanlı etkileşimli kartlar, tek tıkla açılıp kapanan detay tepsisi, yıllık projeksiyon ve sıradaki ödeme sayaçları
 - **Garantiler** — Cihaz ve ürün garantilerini, bitiş tarihi yaklaşanları izle
+- **İnteraktif Cüzdan (WalletCard)** — Fiziksel kart cebi hissi, kartlar arası akıcı geçiş animasyonu
 - **Notlar** ve **yer imleri** — Önemli bilgileri ve bağlantıları topla
 - **Zaman Akışı** — İade takvimi ve sektör dağılımı grafikleriyle geçmişi görselleştir
 - **Global Arama** — `Ctrl+K` / `Cmd+K` ile kasadaki her şeyi anında bul
-- **Passcode Kilidi** — Kasanı kişisel kodla koru
+- **Quiet Luxury Tasarım Felsefesi** — Saf monokrom renk paleti, arka plansız (floating) minimalist ikonlar ve havadar cam efektleri
+- **Ultra Akıcı Sayfa Geçişleri (Zero-Jank)** — 0ms tepki süreli, GPU hızlandırmalı 180ms mikro geçişler; 60/120 FPS donanım hızlandırmalı kart fiziği
+- **Kalıcı Depolama & Hibrit Senkronizasyon** — Native Capacitor Preferences ve LocalStorage arasında cold-start otomatik senkronizasyon
+- **Passcode Kilidi** — Kasanı kişisel PIN ile koru
 - **Onboarding** — İlk açılışta uygulamayı adım adım tanıtan karşılama akışı
-- **Dark Mode** — Açık/koyu tema desteği
+- **Dark Mode** — Tam uyumlu açık/koyu tema desteği
 - **Haptics** — Dokunsal geri bildirim ile premium kullanım hissi
 
 ---

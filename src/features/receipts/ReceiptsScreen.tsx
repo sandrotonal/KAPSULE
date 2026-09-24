@@ -189,9 +189,9 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
           {filtered.map((rec, i) => (
             <motion.div
               key={rec.id}
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.35, delay: i * 0.04 }}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.22, delay: Math.min(i * 0.02, 0.12), ease: [0.16, 1, 0.3, 1] }}
               onClick={() => setSelectedReceipt(rec)}
             >
               <ReceiptTicket

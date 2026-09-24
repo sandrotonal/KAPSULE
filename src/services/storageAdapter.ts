@@ -87,4 +87,25 @@ export const storageAdapter = {
       console.error('[StorageAdapter] Clear error:', error);
     }
   },
+
+  /**
+   * Hydrates localStorage cache from native Capacitor Preferences on app launch.
+   * Ensures zero sync loss when running inside native mobile environments.
+   */
+  async hydrateFromPreferences(): Promise<void> {
+    try {
+      const { keys } = await Preferences.keys();
+      for (const key of keys) {
+        if (key.startsWith('kapsule_')) {
+          const { value } = await Preferences.get({ key });
+          if (value !== null) {
+            localStorage.setItem(key, value);
+          }
+        }
+      }
+    } catch (e) {
+      // In pure web environments or when Preferences is unavailable, gracefully ignore
+      console.warn('[StorageAdapter] Preferences hydration skipped:', e);
+    }
+  },
 };

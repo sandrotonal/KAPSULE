@@ -50,9 +50,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => onTabChange('home')}
           className="flex items-center gap-3 group text-left"
         >
-          <div className="w-10 h-10 rounded-2xl bg-surface border border-border/80 flex items-center justify-center p-1.5 shadow-soft shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
-            <img src="/src/assets/logo.png" alt="Kapsule Logo" className="w-full h-full object-contain dark:invert" />
-          </div>
+          <img
+            src="/src/assets/logo.png"
+            alt="Kapsule Logo"
+            className="w-8 h-8 object-contain dark:invert shrink-0 group-hover:scale-105 transition-transform"
+          />
           <div className="leading-tight">
             <p className="text-base font-bold text-primary tracking-tight">Kapsule</p>
             <p className="text-[11px] text-secondary font-medium uppercase tracking-widest opacity-60">Vault System</p>
@@ -78,8 +80,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           items={NAV_ITEMS}
           activeId={activeTab}
           onItemClick={(idx, item) => onTabChange(item.id as ActiveTab)}
-          accentColor="#4F46E5"
-          textColor="var(--text-secondary)"
+          accentColor="rgb(var(--text-primary))"
+          textColor="rgb(var(--text-secondary))"
           markerColor="rgb(var(--border))"
           showIndex={false}
           showMarker={true}

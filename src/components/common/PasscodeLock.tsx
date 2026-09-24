@@ -53,9 +53,7 @@ export const PasscodeLock: React.FC<PasscodeLockProps> = ({
 
         {/* Header */}
         <div className="flex flex-col items-center space-y-3 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-surface border border-border/80 flex items-center justify-center p-2.5 shadow-soft overflow-hidden">
-            <img src="/src/assets/logo.png" alt="Kapsule Logo" className="w-full h-full object-contain dark:invert" />
-          </div>
+          <img src="/src/assets/logo.png" alt="Kapsule Logo" className="w-12 h-12 object-contain dark:invert select-none mb-1" />
           <div className="space-y-1">
             <h2 className="text-lg font-bold tracking-tight">Kapsule Kilitli</h2>
             <p className="text-xs text-secondary font-medium">Devam etmek için şifrenizi girin</p>

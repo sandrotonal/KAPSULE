@@ -32,9 +32,11 @@ function generateUUID(): string {
     return crypto.randomUUID();
   }
   if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
-    return (([1e7] as any) + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c: number) =>
-      (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
-    );
+    const buf = new Uint8Array(16);
+    crypto.getRandomValues(buf);
+    buf[6] = (buf[6] & 0x0f) | 0x40;
+    buf[8] = (buf[8] & 0x3f) | 0x80;
+    return Array.from(buf, (b) => b.toString(16).padStart(2, '0')).join('');
   }
   return `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 9)}`;
 }
@@ -639,13 +641,19 @@ export class VaultStorageService {
   }
 
   static clearVaultData(): void {
-    localStorage.removeItem(STORAGE_KEYS.DOCUMENTS);
-    localStorage.removeItem(STORAGE_KEYS.RECEIPTS);
-    localStorage.removeItem(STORAGE_KEYS.SUBSCRIPTIONS);
-    localStorage.removeItem(STORAGE_KEYS.WARRANTIES);
-    localStorage.removeItem(STORAGE_KEYS.NOTES);
-    localStorage.removeItem(STORAGE_KEYS.BOOKMARKS);
-    localStorage.removeItem(STORAGE_KEYS.TIMELINE);
+    const vaultKeys = [
+      STORAGE_KEYS.DOCUMENTS,
+      STORAGE_KEYS.RECEIPTS,
+      STORAGE_KEYS.SUBSCRIPTIONS,
+      STORAGE_KEYS.WARRANTIES,
+      STORAGE_KEYS.NOTES,
+      STORAGE_KEYS.BOOKMARKS,
+      STORAGE_KEYS.TIMELINE,
+    ];
+    vaultKeys.forEach((key) => {
+      localStorage.removeItem(key);
+      storageAdapter.removeAsync(key).catch(() => {});
+    });
   }
 
   private static removeTimelineEventsForItem(id: string): void {
