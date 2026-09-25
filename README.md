@@ -7,31 +7,31 @@
 
 ---
 
-## 🌟 Öne Çıkan Özellikler
+## Öne Çıkan Özellikler
 
-### 🛡️ Kasa & Donanım Güvenliği
-- **Kişisel Kasa PIN Kilidi & Kaba Kuvvet Koruması:** 4 haneli PIN şifreleme ve 5 hatalı deneme sonrası 30 saniyelik otomatik donanım kilidi.
+### Kasa ve Donanım Güvenliği
+- **Kişisel Kasa PIN Kilidi ve Kaba Kuvvet Koruması:** 4 haneli PIN şifreleme ve 5 hatalı deneme sonrası 30 saniyelik otomatik donanım kilidi.
 - **Biyometrik Giriş (Face ID / Touch ID / Parmak İzi):** Cihaz donanımıyla tek dokunuşla kilit açma (`NativeBiometricsService`).
-- **Sıfır Sunucu & %100 Çevrimdışı Gizlilik:** Hiçbir veri üçüncü taraf sunuculara veya izleyicilere aktarılmaz; veriler sadece cihazın korumalı sandbox alanında saklanır.
+- **Sıfır Sunucu ve %100 Çevrimdışı Gizlilik:** Hiçbir veri üçüncü taraf sunuculara veya izleyicilere aktarılmaz; veriler sadece cihazın korumalı sandbox alanında saklanır.
 - **Android `allowBackup="false"` Koruması:** USB ve adb üzerinden şifresiz veri sızıntılarına karşı tam koruma (OWASP MASVS standartları).
 
-### 📸 Kamera, Görseller & Fotoğraf Kırpma
-- **Doğrudan Fiş & Belge Tarama:** `@capacitor/camera` entegrasyonu ile kamera veya galeriden belge tarayıp kasaya ekleme.
-- **İnteraktif Profil Kırpma & Hizalama (Avatar Cropper):** 
+### Kamera, Görseller ve Fotoğraf Kırpma
+- **Doğrudan Fiş ve Belge Tarama:** `@capacitor/camera` entegrasyonu ile kamera veya galeriden belge tarayıp kasaya ekleme.
+- **İnteraktif Profil Kırpma ve Hizalama (Avatar Cropper):** 
   - Dokunmatik ve fare ile vizör içinde kaydırma (pan drag)
-  - 1x – 3x kesintisiz yakınlaştırma kaydırıcısı (zoom slider)
-  - 90° yön çevirme ve sıfırlama
-  - 3'te 1 kuralı kılavuz ızgarası (rule-of-thirds grid)
-  - 400×400 px yüksek kaliteli JPEG kayıpsız çıktı
+  - 1x - 3x kesintisiz yakınlaştırma kaydırıcısı (zoom slider)
+  - 90 derece yön çevirme ve sıfırlama
+  - 3te 1 kuralı kılavuz ızgarası (rule-of-thirds grid)
+  - 400x400 px yüksek kaliteli JPEG kayıpsız çıktı
 
-### 💎 Quiet Luxury Tasarım & Akıcılık
+### Quiet Luxury Tasarım ve Akıcılık
 - **Ultra Akıcı Sayfa Geçişleri (Zero-Jank):** 0ms tepki süresi, GPU hızlandırmalı 180ms mikro geçişler; 60/120 FPS akıcı kart fiziği.
 - **Çift Katmanlı Çekmeceler (Slide-Out Drawers):** Profil kartı ve abonelik kartlarında tek tıkla açılıp kapanan, simetrik ve dengeli arayüz mimarisi.
 - **İnteraktif Cüzdan (WalletCard):** Fiziksel kart cebi hissi, kartlar arası akıcı geçiş animasyonu.
-- **Safe Area & Donanım Geometrisi:** Dynamic Island, çentik (`safe-area-inset-top`) ve alt Home Indicator (`safe-area-inset-bottom`) ile tam uyumlu.
-- **Koyu / Açık Mod & StatusBar Senkronizasyonu:** `NativeStatusBarService` ile sistem temasına göre otomatik güncellenen durum çubuğu stili.
+- **Safe Area ve Donanım Geometrisi:** Dynamic Island, çentik (`safe-area-inset-top`) ve alt Home Indicator (`safe-area-inset-bottom`) ile tam uyumlu.
+- **Koyu / Açık Mod ve StatusBar Senkronizasyonu:** `NativeStatusBarService` ile sistem temasına göre otomatik güncellenen durum çubuğu stili.
 
-### ⚖️ Mağaza ve Yasal Uyumluluk (Store Compliance)
+### Mağaza ve Yasal Uyumluluk (Store Compliance)
 - **Apple App Store Review 5.1.1 Uyumlu:** Uygulama içi Gizlilik Politikası, Kullanım Koşulları ve İletişim modalları.
 - **Veri Sıfırlama (Data Deletion):** Apple Store zorunlu kuralı uyarınca çift onaylı tüm kasayı sıfırlama mekanizması.
 - **Google Play Target SDK 36:** Android 14+ gereksinimlerini karşılayan güncel API seviyesi.
@@ -39,7 +39,7 @@
 
 ---
 
-## 🛠️ Teknolojiler
+## Teknolojiler
 
 | Teknoloji | Amaç |
 |---|---|
@@ -59,7 +59,7 @@
 
 ---
 
-## 📁 Proje Mimarisi
+## Proje Mimarisi
 
 ```text
 kapsule/
@@ -91,7 +91,7 @@ kapsule/
 
 ---
 
-## 🚀 Kurulum ve Çalıştırma
+## Kurulum ve Çalıştırma
 
 Gereksinimler: **Node.js 18+**
 
@@ -106,7 +106,7 @@ npm run dev
 npm run build
 ```
 
-### 📱 Mobil Uygulama Derleme (Capacitor)
+### Mobil Uygulama Derleme (Capacitor)
 
 ```bash
 # Web paketini derle ve native platformlara senkronize et
@@ -122,13 +122,13 @@ npx cap open ios
 
 ---
 
-## 📦 Mağaza Yayınlama Rehberleri
+## Mağaza Yayınlama Rehberleri
 
 - [STORE-YAYINLAMA-YOL-HARITASI.md](STORE-YAYINLAMA-YOL-HARITASI.md) — 5 aşamalı mağaza yayınlama eylem planı.
-- [MAGAZA-YAYINLAMA-REHBERI.md](MAGAZA-YAYINLAMA-REHBERI.md) — App Store & Google Play başlık, açıklama, anahtar kelime ve ekran görüntüsü rehberi.
+- [MAGAZA-YAYINLAMA-REHBERI.md](MAGAZA-YAYINLAMA-REHBERI.md) — App Store ve Google Play başlık, açıklama, anahtar kelime ve ekran görüntüsü rehberi.
 
 ---
 
-## 📄 Lisans & Gizlilik
+## Lisans ve Gizlilik
 
 Kapsule, kullanıcı gizliliğini en üst düzeyde tutacak şekilde tasarlanmıştır. Tüm veriler yalnızca kullanıcı cihazında depolanır.
