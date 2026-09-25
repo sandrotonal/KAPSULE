@@ -41,21 +41,27 @@
 
 ## Teknolojiler
 
-| Teknoloji | Amaç |
-|---|---|
-| [React 18](https://react.dev/) | Reaktif bileşen mimarisi ve UI katmanı |
-| [TypeScript](https://www.typescriptlang.org/) | Sıkı tip denetimi ve mimari güvenilirlik (0 Any, 0 Hata) |
-| [Vite](https://vite.dev/) | Hızlı derleme ve optimize üretim paketi |
-| [Tailwind CSS](https://tailwindcss.com/) | Quiet Luxury tasarım sistemi ve HSL tokenları |
-| [Framer Motion](https://www.framer.com/motion/) | GPU hızlandırmalı animasyonlar ve yay dinamikleri |
-| [Lucide React](https://lucide.dev/) | Vektörel ikon kütüphanesi |
-| [Capacitor](https://capacitorjs.com/) | Android ve iOS native mobil kabuk |
-| [Capacitor Camera](https://capacitorjs.com/docs/apis/camera) | Kamera ve galeri erişimi |
-| [Capacitor Preferences](https://capacitorjs.com/docs/apis/preferences) | Kalıcı native cihaz depolaması |
-| [Capacitor Share](https://capacitorjs.com/docs/apis/share) | Native paylaşım menüsü (Share Sheet) |
-| [Capacitor Haptics](https://capacitorjs.com/docs/apis/haptics) | Dokunsal geri bildirim motoru |
-| [Capacitor Status Bar](https://capacitorjs.com/docs/apis/status-bar) | Sistem çubuğu renk ve stil senkronizasyonu |
-| [Capacitor Splash Screen](https://capacitorjs.com/docs/apis/splash-screen) | Lüks açılış ekranı ve pürüzsüz hidrasyon |
+<p align="left">
+  <img src="https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
+  <img src="https://img.shields.io/badge/Capacitor-119EFF?style=for-the-badge&logo=capacitor&logoColor=white" alt="Capacitor" />
+  <img src="https://img.shields.io/badge/Android_SDK_36-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android" />
+  <img src="https://img.shields.io/badge/Apple_iOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS" />
+</p>
+
+| Logo | Teknoloji | Mimari Rol / Kapsam |
+|:---:|---|---|
+| <img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/React-Dark.svg" width="22" height="22" alt="React" /> | [React 18](https://react.dev/) | Reaktif bileşen mimarisi ve kullanıcı arayüzü |
+| <img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/TypeScript.svg" width="22" height="22" alt="TypeScript" /> | [TypeScript](https://www.typescriptlang.org/) | Sıkı tip denetimi ve mimari güvenilirlik (0 Any, 0 Hata) |
+| <img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Vite-Dark.svg" width="22" height="22" alt="Vite" /> | [Vite](https://vite.dev/) | Hızlı derleme ve optimize üretim paketi (dist) |
+| <img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/TailwindCSS-Dark.svg" width="22" height="22" alt="Tailwind CSS" /> | [Tailwind CSS](https://tailwindcss.com/) | Quiet Luxury tasarım sistemi ve HSL renk tokenları |
+| <img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Framer-Dark.svg" width="22" height="22" alt="Framer Motion" /> | [Framer Motion](https://www.framer.com/motion/) | GPU hızlandırmalı animasyonlar ve yay dinamikleri |
+| <img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Capacitor-Dark.svg" width="22" height="22" alt="Capacitor" /> | [Capacitor](https://capacitorjs.com/) | Android ve iOS native mobil kabuk platformu |
+| <img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/AndroidStudio-Dark.svg" width="22" height="22" alt="Android" /> | [Android Studio / Gradle](https://developer.android.com/) | Target SDK 36, APK / AAB paketleme ve Android donanımı |
+| <img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Apple-Dark.svg" width="22" height="22" alt="iOS" /> | [Apple Xcode / iOS](https://developer.apple.com/xcode/) | iOS Swift köprüsü, AppIcon, LaunchScreen ve TestFlight |
 
 ---
 
