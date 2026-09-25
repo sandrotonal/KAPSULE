@@ -42,16 +42,24 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       {/* Content */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen">
         {/* Main scrollable area */}
-        <main ref={mainRef} className="flex-1 overflow-y-auto thin-scrollbar">
-          <div className="max-w-5xl mx-auto px-6 sm:px-10 py-10 sm:py-16 pb-32 md:pb-16">
+        <main
+          ref={mainRef}
+          className="flex-1 overflow-y-auto thin-scrollbar"
+          style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+        >
+          <div
+            className="max-w-5xl mx-auto px-6 sm:px-10 py-8 sm:py-16 md:pb-16"
+            style={{ paddingBottom: 'calc(6.5rem + env(safe-area-inset-bottom, 0px))' }}
+          >
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
-                duration: 0.18,
+                duration: 0.15,
                 ease: [0.16, 1, 0.3, 1]
               }}
+              className="transform-gpu will-change-[transform,opacity]"
             >
               {children}
             </motion.div>

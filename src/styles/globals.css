@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    color-scheme: light;
     --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
     --background: 255 255 255;
     --surface: 248 249 250;
@@ -13,9 +14,14 @@
     --text-primary: 26 26 26;
     --text-secondary: 107 114 128;
     --accent: 99 102 241;
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
   }
 
   .dark {
+    color-scheme: dark;
     --background: 0 0 0;
     --surface: 15 15 17;
     --surface-elevated: 24 24 27;
@@ -46,7 +52,53 @@
     line-height: 1.6;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior: none;
-    transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Universal Form Controls & Select Options Dark/Light Compatibility */
+  select,
+  input,
+  textarea {
+    color-scheme: light;
+  }
+
+  .dark select,
+  .dark input,
+  .dark textarea,
+  html.dark select,
+  html.dark input,
+  html.dark textarea {
+    color-scheme: dark;
+  }
+
+  /* Dropdown Option Menus - Explicit Dark & Light Palette */
+  select option {
+    background-color: #FFFFFF;
+    color: #18181B;
+  }
+
+  .dark select option,
+  html.dark select option,
+  .dark option,
+  html.dark option {
+    background-color: #18181B !important;
+    color: #F4F4F5 !important;
+  }
+
+  /* Native Date & Time picker indicator icon contrast */
+  .dark input[type="date"]::-webkit-calendar-picker-indicator,
+  .dark input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.9) brightness(1.2);
+    cursor: pointer;
+  }
+
+  /* Clean placeholders */
+  ::placeholder {
+    color: rgb(156 163 175 / 0.65);
+  }
+
+  .dark ::placeholder {
+    color: rgb(161 161 170 / 0.55);
   }
 
   /* Selection */
@@ -143,6 +195,14 @@
 }
 
 @layer utilities {
+
+  /* Safe Area insets */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 
   /* No scrollbar */
   .no-scrollbar::-webkit-scrollbar {
@@ -246,5 +306,26 @@
 
   .animate-blob-float-reverse {
     animation: blob-float 8s infinite alternate-reverse ease-in-out;
+  }
+
+  /* Ultra-Snappy 120Hz GPU Drawer Accordion */
+  .sub-drawer-grid {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    margin-top: 0;
+    pointer-events: none;
+    transition: grid-template-rows 200ms cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 160ms cubic-bezier(0.16, 1, 0.3, 1),
+                margin-top 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: grid-template-rows, opacity, margin-top;
+    transform: translateZ(0);
+  }
+
+  .sub-drawer-grid.is-expanded {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    margin-top: -1rem;
+    pointer-events: auto;
   }
 }

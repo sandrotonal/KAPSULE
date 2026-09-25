@@ -10,25 +10,25 @@ import { Variants } from 'framer-motion';
 
 export const springGentle = {
   type: 'spring',
-  stiffness: 260,
-  damping: 30,
+  stiffness: 320,
+  damping: 32,
 };
 
 export const easeOutExpo = [0.16, 1, 0.3, 1];
 
 export const fadeUp: Variants = {
-  initial: { opacity: 0, y: 12, scale: 0.99 },
+  initial: { opacity: 0, y: 8, scale: 0.995 },
   animate: { 
     opacity: 1, 
     y: 0, 
     scale: 1,
-    transition: { duration: 0.35, ease: easeOutExpo }
+    transition: { duration: 0.2, ease: easeOutExpo }
   },
   exit: { 
     opacity: 0, 
-    y: -8, 
-    scale: 0.99,
-    transition: { duration: 0.25, ease: easeOutExpo }
+    y: -4, 
+    scale: 0.995,
+    transition: { duration: 0.14, ease: easeOutExpo }
   }
 };
 
@@ -36,17 +36,17 @@ export const staggerContainer: Variants = {
   initial: {},
   animate: {
     transition: {
-      staggerChildren: 0.04,
-      delayChildren: 0.02,
+      staggerChildren: 0.025,
+      delayChildren: 0.01,
     }
   }
 };
 
 export const staggerItem: Variants = {
-  initial: { opacity: 0, y: 8 },
+  initial: { opacity: 0, y: 6 },
   animate: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.3, ease: easeOutExpo }
+    transition: { duration: 0.2, ease: easeOutExpo }
   }
 };

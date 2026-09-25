@@ -127,6 +127,7 @@ export interface VaultSettings {
   darkMode: boolean;
   notifications: boolean;
   autoLock: boolean;
+  biometricsEnabled?: boolean;
   passcode?: string;
   autoLockTimeout?: 'immediate' | '1m' | '5m' | '15m';
   reminderDaysBefore?: number;

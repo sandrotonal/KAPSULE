@@ -383,10 +383,10 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
               <select
                 value={editCurrency}
                 onChange={e => setEditCurrency(e.target.value)}
-                className="w-full h-12 px-3 rounded-xl bg-surface/50 border border-border/60 text-primary text-sm font-medium focus:outline-none focus:border-accent"
+                className="w-full h-12 px-3 rounded-xl bg-surface/50 dark:bg-zinc-900 border border-border/60 dark:border-zinc-700/80 text-primary text-sm font-medium focus:outline-none focus:border-accent cursor-pointer"
               >
                 {CURRENCIES.map(curr => (
-                  <option key={curr} value={curr}>{curr}</option>
+                  <option key={curr} value={curr} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">{curr}</option>
                 ))}
               </select>
             </div>
@@ -399,10 +399,10 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
               <select
                 value={editCategory}
                 onChange={e => setEditCategory(e.target.value as ReceiptItem['category'])}
-                className="w-full h-12 px-3 rounded-xl bg-surface/50 border border-border/60 text-primary text-sm font-medium focus:outline-none focus:border-accent"
+                className="w-full h-12 px-3 rounded-xl bg-surface/50 dark:bg-zinc-900 border border-border/60 dark:border-zinc-700/80 text-primary text-sm font-medium focus:outline-none focus:border-accent cursor-pointer"
               >
                 {CATEGORIES.filter(c => c !== 'Hepsi').map(cat => (
-                  <option key={cat} value={cat}>{CATEGORY_LABELS[cat] || cat}</option>
+                  <option key={cat} value={cat} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">{CATEGORY_LABELS[cat] || cat}</option>
                 ))}
               </select>
             </div>

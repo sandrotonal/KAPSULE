@@ -1,130 +1,134 @@
-# Kapsule
+# Kapsule — Everything important. One place.
 
-![Kapsule](logo/kaps%C3%BCle-logo.png)
+![Kapsule](public/logo.png)
 
-Everything important. One place.
-
-Kapsule, önemli her şeyi tek bir kasa altında toplayan kişisel dijital kasa uygulamasıdır. Belgeler, fişler, abonelikler, garantiler, notlar ve yer imleri — hepsi tek bir yerden, güvenli ve şık bir arayüzle yönetilir. React + Capacitor ile geliştirilip Android ve iOS mağazalarında yayınlanmaya hazır hale getirilmiştir.
-
----
-
-## Özellikler
-
-- **Belgeler** — Kimlik, finans, sigorta, araç, sağlık ve iş evraklarını kategorize ederek sakla
-- **Fişler** ve **iade takvimi** — Harcama geçmişini takip et, önizlemeli fiş görünümü
-- **Abonelikler (Slide-Out Çekmece Mimarisi)** — Çift katmanlı etkileşimli kartlar, tek tıkla açılıp kapanan detay tepsisi, yıllık projeksiyon ve sıradaki ödeme sayaçları
-- **Garantiler** — Cihaz ve ürün garantilerini, bitiş tarihi yaklaşanları izle
-- **İnteraktif Cüzdan (WalletCard)** — Fiziksel kart cebi hissi, kartlar arası akıcı geçiş animasyonu
-- **Notlar** ve **yer imleri** — Önemli bilgileri ve bağlantıları topla
-- **Zaman Akışı** — İade takvimi ve sektör dağılımı grafikleriyle geçmişi görselleştir
-- **Global Arama** — `Ctrl+K` / `Cmd+K` ile kasadaki her şeyi anında bul
-- **Quiet Luxury Tasarım Felsefesi** — Saf monokrom renk paleti, arka plansız (floating) minimalist ikonlar ve havadar cam efektleri
-- **Ultra Akıcı Sayfa Geçişleri (Zero-Jank)** — 0ms tepki süreli, GPU hızlandırmalı 180ms mikro geçişler; 60/120 FPS donanım hızlandırmalı kart fiziği
-- **Kalıcı Depolama & Hibrit Senkronizasyon** — Native Capacitor Preferences ve LocalStorage arasında cold-start otomatik senkronizasyon
-- **Passcode Kilidi** — Kasanı kişisel PIN ile koru
-- **Onboarding** — İlk açılışta uygulamayı adım adım tanıtan karşılama akışı
-- **Dark Mode** — Tam uyumlu açık/koyu tema desteği
-- **Haptics** — Dokunsal geri bildirim ile premium kullanım hissi
+> **Kapsule**, önemli her şeyi tek bir kasa altında toplayan kişisel dijital kasa uygulamasıdır. Belgeler, fişler, abonelikler, garantiler, notlar ve yer imleri — hepsi tek bir yerden, ultra güvenli, çevrimdışı ve sessiz lüks (Quiet Luxury) arayüzle yönetilir.  
+> **Apple App Store** ve **Google Play Store** mağaza standartlarına uygun olarak React 18, TypeScript ve Capacitor ile paketlenmiştir.
 
 ---
 
-## Teknolojiler
+## 🌟 Öne Çıkan Özellikler
+
+### 🛡️ Kasa & Donanım Güvenliği
+- **Kişisel Kasa PIN Kilidi & Kaba Kuvvet Koruması:** 4 haneli PIN şifreleme ve 5 hatalı deneme sonrası 30 saniyelik otomatik donanım kilidi.
+- **Biyometrik Giriş (Face ID / Touch ID / Parmak İzi):** Cihaz donanımıyla tek dokunuşla kilit açma (`NativeBiometricsService`).
+- **Sıfır Sunucu & %100 Çevrimdışı Gizlilik:** Hiçbir veri üçüncü taraf sunuculara veya izleyicilere aktarılmaz; veriler sadece cihazın korumalı sandbox alanında saklanır.
+- **Android `allowBackup="false"` Koruması:** USB ve adb üzerinden şifresiz veri sızıntılarına karşı tam koruma (OWASP MASVS standartları).
+
+### 📸 Kamera, Görseller & Fotoğraf Kırpma
+- **Doğrudan Fiş & Belge Tarama:** `@capacitor/camera` entegrasyonu ile kamera veya galeriden belge tarayıp kasaya ekleme.
+- **İnteraktif Profil Kırpma & Hizalama (Avatar Cropper):** 
+  - Dokunmatik ve fare ile vizör içinde kaydırma (pan drag)
+  - 1x – 3x kesintisiz yakınlaştırma kaydırıcısı (zoom slider)
+  - 90° yön çevirme ve sıfırlama
+  - 3'te 1 kuralı kılavuz ızgarası (rule-of-thirds grid)
+  - 400×400 px yüksek kaliteli JPEG kayıpsız çıktı
+
+### 💎 Quiet Luxury Tasarım & Akıcılık
+- **Ultra Akıcı Sayfa Geçişleri (Zero-Jank):** 0ms tepki süresi, GPU hızlandırmalı 180ms mikro geçişler; 60/120 FPS akıcı kart fiziği.
+- **Çift Katmanlı Çekmeceler (Slide-Out Drawers):** Profil kartı ve abonelik kartlarında tek tıkla açılıp kapanan, simetrik ve dengeli arayüz mimarisi.
+- **İnteraktif Cüzdan (WalletCard):** Fiziksel kart cebi hissi, kartlar arası akıcı geçiş animasyonu.
+- **Safe Area & Donanım Geometrisi:** Dynamic Island, çentik (`safe-area-inset-top`) ve alt Home Indicator (`safe-area-inset-bottom`) ile tam uyumlu.
+- **Koyu / Açık Mod & StatusBar Senkronizasyonu:** `NativeStatusBarService` ile sistem temasına göre otomatik güncellenen durum çubuğu stili.
+
+### ⚖️ Mağaza ve Yasal Uyumluluk (Store Compliance)
+- **Apple App Store Review 5.1.1 Uyumlu:** Uygulama içi Gizlilik Politikası, Kullanım Koşulları ve İletişim modalları.
+- **Veri Sıfırlama (Data Deletion):** Apple Store zorunlu kuralı uyarınca çift onaylı tüm kasayı sıfırlama mekanizması.
+- **Google Play Target SDK 36:** Android 14+ gereksinimlerini karşılayan güncel API seviyesi.
+- **Native Paylaşım (Share Sheet):** AirDrop, WhatsApp, Google Drive ve Dosyalar üzerinden şifreli JSON kasa yedeği dışa aktarma (`@capacitor/share`).
+
+---
+
+## 🛠️ Teknolojiler
 
 | Teknoloji | Amaç |
 |---|---|
-| [React 18](https://react.dev/) | Kullanıcı arayüzü |
-| [TypeScript](https://www.typescriptlang.org/) | Tip güvenli geliştirme |
-| [Vite](https://vite.dev/) | Build ve dev sunucusu |
-| [Tailwind CSS](https://tailwindcss.com/) | Stil ve tasarım sistemi |
-| [Framer Motion](https://www.framer.com/motion/) | Animasyon ve mikro etkileşimler |
-| [Lucide React](https://lucide.dev/) | İkon seti |
-| [TanStack Query](https://tanstack.com/query) | Veri yönetimi ve önbellekleme |
-| [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) | Formlar ve doğrulama |
-| [Capacitor](https://capacitorjs.com/) | Native mobil kabuk (Android / iOS) |
-| [Capacitor Preferences](https://capacitorjs.com/docs/apis/preferences) | Kalıcı cihaz depolaması |
-| [Capacitor Haptics](https://capacitorjs.com/docs/apis/haptics) | Dokunsal geri bildirim |
-| [Capacitor Status Bar](https://capacitorjs.com/docs/apis/status-bar) | Status bar yönetimi |
-
-![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=000)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=fff)
-![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=fff)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=fff)
-![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=fff)
-![Lucide](https://img.shields.io/badge/Lucide-E74C3C?style=for-the-badge&logo=lucide&logoColor=fff)
-![TanStack Query](https://img.shields.io/badge/TanStack_Query-FF4154?style=for-the-badge&logo=reactquery&logoColor=fff)
-![React Hook Form](https://img.shields.io/badge/React_Hook_Form-EC5990?style=for-the-badge&logo=reacthookform&logoColor=fff)
-![Zod](https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=fff)
-![Capacitor](https://img.shields.io/badge/Capacitor-119EFF?style=for-the-badge&logo=capacitor&logoColor=fff)
+| [React 18](https://react.dev/) | Reaktif bileşen mimarisi ve UI katmanı |
+| [TypeScript](https://www.typescriptlang.org/) | Sıkı tip denetimi ve mimari güvenilirlik (0 Any, 0 Hata) |
+| [Vite](https://vite.dev/) | Hızlı derleme ve optimize üretim paketi |
+| [Tailwind CSS](https://tailwindcss.com/) | Quiet Luxury tasarım sistemi ve HSL tokenları |
+| [Framer Motion](https://www.framer.com/motion/) | GPU hızlandırmalı animasyonlar ve yay dinamikleri |
+| [Lucide React](https://lucide.dev/) | Vektörel ikon kütüphanesi |
+| [Capacitor](https://capacitorjs.com/) | Android ve iOS native mobil kabuk |
+| [Capacitor Camera](https://capacitorjs.com/docs/apis/camera) | Kamera ve galeri erişimi |
+| [Capacitor Preferences](https://capacitorjs.com/docs/apis/preferences) | Kalıcı native cihaz depolaması |
+| [Capacitor Share](https://capacitorjs.com/docs/apis/share) | Native paylaşım menüsü (Share Sheet) |
+| [Capacitor Haptics](https://capacitorjs.com/docs/apis/haptics) | Dokunsal geri bildirim motoru |
+| [Capacitor Status Bar](https://capacitorjs.com/docs/apis/status-bar) | Sistem çubuğu renk ve stil senkronizasyonu |
+| [Capacitor Splash Screen](https://capacitorjs.com/docs/apis/splash-screen) | Lüks açılış ekranı ve pürüzsüz hidrasyon |
 
 ---
 
-## Proje Yapısı
+## 📁 Proje Mimarisi
 
 ```text
-src/
-├── components/          # Ortak UI bileşenleri (Button, Card, Modal, Toast, WalletCard ...)
-│   ├── common/          # PasscodeLock, QuickAddModal
-│   └── ui/              # TiltCard, badge, ticket görünümleri, grafikler
-├── features/            # Ekranlar (home, documents, receipts, subscriptions, warranties ...)
-├── layouts/             # MainLayout, MobileNav, Sidebar
-├── services/            # vaultStorage, storageAdapter (Capacitor/Web uyumlu)
-├── lib/                 # utils, motion
-├── utils/               # haptics
-├── styles/              # globals.css
-└── types/               # Tip tanımları
-android/                 # Capacitor Android native projesi
+kapsule/
+├── android/                 # Capacitor Android native projesi (Gradle, Manifest, Mipmap ikonları)
+├── ios/                     # Capacitor iOS native projesi (Xcode Workspace, Info.plist, AppIcon)
+├── public/                  # Statik varlıklar (logo.png, favicon.svg)
+├── scripts/                 # Varlık üretim otomasyonu (generate-icons.js)
+├── src/
+│   ├── assets/              # Marka varlıkları ve 3D çizimler
+│   ├── components/          # Ortak UI bileşenleri (Button, Badge, Card, Toast, PasscodeLock ...)
+│   ├── features/            # Ekranlar
+│   │   ├── home/            # Kasa özeti, son işlemler, hızlı aksiyonlar
+│   │   ├── documents/       # Belge arşivleme ve kategorizasyon
+│   │   ├── receipts/        # Fiş tarama, kamera ve iade takvimi
+│   │   ├── subscriptions/   # Çekmeceli abonelik kartları ve maliyet projeksiyonu
+│   │   ├── warranties/      # Garanti takibi ve bitiş alarmları
+│   │   ├── notes/           # Güvenli kişisel notlar
+│   │   ├── bookmarks/       # Bağlantı ve yer imleri
+│   │   ├── timeline/        # Zaman akışı ve harcama grafikleri
+│   │   └── settings/        # Profil, AvatarCropModal, LegalModals, PIN ve tema
+│   ├── layouts/             # MainLayout, MobileNav, Sidebar (Safe area uyumlu)
+│   ├── services/            # vaultStorage, storageAdapter, nativeBiometrics, nativeShare, nativeCamera
+│   ├── styles/              # globals.css (Quiet luxury CSS tokenları)
+│   └── types/               # TypeScript tip ve arayüz tanımları
+├── capacitor.config.ts      # Capacitor köprü yapılandırması
+├── STORE-YAYINLAMA-YOL-HARITASI.md  # Mağaza yayınlama yol haritası ve kontrol listesi
+└── MAGAZA-YAYINLAMA-REHBERI.md      # ASO metinleri, ekran görüntüsü ebatları ve yayın rehberi
 ```
 
 ---
 
-## Kurulum ve Çalıştırma
+## 🚀 Kurulum ve Çalıştırma
 
-Gereksinimler: Node.js 18+
+Gereksinimler: **Node.js 18+**
 
 ```bash
-# Bağımlılıkları kur
+# Bağımlılıkları yükle
 npm install
 
-# Geliştirme sunucusunu başlat (localhost:3000)
+# Geliştirme sunucusunu başlat (localhost:3000 / 3001)
 npm run dev
 
-# Telefon ile aynı ağdan erişim için (host: true)
-# Terminalde görünen Network adresini telefonda aç
+# Tip kontrolü ve üretim derlemesi
+npm run build
 ```
 
-### Native uygulama (Capacitor)
+### 📱 Mobil Uygulama Derleme (Capacitor)
 
 ```bash
-# Web uygulamasını build et ve native projeye senkronize et
+# Web paketini derle ve native platformlara senkronize et
 npm run build
 npx cap sync
 
-# Android Studio'da aç
+# Android Studio ile aç ve derle
 npx cap open android
+
+# Xcode ile aç ve derle (macOS gereklidir)
+npx cap open ios
 ```
 
 ---
 
-## Branch Stratejisi
+## 📦 Mağaza Yayınlama Rehberleri
 
-- `master` — Stabil ve çalışan sürüm
-- `son-hal` — Geliştirme devam sürümü
-- `ticket-gorunumleri` — Aktif özellik branch'i
-
-Yeni özellikler ayrı branch'lerde geliştirilir ve kullanılabilir hale gelince `master`'a birleştirilir.
+- [STORE-YAYINLAMA-YOL-HARITASI.md](STORE-YAYINLAMA-YOL-HARITASI.md) — 5 aşamalı mağaza yayınlama eylem planı.
+- [MAGAZA-YAYINLAMA-REHBERI.md](MAGAZA-YAYINLAMA-REHBERI.md) — App Store & Google Play başlık, açıklama, anahtar kelime ve ekran görüntüsü rehberi.
 
 ---
 
-## Dökümantasyon
+## 📄 Lisans & Gizlilik
 
-[GELISTIRME-PLANI.md](GELISTIRME-PLANI.md) — Web uygulamasından mobil uygulamaya geçiş ve geliştirme yol haritası.
-
-Ürün vizyonundan tasarım diline kadar tüm kararlar şu dökümanlarda toplanır:
-
-01 Product Vision · 02 Visual Design · 03 Anti Patterns · 04 UX Constitution · 05 Design System · 06 Screen Blueprints · 07 Motion Constitution · 08 Engineering Constitution · 09 Copywriting Guide · 10 AI Master Prompt · 11 Reference Analysis · 12 Brand Personality · 13 Product Principles
-
----
-
-## Teşekkürler
-
-Bu proje [GucluYum](https://gucluyumhe.dev/) tarafından geliştirilmektedir.
+Kapsule, kullanıcı gizliliğini en üst düzeyde tutacak şekilde tasarlanmıştır. Tüm veriler yalnızca kullanıcı cihazında depolanır.

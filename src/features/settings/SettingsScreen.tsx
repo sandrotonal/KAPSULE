@@ -5,26 +5,67 @@ import {
   Moon, Sun, Bell, Lock, Download, Upload, RefreshCw, ChevronRight,
   LogOut, ShieldCheck, User, Trash2, CheckCircle2,
   AlertTriangle, KeyRound, Clock, Camera, X, Check, BookmarkCheck,
-  Sparkles, Shield
+  Sparkles, Shield, FileText, Mail, Fingerprint, Zap, Crown, ChevronUp, ChevronDown, Crop
 } from 'lucide-react';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { NotificationService } from '../../services/notificationService';
+import { NativeShareService } from '../../services/nativeShare';
+import { NativeBiometricsService } from '../../services/nativeBiometrics';
+import { PrivacyPolicyModal, TermsOfServiceModal, SupportModal } from './LegalModals';
+import { AvatarCropModal } from './AvatarCropModal';
 import { useToast } from '../../components/ui/Toast';
 import { triggerHaptic } from '../../utils/haptics';
 import { cn } from '../../lib/utils';
 
-/* ─────────────── Avatar Presets ─────────────── */
+/* ─────────────── Avatar Presets (Lucide Vector Icons) ─────────────── */
 
 const AVATAR_PRESETS = [
-  { id: 'shield', label: 'Kalkan', icon: '🛡️', bg: 'from-blue-500/20 to-indigo-500/20' },
-  { id: 'gem', label: 'Elmas', icon: '💎', bg: 'from-emerald-500/20 to-teal-500/20' },
-  { id: 'lock', label: 'Kilit', icon: '🔐', bg: 'from-amber-500/20 to-orange-500/20' },
-  { id: 'rocket', label: 'Roket', icon: '🚀', bg: 'from-purple-500/20 to-pink-500/20' },
-  { id: 'planet', label: 'Gezegen', icon: '🪐', bg: 'from-violet-500/20 to-fuchsia-500/20' },
-  { id: 'star', label: 'Yıldız', icon: '⭐', bg: 'from-yellow-500/20 to-amber-500/20' },
+  { id: 'user', label: 'Profil', Icon: User },
+  { id: 'shield', label: 'Kalkan', Icon: Shield },
+  { id: 'lock', label: 'Kasa', Icon: Lock },
+  { id: 'fingerprint', label: 'Biyometrik', Icon: Fingerprint },
+  { id: 'sparkles', label: 'Yıldız', Icon: Sparkles },
+  { id: 'zap', label: 'Hızlı', Icon: Zap },
+  { id: 'key', label: 'Anahtar', Icon: KeyRound },
+  { id: 'crown', label: 'VIP', Icon: Crown },
 ];
+
+const renderAvatarContent = (avatarValue?: string, nameValue?: string, iconSize = "w-6 h-6") => {
+  if (avatarValue?.startsWith('data:')) {
+    return (
+      <img
+        src={avatarValue}
+        alt="Profil"
+        className="w-full h-full object-cover object-center pointer-events-none block shrink-0"
+      />
+    );
+  }
+  
+  switch (avatarValue) {
+    case 'shield':
+      return <Shield className={cn(iconSize, "stroke-[1.8]")} />;
+    case 'lock':
+      return <Lock className={cn(iconSize, "stroke-[1.8]")} />;
+    case 'fingerprint':
+      return <Fingerprint className={cn(iconSize, "stroke-[1.8]")} />;
+    case 'sparkles':
+      return <Sparkles className={cn(iconSize, "stroke-[1.8]")} />;
+    case 'zap':
+      return <Zap className={cn(iconSize, "stroke-[1.8]")} />;
+    case 'key':
+      return <KeyRound className={cn(iconSize, "stroke-[1.8]")} />;
+    case 'crown':
+      return <Crown className={cn(iconSize, "stroke-[1.8]")} />;
+    case 'user':
+      return <User className={cn(iconSize, "stroke-[1.8]")} />;
+    default:
+      // If it's an old legacy emoji or empty, sanitize and show uppercase initial letter
+      const initial = (nameValue || 'Kullanıcı').trim().charAt(0).toUpperCase() || 'K';
+      return <span className="font-bold text-lg">{initial}</span>;
+  }
+};
 
 /* ─────────────── Sub-Components ─────────────── */
 
@@ -164,6 +205,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const [showPasscodeModal, setShowPasscodeModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
   const [newPasscode, setNewPasscode] = useState('');
   const [enableLockAfterPasscode, setEnableLockAfterPasscode] = useState(false);
 
@@ -171,7 +215,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const [nameInput, setNameInput] = useState(settings.profileName || '');
   const [emailInput, setEmailInput] = useState(settings.profileEmail || '');
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>(settings.profileAvatar);
+  const [isProfileCardExpanded, setIsProfileCardExpanded] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
+  const [showCropModal, setShowCropModal] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState<'granted' | 'denied' | 'default' | 'unsupported'>('default');
+  const [hasBiometricsHardware, setHasBiometricsHardware] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const avatarUploadRef = useRef<HTMLInputElement>(null);
@@ -180,6 +228,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   useEffect(() => {
     setNotificationPermission(NotificationService.getPermissionStatus());
     VaultStorageService.recordLogin();
+    NativeBiometricsService.isAvailable().then(setHasBiometricsHardware);
   }, []);
 
   const updateSetting = async <K extends keyof typeof settings>(
@@ -230,19 +279,33 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      showToast('Fotoğraf en fazla 2 MB olabilir.', 'warning');
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Fotoğraf en fazla 5 MB olabilir.', 'warning');
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const base64 = event.target?.result as string;
-      setAvatarPreview(base64);
+      const rawSrc = event.target?.result as string;
+      setCropImageSrc(rawSrc);
+      setShowCropModal(true);
       triggerHaptic.light();
     };
     reader.readAsDataURL(file);
     e.target.value = '';
+  };
+
+  const handleCropComplete = (croppedBase64: string) => {
+    setAvatarPreview(croppedBase64);
+    const updated = VaultStorageService.saveSettings({
+      profileAvatar: croppedBase64,
+    });
+    setSettingsState(updated);
+    onSettingsChange?.();
+    setShowCropModal(false);
+    setCropImageSrc(null);
+    triggerHaptic.success();
+    showToast('Profil fotoğrafı kırpıldı ve kaydedildi.');
   };
 
   const handleSaveProfile = (e: React.FormEvent) => {
@@ -259,7 +322,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     onSettingsChange?.();
   };
 
-  const handleExport = () => {
+  const handleExport = async () => {
     triggerHaptic.light();
     const data = {
       documents: VaultStorageService.getDocuments(),
@@ -273,15 +336,22 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
       exportedAt: new Date().toISOString(),
       version: '1.0.4',
     };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
+    const jsonString = JSON.stringify(data, null, 2);
     const dateStr = new Date().toISOString().slice(0, 10);
-    a.download = `kapsule_kasa_yedek_${dateStr}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast('Kasa yedeği JSON formatında indirildi.');
+    const filename = `kapsule_kasa_yedek_${dateStr}.json`;
+
+    const result = await NativeShareService.shareData({
+      title: 'Kapsüle Kasa Yedeği',
+      text: `Kapsüle Kişisel Kasa Yedeği (${dateStr})`,
+      filename,
+      dataString: jsonString,
+      mimeType: 'application/json',
+    });
+
+    if (result.success) {
+      triggerHaptic.success();
+      showToast(result.method === 'native' ? 'Kasa yedeği paylaşıldı.' : 'Kasa yedeği JSON formatında indirildi.');
+    }
   };
 
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -338,6 +408,15 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         onChange={handleImportFile}
       />
 
+      {/* Hidden File Input for Avatar Photo */}
+      <input
+        ref={avatarUploadRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleAvatarFileChange}
+      />
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-primary tracking-tight">Ayarlar</h1>
@@ -346,94 +425,210 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </p>
       </div>
 
-      {/* ─── Profile & Account Card ─── */}
-      <div className="p-4 bg-surface/70 dark:bg-white/[0.03] border border-border/80 dark:border-white/[0.08] rounded-3xl shadow-sm">
-        <div className="flex items-center gap-3.5">
-          {/* Avatar circle with photo or initial */}
-          <div className="relative group shrink-0">
-            <div className="w-13 h-13 rounded-full bg-accent/15 text-accent font-bold text-lg flex items-center justify-center overflow-hidden border border-accent/20">
-              {settings.profileAvatar ? (
-                settings.profileAvatar.startsWith('data:') ? (
-                  <img
-                    src={settings.profileAvatar}
-                    alt="Profil"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-2xl">{settings.profileAvatar}</span>
-                )
-              ) : (
-                <span className="text-xl uppercase">
-                  {settings.profileName ? settings.profileName.charAt(0) : 'U'}
-                </span>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                setNameInput(settings.profileName || '');
-                setEmailInput(settings.profileEmail || '');
-                setAvatarPreview(settings.profileAvatar);
-                setShowProfileModal(true);
-              }}
-              className="absolute -bottom-1 -right-1 p-1 rounded-full bg-accent text-white shadow-md hover:scale-105 transition-transform"
-              title="Fotoğrafı Değiştir"
-            >
-              <Camera className="w-3 h-3 stroke-[2]" />
-            </button>
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <p className="text-base font-semibold text-primary tracking-tight truncate">
-                {settings.profileName || 'Kullanıcı'}
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setNameInput(settings.profileName || '');
-                  setEmailInput(settings.profileEmail || '');
-                  setAvatarPreview(settings.profileAvatar);
-                  setShowProfileModal(true);
-                }}
-                className="text-xs text-accent font-medium hover:underline"
-              >
-                Düzenle
-              </button>
-            </div>
-            <p className="text-xs text-secondary/70 truncate mt-0.5">
-              {settings.profileEmail || 'Kişisel Kasa · Çevrimdışı'}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {onLock && settings.passcode && (
-              <Button
-                variant="ghost"
-                size="xs"
-                icon={<LogOut className="w-3.5 h-3.5 stroke-[2]" />}
-                onClick={() => {
-                  triggerHaptic.medium();
-                  onLock();
-                }}
-              >
-                Kilitle
-              </Button>
-            )}
-            <Badge variant="muted" size="sm">Yerel</Badge>
-          </div>
+      {/* ─── Interactive Sliding Drawer Profile Card (User Design Architecture) ─── */}
+      <div
+        onClick={() => {
+          triggerHaptic.light();
+          setIsProfileCardExpanded((prev) => !prev);
+        }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isProfileCardExpanded}
+        aria-label="Kullanıcı Kasa Profili"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            triggerHaptic.light();
+            setIsProfileCardExpanded((prev) => !prev);
+          }
+        }}
+        className={cn(
+          "relative w-full h-[270px] sm:h-[285px] rounded-[32px] p-1.5 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] select-none cursor-pointer overflow-hidden border transform-gpu",
+          "bg-white dark:bg-[#121316]",
+          "border-zinc-200/90 dark:border-white/[0.08]",
+          "shadow-[0_20px_45px_-15px_rgba(0,0,0,0.08)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)]"
+        )}
+      >
+        {/* Top-Right Quick Action Button */}
+        <div className="absolute top-3.5 right-3.5 z-30 flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              avatarUploadRef.current?.click();
+            }}
+            className="p-2 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur-md border border-zinc-200/80 dark:border-white/15 text-zinc-700 dark:text-zinc-200 shadow-md hover:scale-105 active:scale-95 transition-all"
+            title="Fotoğraf Değiştir"
+          >
+            <Camera className="w-3.5 h-3.5 stroke-[2]" />
+          </button>
         </div>
 
-        {/* Security & Active Session Footer */}
-        <div className="mt-3.5 pt-3 border-t border-border/40 dark:border-white/[0.04] flex items-center justify-between text-[11px] text-secondary/60">
-          <span className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 stroke-[2]" />
-            Cihaz İçi Şifrelenmiş Sandbox
-          </span>
-          <span className="flex items-center gap-1">
-            <Clock className="w-3 h-3 stroke-[2]" />
-            {settings.lastLoginTime ? `Giriş: ${settings.lastLoginTime}` : 'Aktif Oturum'}
-          </span>
+        {/* ─── Hero / Profile Avatar Stage (Morphes from Full Card to Corner Squircle) ─── */}
+        <div
+          className={cn(
+            "absolute overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-[1]",
+            isProfileCardExpanded
+              ? "w-[76px] h-[76px] top-3 left-3 rounded-2xl ring-4 ring-white dark:ring-[#121316] shadow-xl z-[3]"
+              : "inset-1.5 rounded-[26px]"
+          )}
+        >
+          {settings.profileAvatar?.startsWith('data:') ? (
+            <div className="w-full h-full relative bg-zinc-900 group">
+              <img
+                src={settings.profileAvatar}
+                alt="Profil"
+                className="w-full h-full object-cover object-center"
+              />
+              <div
+                className={cn(
+                  "absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none transition-opacity duration-300",
+                  isProfileCardExpanded ? "opacity-0" : "opacity-100"
+                )}
+              />
+              {isProfileCardExpanded && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCropImageSrc(settings.profileAvatar!);
+                    setShowCropModal(true);
+                    triggerHaptic.light();
+                  }}
+                  className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity flex flex-col items-center justify-center text-white cursor-pointer"
+                  title="Fotoğrafı Kırp & Hizala"
+                >
+                  <Crop className="w-4 h-4" />
+                  <span className="text-[9px] font-semibold mt-0.5">Kırp</span>
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="w-full h-full relative flex items-center justify-center bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-bold shadow-md">
+              <div className="relative z-10 transition-transform duration-500">
+                {renderAvatarContent(settings.profileAvatar, settings.profileName, isProfileCardExpanded ? "w-8 h-8" : "w-12 h-12 sm:w-14 sm:h-14")}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ─── Bottom Sliding Tray (Toggles on Click, Seamless & Balanced) ─── */}
+        <div
+          className={cn(
+            "absolute bottom-1.5 left-1.5 right-1.5 z-[2] overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] transform-gpu",
+            "bg-zinc-950 dark:bg-[#16171b] text-white backdrop-blur-2xl",
+            "border border-white/10 dark:border-white/[0.08]",
+            "shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_15px_35px_rgba(0,0,0,0.35)]",
+            isProfileCardExpanded
+              ? "top-[20%] rounded-tl-[44px] rounded-tr-[26px] rounded-b-[26px]"
+              : "top-[75%] rounded-[26px]"
+          )}
+        >
+          {/* Collapsed State Bar (Resting View) */}
+          <div
+            className={cn(
+              "absolute inset-x-0 top-0 h-[64px] px-5 flex items-center justify-between transition-all duration-300 pointer-events-auto",
+              isProfileCardExpanded ? "opacity-0 pointer-events-none -translate-y-2" : "opacity-100 translate-y-0"
+            )}
+          >
+            <div className="min-w-0 pr-3">
+              <p className="text-sm font-bold text-white tracking-tight truncate">
+                {settings.profileName || 'Kullanıcı'}
+              </p>
+              <p className="text-[11px] text-zinc-400 truncate mt-0.5 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
+                {settings.profileEmail || 'Kişisel Kasa · Çevrimdışı'}
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 text-zinc-400 text-xs shrink-0 font-medium">
+              <span className="text-[11px] hidden sm:inline">Genişlet</span>
+              <div className={cn(
+                "w-6 h-6 rounded-full bg-white/10 flex items-center justify-center transition-transform duration-400",
+                isProfileCardExpanded ? "rotate-180" : "rotate-0"
+              )}>
+                <ChevronUp className="w-3.5 h-3.5 stroke-[2.2]" />
+              </div>
+            </div>
+          </div>
+
+          {/* Expanded State Full View (Clean, Balanced & No Clutter) */}
+          <div
+            className={cn(
+              "absolute inset-0 p-4 sm:p-5 flex flex-col justify-between transition-all duration-300",
+              isProfileCardExpanded
+                ? "opacity-100 translate-y-0 pointer-events-auto"
+                : "opacity-0 translate-y-2 pointer-events-none"
+            )}
+          >
+            {/* Top info section (clears the top-left avatar squircle) */}
+            <div className="pt-1 pl-22 sm:pl-24 pr-1">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="text-base sm:text-lg font-bold text-white tracking-tight truncate">
+                    {settings.profileName || 'Kullanıcı'}
+                  </h3>
+                  <p className="text-xs text-zinc-400 truncate mt-0.5 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
+                    {settings.profileEmail || 'Kişisel Kasa · Çevrimdışı'}
+                  </p>
+                </div>
+                <Badge variant="muted" size="sm" className="bg-white/10 text-white/90 border-white/10 shrink-0">
+                  Yerel
+                </Badge>
+              </div>
+            </div>
+
+            {/* Bottom action buttons: Symmetrically centered & equally spaced across entire card */}
+            <div className="pt-3 border-t border-white/10 w-full mt-auto">
+              <div className={cn(
+                "grid gap-2 sm:gap-2.5 w-full",
+                onLock && settings.passcode ? "grid-cols-3" : "grid-cols-2"
+              )}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    triggerHaptic.medium();
+                    setNameInput(settings.profileName || '');
+                    setEmailInput(settings.profileEmail || '');
+                    setAvatarPreview(settings.profileAvatar);
+                    setShowProfileModal(true);
+                  }}
+                  className="w-full py-2.5 px-2.5 rounded-xl bg-white text-zinc-950 font-semibold text-xs shadow-md hover:bg-zinc-100 active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                >
+                  <User className="w-3.5 h-3.5 stroke-[2.2] shrink-0" />
+                  <span className="truncate">Profili Düzenle</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    avatarUploadRef.current?.click();
+                  }}
+                  className="w-full py-2.5 px-2.5 rounded-xl bg-white/10 text-zinc-200 hover:text-white hover:bg-white/15 active:scale-95 transition-all flex items-center justify-center gap-1.5 text-xs font-medium border border-white/10"
+                >
+                  <Camera className="w-3.5 h-3.5 stroke-[2] shrink-0" />
+                  <span className="truncate">Fotoğraf</span>
+                </button>
+
+                {onLock && settings.passcode && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      triggerHaptic.medium();
+                      onLock();
+                    }}
+                    className="w-full py-2.5 px-2.5 rounded-xl bg-white/10 text-zinc-300 hover:text-white hover:bg-white/15 active:scale-95 transition-all flex items-center justify-center gap-1.5 text-xs font-medium border border-white/10"
+                  >
+                    <LogOut className="w-3.5 h-3.5 stroke-[2] shrink-0" />
+                    <span className="truncate">Kilitle</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -524,12 +719,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 <select
                   value={settings.reminderDaysBefore || 7}
                   onChange={(e) => updateSetting('reminderDaysBefore', Number(e.target.value))}
-                  className="text-xs bg-surface-elevated dark:bg-white/10 border border-border/70 dark:border-white/10 rounded-lg px-2.5 py-1 text-primary focus:outline-none focus:border-accent"
+                  className="text-xs bg-surface-elevated dark:bg-zinc-800 border border-border/70 dark:border-zinc-700/80 rounded-lg px-2.5 py-1 text-primary focus:outline-none focus:border-accent cursor-pointer transition-colors"
                 >
-                  <option value={3}>3 Gün Önce</option>
-                  <option value={7}>7 Gün Önce (Önerilen)</option>
-                  <option value={14}>14 Gün Önce</option>
-                  <option value={30}>30 Gün Önce</option>
+                  <option value={3} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">3 Gün Önce</option>
+                  <option value={7} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">7 Gün Önce (Önerilen)</option>
+                  <option value={14} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">14 Gün Önce</option>
+                  <option value={30} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">30 Gün Önce</option>
                 </select>
               }
             />
@@ -567,6 +762,35 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           description={settings.passcode ? 'PIN tanımlandı ve aktif' : 'Henüz kilit şifresi tanımlanmadı'}
           onClick={() => setShowPasscodeModal(true)}
         />
+        {hasBiometricsHardware && (
+          <SettingsRow
+            icon={<Fingerprint className="w-4 h-4 stroke-[1.8]" />}
+            label="Biyometrik Kilit (Face ID / Parmak İzi)"
+            description="PIN yerine yüz veya parmak izi ile anında kilit aç"
+            right={
+              <Toggle
+                checked={settings.biometricsEnabled !== false}
+                onChange={async () => {
+                  const target = settings.biometricsEnabled === false;
+                  if (target) {
+                    const enrolled = await NativeBiometricsService.enrollBiometrics(settings.profileName || 'Kapsule');
+                    if (enrolled) {
+                      updateSetting('biometricsEnabled', true);
+                      showToast('Biyometrik kilit aktif edildi.');
+                    } else {
+                      showToast('Biyometrik yetkilendirme tamamlanamadı.', 'warning');
+                    }
+                  } else {
+                    NativeBiometricsService.clearEnrollment();
+                    updateSetting('biometricsEnabled', false);
+                    showToast('Biyometrik kilit kapatıldı.');
+                  }
+                }}
+                id="biometrics-toggle"
+              />
+            }
+          />
+        )}
         {settings.autoLock && (
           <SettingsRow
             icon={<Clock className="w-4 h-4 stroke-[1.8]" />}
@@ -576,12 +800,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               <select
                 value={settings.autoLockTimeout || 'immediate'}
                 onChange={(e) => updateSetting('autoLockTimeout', e.target.value as any)}
-                className="text-xs bg-surface-elevated dark:bg-white/10 border border-border/70 dark:border-white/10 rounded-lg px-2.5 py-1 text-primary focus:outline-none focus:border-accent"
+                className="text-xs bg-surface-elevated dark:bg-zinc-800 border border-border/70 dark:border-zinc-700/80 rounded-lg px-2.5 py-1 text-primary focus:outline-none focus:border-accent cursor-pointer transition-colors"
               >
-                <option value="immediate">Hemen Kilitle</option>
-                <option value="1m">1 Dakika Sonra</option>
-                <option value="5m">5 Dakika Sonra</option>
-                <option value="15m">15 Dakika Sonra</option>
+                <option value="immediate" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Hemen Kilitle</option>
+                <option value="1m" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">1 Dakika Sonra</option>
+                <option value="5m" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">5 Dakika Sonra</option>
+                <option value="15m" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">15 Dakika Sonra</option>
               </select>
             }
           />
@@ -619,7 +843,29 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         />
       </SettingsSection>
 
-      {/* ─── 6. App Info ─── */}
+      {/* ─── 6. Yasal & Destek (Store Compliance) ─── */}
+      <SettingsSection title="Yasal & Destek">
+        <SettingsRow
+          icon={<Shield className="w-4 h-4 stroke-[1.8]" />}
+          label="Gizlilik Politikası"
+          description="Veri güvenliği, yerel sandbox ve sıfır takipçi politikası"
+          onClick={() => setShowPrivacyModal(true)}
+        />
+        <SettingsRow
+          icon={<FileText className="w-4 h-4 stroke-[1.8]" />}
+          label="Kullanım Koşulları"
+          description="Hizmet şartları ve yerel yedekleme sorumluluğu"
+          onClick={() => setShowTermsModal(true)}
+        />
+        <SettingsRow
+          icon={<Mail className="w-4 h-4 stroke-[1.8]" />}
+          label="Destek & Geri Bildirim"
+          description="Geliştirici ekiple iletişime geç veya soru sor"
+          onClick={() => setShowSupportModal(true)}
+        />
+      </SettingsSection>
+
+      {/* ─── 7. App Info ─── */}
       <div className="p-4 rounded-3xl bg-surface/40 dark:bg-white/[0.015] border border-border/50 dark:border-white/[0.04] text-center space-y-2">
         <p className="text-xs font-semibold text-primary tracking-tight">Kapsüle v1.0.4</p>
         <p className="text-[11px] text-secondary/60">
@@ -657,34 +903,35 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                transition={{ duration: 0.16 }}
                 onClick={() => setShowProfileModal(false)}
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+                className="fixed inset-0 bg-black/60 backdrop-blur-md"
               />
 
               {/* Modal Container */}
               <motion.div
-                initial={{ opacity: 0, y: 24, scale: 0.96 }}
+                initial={{ opacity: 0, y: 16, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 16, scale: 0.98 }}
-                transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+                exit={{ opacity: 0, y: 12, scale: 0.98 }}
+                transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
                 className={cn(
                   "relative w-full max-w-sm z-10",
-                  "bg-surface dark:bg-[#13151b]",
-                  "border border-border/80 dark:border-white/10",
-                  "shadow-2xl shadow-black/40",
-                  "rounded-t-3xl sm:rounded-3xl p-6 overflow-hidden"
+                  "bg-white dark:bg-[#121316]",
+                  "border border-zinc-200/80 dark:border-white/[0.08]",
+                  "shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)]",
+                  "rounded-t-3xl sm:rounded-3xl p-6 overflow-hidden transform-gpu"
                 )}
               >
                 {/* Header */}
-                <div className="flex items-center justify-between pb-3 border-b border-border/40 dark:border-white/[0.05]">
+                <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-white/[0.05]">
                   <div>
-                    <h3 className="text-base font-bold text-primary tracking-tight">Profili Düzenle</h3>
-                    <p className="text-xs text-secondary/70 mt-0.5">Kasa kimliği ve profil resmi</p>
+                    <h3 className="text-base font-bold text-zinc-900 dark:text-white tracking-tight">Profili Düzenle</h3>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Kasa kimliği ve profil ikonu</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setShowProfileModal(false)}
-                    className="p-1.5 rounded-xl text-secondary/60 hover:text-primary hover:bg-surface-elevated transition-colors"
+                    className="p-1.5 rounded-xl text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/[0.06] transition-colors"
                   >
                     <X className="w-4 h-4 stroke-[2]" />
                   </button>
@@ -693,37 +940,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 <form onSubmit={handleSaveProfile} className="space-y-4 pt-4">
                   {/* Avatar Picker Section */}
                   <div className="flex flex-col items-center gap-3">
-                    {/* Hidden Photo File Input */}
-                    <input
-                      ref={avatarUploadRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleAvatarFileChange}
-                    />
-
-                    {/* Circular Avatar Preview */}
-                    <div className="relative group cursor-pointer" onClick={() => avatarUploadRef.current?.click()}>
-                      <div className="w-20 h-20 rounded-full bg-accent/15 text-accent font-bold text-2xl flex items-center justify-center overflow-hidden border-2 border-accent shadow-md">
-                        {avatarPreview ? (
-                          avatarPreview.startsWith('data:') ? (
-                            <img
-                              src={avatarPreview}
-                              alt="Profil Önizleme"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-3xl">{avatarPreview}</span>
-                          )
-                        ) : (
-                          <span className="text-2xl uppercase">
-                            {nameInput ? nameInput.charAt(0) : 'U'}
-                          </span>
-                        )}
+                    {/* Squircle Avatar Preview */}
+                    <div className="relative group cursor-pointer shrink-0 w-20 h-20" onClick={() => avatarUploadRef.current?.click()}>
+                      <div className="w-20 h-20 rounded-2xl bg-zinc-100 dark:bg-white/[0.06] text-zinc-900 dark:text-zinc-100 font-bold text-2xl flex items-center justify-center overflow-hidden border border-zinc-300 dark:border-white/15 shadow-sm transition-transform group-hover:scale-105 shrink-0">
+                        {renderAvatarContent(avatarPreview, nameInput, "w-8 h-8")}
                       </div>
-                      <div className="absolute inset-0 rounded-full bg-black/40 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute inset-0 rounded-2xl bg-black/40 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <Camera className="w-5 h-5 stroke-[2]" />
-                        <span className="text-[9px] font-semibold mt-0.5">Değiştir</span>
+                        <span className="text-[10px] font-semibold mt-0.5">Değiştir</span>
                       </div>
                     </div>
 
@@ -731,17 +955,33 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                       <button
                         type="button"
                         onClick={() => avatarUploadRef.current?.click()}
-                        className="text-xs text-accent font-medium hover:underline"
+                        className="text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:text-black dark:hover:text-white transition-colors"
                       >
                         Fotoğraf Yükle
                       </button>
+                      {avatarPreview?.startsWith('data:') && (
+                        <>
+                          <span className="text-secondary/40 text-xs">·</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCropImageSrc(avatarPreview);
+                              setShowCropModal(true);
+                              triggerHaptic.light();
+                            }}
+                            className="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline transition-colors"
+                          >
+                            Kırp / Hizala
+                          </button>
+                        </>
+                      )}
                       {avatarPreview && (
                         <>
                           <span className="text-secondary/40 text-xs">·</span>
                           <button
                             type="button"
                             onClick={() => setAvatarPreview(undefined)}
-                            className="text-xs text-red-500 font-medium hover:underline"
+                            className="text-xs text-red-500 font-semibold hover:text-red-600 transition-colors"
                           >
                             Kaldır
                           </button>
@@ -749,33 +989,37 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                       )}
                     </div>
 
-                    {/* Preset Avatars Row */}
-                    <div className="flex items-center gap-1.5 pt-1">
-                      {AVATAR_PRESETS.map((p) => (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => {
-                            setAvatarPreview(p.icon);
-                            triggerHaptic.light();
-                          }}
-                          className={cn(
-                            "w-8 h-8 rounded-full flex items-center justify-center text-sm transition-transform active:scale-90",
-                            avatarPreview === p.icon
-                              ? "ring-2 ring-accent scale-105 bg-accent/20"
-                              : "bg-surface-elevated/70 dark:bg-white/[0.04] hover:bg-surface-elevated"
-                          )}
-                          title={p.label}
-                        >
-                          {p.icon}
-                        </button>
-                      ))}
+                    {/* Preset Vector Icons Row (No Emojis!) */}
+                    <div className="flex items-center justify-center gap-1.5 pt-1 flex-wrap">
+                      {AVATAR_PRESETS.map((p) => {
+                        const isSelected = avatarPreview === p.id;
+                        const Icon = p.Icon;
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              setAvatarPreview(p.id);
+                              triggerHaptic.light();
+                            }}
+                            className={cn(
+                              "w-8 h-8 rounded-xl flex items-center justify-center transition-all active:scale-90",
+                              isSelected
+                                ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 shadow-sm"
+                                : "bg-zinc-100 dark:bg-white/[0.04] text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white border border-transparent hover:border-zinc-300 dark:hover:border-white/10"
+                            )}
+                            title={p.label}
+                          >
+                            <Icon className="w-4 h-4 stroke-[1.8]" />
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
                   {/* Name Input */}
                   <div>
-                    <label className="text-xs font-medium text-secondary/80 block mb-1">
+                    <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400 block mb-1">
                       Kullanıcı Adı
                     </label>
                     <input
@@ -783,13 +1027,13 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                       placeholder="Örn. Ali Can"
                       value={nameInput}
                       onChange={(e) => setNameInput(e.target.value)}
-                      className="w-full h-11 px-3.5 text-sm bg-surface/60 dark:bg-white/[0.04] border border-border/80 dark:border-white/10 rounded-xl text-primary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all"
+                      className="w-full h-11 px-3.5 text-sm bg-zinc-50 dark:bg-white/[0.035] border border-zinc-200/80 dark:border-white/[0.08] rounded-xl text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-zinc-900 dark:focus:border-white focus:bg-white dark:focus:bg-white/[0.06] transition-all"
                     />
                   </div>
 
                   {/* Vault Title / Email Input */}
                   <div>
-                    <label className="text-xs font-medium text-secondary/80 block mb-1">
+                    <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400 block mb-1">
                       Kasa Başlığı / Açıklama
                     </label>
                     <input
@@ -797,7 +1041,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                       placeholder="Örn. Kişisel Kasa"
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
-                      className="w-full h-11 px-3.5 text-sm bg-surface/60 dark:bg-white/[0.04] border border-border/80 dark:border-white/10 rounded-xl text-primary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all"
+                      className="w-full h-11 px-3.5 text-sm bg-zinc-50 dark:bg-white/[0.035] border border-zinc-200/80 dark:border-white/[0.08] rounded-xl text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-zinc-900 dark:focus:border-white focus:bg-white dark:focus:bg-white/[0.06] transition-all"
                     />
                   </div>
 
@@ -806,13 +1050,13 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     <button
                       type="button"
                       onClick={() => setShowProfileModal(false)}
-                      className="flex-1 h-11 rounded-xl text-sm font-medium text-secondary border border-border/80 dark:border-white/10 hover:bg-surface-elevated transition-colors"
+                      className="flex-1 h-11 rounded-xl text-sm font-semibold text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-white/10 hover:bg-zinc-100 dark:hover:bg-white/[0.04] transition-colors"
                     >
                       İptal
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 h-11 rounded-xl text-sm font-semibold text-white bg-accent hover:bg-accent/90 shadow-md shadow-accent/20 transition-all active:scale-[0.98]"
+                      className="flex-1 h-11 rounded-xl text-sm font-semibold text-white bg-zinc-900 dark:bg-white dark:text-zinc-950 hover:opacity-90 transition-all active:scale-[0.98] shadow-sm"
                     >
                       Kaydet
                     </button>
@@ -976,6 +1220,31 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </AnimatePresence>,
         portalTarget
       )}
+
+      {/* ─── Avatar Crop & Frame Alignment Modal ─── */}
+      <AvatarCropModal
+        isOpen={showCropModal}
+        imageSrc={cropImageSrc}
+        onClose={() => {
+          setShowCropModal(false);
+          setCropImageSrc(null);
+        }}
+        onCropComplete={handleCropComplete}
+      />
+
+      {/* ─── Legal & App Store Compliance Modals ─── */}
+      <PrivacyPolicyModal
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+      />
+      <TermsOfServiceModal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+      />
+      <SupportModal
+        isOpen={showSupportModal}
+        onClose={() => setShowSupportModal(false)}
+      />
     </div>
   );
 };
