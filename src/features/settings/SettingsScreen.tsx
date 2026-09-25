@@ -474,7 +474,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           )}
         >
           {settings.profileAvatar?.startsWith('data:') ? (
-            <div className="w-full h-full relative bg-zinc-900 group">
+            <div className="w-full h-full relative bg-zinc-900">
               <img
                 src={settings.profileAvatar}
                 alt="Profil"
@@ -486,22 +486,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                   isProfileCardExpanded ? "opacity-0" : "opacity-100"
                 )}
               />
-              {isProfileCardExpanded && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCropImageSrc(settings.profileAvatar!);
-                    setShowCropModal(true);
-                    triggerHaptic.light();
-                  }}
-                  className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity flex flex-col items-center justify-center text-white cursor-pointer"
-                  title="Fotoğrafı Kırp & Hizala"
-                >
-                  <Crop className="w-4 h-4" />
-                  <span className="text-[9px] font-semibold mt-0.5">Kırp</span>
-                </button>
-              )}
             </div>
           ) : (
             <div className="w-full h-full relative flex items-center justify-center bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-bold shadow-md">
@@ -959,22 +943,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                       >
                         Fotoğraf Yükle
                       </button>
-                      {avatarPreview?.startsWith('data:') && (
-                        <>
-                          <span className="text-secondary/40 text-xs">·</span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCropImageSrc(avatarPreview);
-                              setShowCropModal(true);
-                              triggerHaptic.light();
-                            }}
-                            className="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline transition-colors"
-                          >
-                            Kırp / Hizala
-                          </button>
-                        </>
-                      )}
                       {avatarPreview && (
                         <>
                           <span className="text-secondary/40 text-xs">·</span>
