@@ -28,7 +28,10 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   );
 
   return (
-    <nav className="md:hidden fixed bottom-3 left-0 right-0 z-40 select-none flex justify-center pointer-events-auto px-4">
+    <nav
+      className="md:hidden fixed left-0 right-0 z-40 select-none flex justify-center pointer-events-auto px-4"
+      style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
+    >
       <FluidTabs
         activeIndex={activeIndex < 0 ? 0 : activeIndex}
         onActiveIndexChange={(idx) => onTabChange(MAIN_TABS[idx].id)}

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, ChevronDown, Clock, ArrowUpRight, PauseCircle, PlayCircle, Settings2 } from 'lucide-react';
+import { Calendar, ChevronDown, Clock, PauseCircle, PlayCircle, Settings2 } from 'lucide-react';
 import { BrandAvatar } from '../../components/ui/BrandAvatar';
 import { Badge } from '../../components/ui/Badge';
 import { SubscriptionItem } from '../../types';
@@ -19,18 +18,12 @@ export const SubscriptionDrawerCard: React.FC<SubscriptionDrawerCardProps> = ({
   onToggleStatus,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const lastToggleTimeRef = React.useRef(0);
 
   const daysLeft = getDaysRemaining(subscription.renewalDate);
   const annualCost = subscription.billingCycle === 'monthly' ? subscription.price * 12 : subscription.price;
   const isActive = subscription.status === 'active';
 
   const handleCardClick = () => {
-    const now = Date.now();
-    // Prevent double-tap or ghost click from immediately reopening/closing
-    if (now - lastToggleTimeRef.current < 280) return;
-    lastToggleTimeRef.current = now;
-
     triggerHaptic.light();
     setIsOpen((prev) => !prev);
   };
@@ -38,7 +31,7 @@ export const SubscriptionDrawerCard: React.FC<SubscriptionDrawerCardProps> = ({
   return (
     <div className="relative flex flex-col w-full">
       {/* ─── 1. Main Top Card (Elevated Surface) ─── */}
-      <motion.div
+      <div
         role="button"
         tabIndex={0}
         aria-expanded={isOpen}
@@ -49,10 +42,10 @@ export const SubscriptionDrawerCard: React.FC<SubscriptionDrawerCardProps> = ({
             handleCardClick();
           }
         }}
-        whileTap={{ scale: 0.985 }}
         className={cn(
-          "relative z-20 w-full p-5 rounded-[26px] border transition-all duration-300 cursor-pointer select-none",
+          "relative z-20 w-full p-5 rounded-[26px] border cursor-pointer select-none",
           "bg-surface/90 dark:bg-zinc-900/90 backdrop-blur-xl border-border/70 dark:border-white/[0.08]",
+          "transition-all duration-200 active:scale-[0.985] transform-gpu",
           isOpen
             ? "shadow-[0_16px_36px_-10px_rgba(0,0,0,0.14)] dark:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.7)] border-border"
             : "shadow-sm hover:shadow-md hover:border-border/90"
@@ -110,29 +103,24 @@ export const SubscriptionDrawerCard: React.FC<SubscriptionDrawerCardProps> = ({
             <span className="text-[11px] font-medium hidden sm:inline">
               {isOpen ? 'Detayları Kapat' : 'Detayları Gör'}
             </span>
-            <motion.div
-              animate={{ rotate: isOpen ? 180 : 0 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="w-5 h-5 rounded-full bg-surface-elevated/80 dark:bg-white/[0.04] border border-border/50 flex items-center justify-center text-secondary/80"
+            <div
+              className={cn(
+                "w-5 h-5 rounded-full bg-surface-elevated/80 dark:bg-white/[0.04] border border-border/50 flex items-center justify-center text-secondary/80 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] transform-gpu",
+                isOpen && "rotate-180"
+              )}
             >
               <ChevronDown className="w-3 h-3 stroke-[2.2]" />
-            </motion.div>
+            </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* ─── 2. Slide-Out Detail Tray (Draws out from underneath) ─── */}
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{
-              duration: 0.24,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            className="relative z-10 w-full -mt-4 pt-6 px-4 pb-3.5 rounded-b-[24px] bg-surface/95 dark:bg-zinc-900/95 border border-t-0 border-border/70 dark:border-white/[0.08] shadow-md overflow-hidden flex flex-col gap-3"
+      <div className={cn("sub-drawer-grid", isOpen && "is-expanded")}>
+        <div className="overflow-hidden min-h-0">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative z-10 w-full pt-6 px-4 pb-3.5 rounded-b-[24px] bg-surface/95 dark:bg-zinc-900/95 border border-t-0 border-border/70 dark:border-white/[0.08] shadow-md flex flex-col gap-3"
           >
             {/* Quick Metrics Grid */}
             <div className="grid grid-cols-2 gap-2 text-xs pt-1">
@@ -200,9 +188,9 @@ export const SubscriptionDrawerCard: React.FC<SubscriptionDrawerCardProps> = ({
                 <span>Yönet</span>
               </button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

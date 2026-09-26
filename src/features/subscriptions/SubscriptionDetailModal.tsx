@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { CreditCard, Calendar, Clock, Trash2, PauseCircle, PlayCircle, Tag } from 'lucide-react';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
@@ -18,12 +18,17 @@ export interface SubscriptionDetailModalProps {
 }
 
 export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = ({
-  subscription,
+  subscription: propSubscription,
   isOpen,
   onClose,
   onDelete,
   onToggleStatus,
 }) => {
+  const activeSubscriptionRef = useRef<SubscriptionItem | null>(propSubscription);
+  if (propSubscription) {
+    activeSubscriptionRef.current = propSubscription;
+  }
+  const subscription = propSubscription || activeSubscriptionRef.current;
   const { showToast } = useToast();
 
   if (!subscription) return null;

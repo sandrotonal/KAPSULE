@@ -51,7 +51,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           className="flex items-center gap-3 group text-left"
         >
           <img
-            src="/src/assets/logo.png"
+            src="/logo.png"
             alt="Kapsule Logo"
             className="w-8 h-8 object-contain dark:invert shrink-0 group-hover:scale-105 transition-transform"
           />

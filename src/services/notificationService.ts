@@ -56,8 +56,8 @@ export class NotificationService {
 
     try {
       new Notification(title, {
-        icon: '/src/assets/logo.png',
-        badge: '/src/assets/logo.png',
+        icon: '/logo.png',
+        badge: '/logo.png',
         silent: false,
         ...options,
       });
@@ -199,8 +199,8 @@ export class NotificationService {
     try {
       new Notification('Kapsule Test Bildirimi', {
         body: 'Kasa bildirim ve hatırlatma sistemi cihazınızda başarıyla çalışıyor!',
-        icon: '/src/assets/logo.png',
-        badge: '/src/assets/logo.png',
+        icon: '/logo.png',
+        badge: '/logo.png',
         tag: 'kapsule-test',
       });
       triggerHaptic.success();

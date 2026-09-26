@@ -1,8 +1,8 @@
-import React from 'react';
-import { FileText, Star, Download, Trash2, X, ScanText, Tag } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { FileText, Star, Download, Trash2, ScanText, Copy, Check, Calendar, HardDrive, Shield } from 'lucide-react';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
-import { Badge } from '../../components/ui/Badge';
+import { AppleFileIcon } from '../../components/ui/AppleFileIcon';
 import { DocumentItem, DOCUMENT_CATEGORY_LABELS } from '../../types';
 import { formatDate } from '../../lib/utils';
 import { useToast } from '../../components/ui/Toast';
@@ -16,12 +16,18 @@ export interface DocumentDetailModalProps {
 }
 
 export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
-  document,
+  document: propDocument,
   isOpen,
   onClose,
   onToggleFavorite,
   onDelete,
 }) => {
+  const activeDocRef = useRef<DocumentItem | null>(propDocument);
+  if (propDocument) {
+    activeDocRef.current = propDocument;
+  }
+  const document = propDocument || activeDocRef.current;
+  const [copiedOcr, setCopiedOcr] = useState(false);
   const { showToast } = useToast();
 
   if (!document) return null;
@@ -36,6 +42,15 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
     link.href = document.previewUrl;
     link.download = `${document.title}.${extension}`;
     link.click();
+    showToast('Dosya indirme başlatıldı.');
+  };
+
+  const handleCopyOcr = () => {
+    if (!document.ocrText) return;
+    navigator.clipboard.writeText(document.ocrText);
+    setCopiedOcr(true);
+    setTimeout(() => setCopiedOcr(false), 2000);
+    showToast('Taranan metin panoya kopyalandı.');
   };
 
   return (
@@ -43,57 +58,87 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={document.title}
-      subtitle={`${DOCUMENT_CATEGORY_LABELS[document.category]} · ${formatDate(document.createdAt)} tarihinde eklendi`}
+      subtitle={`${DOCUMENT_CATEGORY_LABELS[document.category]} · ${formatDate(document.createdAt)}`}
       maxWidth="lg"
     >
-      <div className="space-y-5">
-        {/* Preview */}
-        <div className="w-full h-52 sm:h-64 rounded-xl overflow-hidden border border-border bg-surface">
+      <div className="space-y-6">
+        {/* Apple Quick Look Preview Canvas */}
+        <div className="w-full h-56 sm:h-72 rounded-2xl overflow-hidden bg-surface-elevated/40 dark:bg-zinc-950/70 border border-border/40 flex items-center justify-center relative">
           {document.fileType === 'img' && document.previewUrl ? (
-            <img src={document.previewUrl} alt={document.title} className="w-full h-full object-cover" />
+            <img src={document.previewUrl} alt={document.title} className="w-full h-full object-contain" />
           ) : document.fileType === 'pdf' && document.previewUrl ? (
             <iframe title={`${document.title} önizlemesi`} src={document.previewUrl} className="w-full h-full" />
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-secondary">
-              <FileText className="w-10 h-10" />
-              <p className="text-sm font-medium">Bu dosya türü önizlenemiyor.</p>
+            <div className="flex flex-col items-center justify-center p-6">
+              <AppleFileIcon fileType={document.fileType} size="hero" />
             </div>
           )}
         </div>
 
-        {/* Metadata row */}
-        <div className="grid grid-cols-3 gap-3 p-3 bg-surface rounded-xl border border-border text-xs">
+        {/* Clean Metadata Inspector Strip (No bulky boxes) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-3 px-1 border-y border-border/30 text-xs">
           <div>
-            <p className="text-secondary font-medium mb-0.5">Tür</p>
-            <p className="font-semibold text-primary uppercase">{document.fileType} · {document.fileSize}</p>
+            <span className="text-[11px] text-secondary/60 font-medium block">Dosya Türü</span>
+            <span className="font-semibold text-primary uppercase font-mono mt-0.5 block">
+              {document.fileType}
+            </span>
           </div>
           <div>
-            <p className="text-secondary font-medium mb-0.5">Eklenme</p>
-            <p className="font-semibold text-primary">{formatDate(document.createdAt)}</p>
+            <span className="text-[11px] text-secondary/60 font-medium block">Dosya Boyutu</span>
+            <span className="font-semibold text-primary font-mono mt-0.5 block">
+              {document.fileSize}
+            </span>
           </div>
           <div>
-            <p className="text-secondary font-medium mb-0.5">Durum</p>
-            <p className="font-semibold text-primary">{document.isFavorite ? 'Favori' : 'Aktif'}</p>
+            <span className="text-[11px] text-secondary/60 font-medium block">Eklenme Tarihi</span>
+            <span className="font-semibold text-primary mt-0.5 block">
+              {formatDate(document.createdAt)}
+            </span>
+          </div>
+          <div>
+            <span className="text-[11px] text-secondary/60 font-medium block">Kategori</span>
+            <span className="font-semibold text-primary mt-0.5 block">
+              {DOCUMENT_CATEGORY_LABELS[document.category]}
+            </span>
           </div>
         </div>
 
         {/* Description */}
         {document.description && (
           <div className="space-y-1.5">
-            <p className="text-xs font-medium text-secondary">Açıklama</p>
-            <p className="text-sm text-primary leading-relaxed bg-surface px-4 py-3 rounded-xl border border-border">
+            <span className="text-xs font-semibold text-secondary/70">Açıklama</span>
+            <p className="text-sm text-primary/90 leading-relaxed font-normal">
               {document.description}
             </p>
           </div>
         )}
 
-        {/* OCR */}
+        {/* OCR Scanned Text Sheet */}
         {document.ocrText && (
-          <div className="space-y-1.5">
-            <p className="text-xs font-medium text-secondary flex items-center gap-1.5">
-              <ScanText className="w-3.5 h-3.5 text-accent" /> Taranan metin
-            </p>
-            <div className="px-4 py-3 bg-surface rounded-xl border border-border text-xs font-mono text-secondary leading-relaxed max-h-28 overflow-y-auto thin-scrollbar">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-secondary/70 flex items-center gap-1.5">
+                <ScanText className="w-3.5 h-3.5 text-accent" /> Taranan Metin (OCR)
+              </span>
+              <button
+                onClick={handleCopyOcr}
+                className="text-xs text-secondary/70 hover:text-primary flex items-center gap-1 transition-colors"
+                aria-label="Taranan metni kopyala"
+              >
+                {copiedOcr ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-success" />
+                    <span className="text-success font-medium">Kopyalandı</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Kopyala</span>
+                  </>
+                )}
+              </button>
+            </div>
+            <div className="p-3.5 bg-surface-elevated/40 dark:bg-zinc-900/40 rounded-xl border border-border/30 text-xs font-mono text-secondary/80 leading-relaxed max-h-32 overflow-y-auto thin-scrollbar select-text">
               {document.ocrText}
             </div>
           </div>
@@ -101,33 +146,34 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
 
         {/* Tags */}
         {document.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex items-center gap-2 text-xs text-secondary/60 font-mono">
             {document.tags.map(tag => (
-              <Badge key={tag} variant="outline" size="xs">{tag}</Badge>
+              <span key={tag}>#{tag}</span>
             ))}
           </div>
         )}
 
-        {/* Actions */}
-        <div className="flex items-center justify-between pt-2 border-t border-border">
+        {/* Bottom Actions Bar */}
+        <div className="flex items-center justify-between pt-3 border-t border-border/40">
           <Button
             variant="ghost"
             size="sm"
-            icon={<Trash2 className="w-3.5 h-3.5" />}
-            onClick={() => { onDelete(document.id); onClose(); showToast('Belge silindi.'); }}
+            icon={<Trash2 className="w-4 h-4" />}
+            onClick={() => {
+              onDelete(document.id);
+              onClose();
+            }}
             className="text-danger hover:text-danger hover:bg-danger-muted"
           >
             Sil
           </Button>
+
           <div className="flex items-center gap-2">
             <Button
               variant="secondary"
               size="sm"
               icon={<Star className={`w-3.5 h-3.5 ${document.isFavorite ? 'fill-amber-400 text-amber-400' : ''}`} />}
-              onClick={() => {
-                onToggleFavorite(document.id);
-                showToast(document.isFavorite ? 'Favorilerden çıkarıldı.' : 'Favorilere eklendi.');
-              }}
+              onClick={() => onToggleFavorite(document.id)}
             >
               {document.isFavorite ? 'Favori' : 'Favorile'}
             </Button>

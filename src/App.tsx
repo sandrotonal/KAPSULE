@@ -18,6 +18,8 @@ import { OnboardingScreen } from './features/onboarding/OnboardingScreen';
 import { VaultStorageService } from './services/vaultStorage';
 import { storageAdapter } from './services/storageAdapter';
 import { NotificationService } from './services/notificationService';
+import { NativeStatusBarService } from './services/nativeStatusBar';
+import { SplashScreen } from '@capacitor/splash-screen';
 import { ToastProvider, useToast } from './components/ui/Toast';
 
 const ONBOARDING_KEY = 'kapsule_onboarding_complete';
@@ -52,18 +54,33 @@ function AppContent() {
     setShowOnboarding(false);
   };
 
-  // Sync dark theme on settings update
+  // Sync dark theme and native status bar on settings update
   useEffect(() => {
     if (settings.darkMode) {
       document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.style.colorScheme = 'light';
     }
+    NativeStatusBarService.syncWithTheme(Boolean(settings.darkMode));
   }, [settings.darkMode]);
 
   // Hydrate persistent storage and run background notification check
   useEffect(() => {
-    storageAdapter.hydrateFromPreferences().catch(() => {});
+    storageAdapter.hydrateFromPreferences()
+      .then(() => {
+        const synced = VaultStorageService.getSettings();
+        setSettings(synced);
+        if (synced.autoLock && synced.passcode) {
+          setIsLocked(true);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        SplashScreen.hide().catch(() => {});
+      });
+
     try {
       NotificationService.runDailyCheck();
     } catch (e) {
@@ -93,6 +110,23 @@ function AppContent() {
     setActiveTab(tab);
   };
 
+  const getContextualCategory = (tab: ActiveTab): VaultCategory => {
+    switch (tab) {
+      case 'receipts': return 'receipt';
+      case 'warranties': return 'warranty';
+      case 'subscriptions': return 'subscription';
+      case 'documents': return 'document';
+      case 'notes': return 'note';
+      case 'bookmarks': return 'bookmark';
+      default: return 'receipt';
+    }
+  };
+
+  const handleOpenQuickAdd = (specificType?: VaultCategory) => {
+    setQuickAddInitialType(specificType || getContextualCategory(activeTab));
+    setIsQuickAddOpen(true);
+  };
+
   const renderActiveScreen = () => {
     switch (activeTab) {
       case 'home':
@@ -101,8 +135,8 @@ function AppContent() {
             key={`home-${refreshKey}`}
             onNavigateToTab={handleNavigateToTab}
             onOpenSearch={() => setIsSearchOpen(true)}
-            onOpenQuickAdd={() => setIsQuickAddOpen(true)}
-            onOpenQuickAddFor={(cat) => { setQuickAddInitialType(cat); setIsQuickAddOpen(true); }}
+            onOpenQuickAdd={() => handleOpenQuickAdd('receipt')}
+            onOpenQuickAddFor={(cat) => handleOpenQuickAdd(cat)}
           />
         );
       case 'documents':
@@ -110,7 +144,7 @@ function AppContent() {
           <DocumentsScreen
             key={`documents-${refreshKey}`}
             selectedItemId={selectedItemId}
-            onOpenAdd={() => setIsQuickAddOpen(true)}
+            onOpenAdd={() => handleOpenQuickAdd('document')}
           />
         );
       case 'receipts':
@@ -118,7 +152,7 @@ function AppContent() {
           <ReceiptsScreen
             key={`receipts-${refreshKey}`}
             selectedItemId={selectedItemId}
-            onOpenAdd={() => setIsQuickAddOpen(true)}
+            onOpenAdd={() => handleOpenQuickAdd('receipt')}
           />
         );
       case 'subscriptions':
@@ -126,7 +160,7 @@ function AppContent() {
           <SubscriptionsScreen
             key={`subscriptions-${refreshKey}`}
             selectedItemId={selectedItemId}
-            onOpenAdd={() => setIsQuickAddOpen(true)}
+            onOpenAdd={() => handleOpenQuickAdd('subscription')}
           />
         );
       case 'warranties':
@@ -134,7 +168,7 @@ function AppContent() {
           <WarrantiesScreen
             key={`warranties-${refreshKey}`}
             selectedItemId={selectedItemId}
-            onOpenAdd={() => setIsQuickAddOpen(true)}
+            onOpenAdd={() => handleOpenQuickAdd('warranty')}
             onViewReceipt={(receiptId) => handleNavigateToTab('receipts', receiptId)}
           />
         );
@@ -143,7 +177,7 @@ function AppContent() {
           <NotesScreen
             key={`notes-${refreshKey}`}
             selectedItemId={selectedItemId}
-            onOpenAdd={() => setIsQuickAddOpen(true)}
+            onOpenAdd={() => handleOpenQuickAdd('note')}
           />
         );
       case 'bookmarks':
@@ -151,7 +185,7 @@ function AppContent() {
           <BookmarksScreen
             key={`bookmarks-${refreshKey}`}
             selectedItemId={selectedItemId}
-            onOpenAdd={() => setIsQuickAddOpen(true)}
+            onOpenAdd={() => handleOpenQuickAdd('bookmark')}
           />
         );
       case 'timeline':
@@ -191,17 +225,24 @@ function AppContent() {
     return (
       <PasscodeLock
         correctPasscode={settings.passcode}
+        biometricsEnabled={settings.biometricsEnabled !== false}
         onSuccess={() => setIsLocked(false)}
       />
     );
   }
+
+  const handleGlobalRefresh = async () => {
+    setRefreshKey(prev => prev + 1);
+    showToast('Kasa güncellendi.');
+  };
 
   return (
     <MainLayout
       activeTab={activeTab}
       onTabChange={handleTabChange}
       onOpenSearch={() => setIsSearchOpen(true)}
-      onOpenQuickAdd={() => setIsQuickAddOpen(true)}
+      onOpenQuickAdd={() => handleOpenQuickAdd()}
+      onRefresh={handleGlobalRefresh}
     >
       {renderActiveScreen()}
 
@@ -217,9 +258,8 @@ function AppContent() {
         isOpen={isQuickAddOpen}
         initialType={quickAddInitialType}
         onClose={() => {
-            setIsQuickAddOpen(false);
-            setQuickAddInitialType('document'); // reset so next generic add starts fresh
-          }}
+          setIsQuickAddOpen(false);
+        }}
         onSuccess={() => {
           // Increment trigger key to refresh active sub-screen data
           setRefreshKey(prev => prev + 1);
