@@ -13,15 +13,15 @@ interface OnboardingScreenProps {
 /* ─── Slide 1: 3D Capsule Vault (Clean, Centered, Backgroundless) ─── */
 const Slide1Vault: React.FC = () => {
   return (
-    <div className="relative w-full max-w-[340px] h-[310px] sm:h-[350px] flex items-center justify-center">
+    <div className="relative w-full max-w-[320px] h-[250px] sm:h-[280px] flex flex-col items-center justify-end pb-3">
       {/* Subtle ambient light pool */}
-      <div className="absolute w-56 h-56 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
+      <div className="absolute w-52 h-52 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
 
       {/* Floating 3D Capsule Vault */}
       <motion.div
         className="relative z-10 flex flex-col items-center justify-center"
         animate={{
-          y: [-8, 8, -8],
+          y: [-7, 5, -7],
           rotateZ: [-1, 1, -1],
         }}
         transition={{
@@ -32,24 +32,25 @@ const Slide1Vault: React.FC = () => {
       >
         <img
           src={kapsuleVault3D}
-          alt="Kapsule 3D Kasa"
-          className="w-[190px] sm:w-[220px] h-auto object-contain drop-shadow-[0_24px_40px_rgba(0,0,0,0.22)] dark:drop-shadow-[0_28px_50px_rgba(0,0,0,0.7)] select-none pointer-events-none"
-        />
-
-        {/* Ambient Floor Shadow */}
-        <motion.div
-          className="w-28 h-3 rounded-full bg-black/15 dark:bg-white/10 blur-sm -mt-2"
-          animate={{
-            scale: [0.9, 1.1, 0.9],
-            opacity: [0.35, 0.65, 0.35],
-          }}
-          transition={{
-            duration: 4.6,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
+          alt="Kapsüle 3D Kasa"
+          style={{ clipPath: 'inset(0 0 11.5% 0)' }}
+          className="h-[195px] sm:h-[225px] w-auto max-w-[170px] sm:max-w-[190px] object-contain drop-shadow-[0_18px_32px_rgba(0,0,0,0.18)] dark:drop-shadow-[0_24px_45px_rgba(0,0,0,0.7)] select-none pointer-events-none"
         />
       </motion.div>
+
+      {/* Ambient Floor Shadow - Stationary on ground plane, scales softly with height */}
+      <motion.div
+        className="w-24 sm:w-28 h-2 rounded-full bg-neutral-900/[0.12] dark:bg-black/60 blur-sm mt-3"
+        animate={{
+          scale: [0.92, 1.08, 0.92],
+          opacity: [0.35, 0.6, 0.35],
+        }}
+        transition={{
+          duration: 4.6,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
     </div>
   );
 };
@@ -57,15 +58,15 @@ const Slide1Vault: React.FC = () => {
 /* ─── Slide 2: 3D Holographic AI Scanner (Clean, No Clutter Badges) ─── */
 const Slide2Scanner: React.FC = () => {
   return (
-    <div className="relative w-full max-w-[340px] h-[310px] sm:h-[350px] flex items-center justify-center">
+    <div className="relative w-full max-w-[320px] h-[250px] sm:h-[280px] flex flex-col items-center justify-end pb-3">
       {/* Subtle ambient light pool */}
-      <div className="absolute w-56 h-56 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
+      <div className="absolute w-52 h-52 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
 
       {/* Floating 3D Scanner */}
       <motion.div
         className="relative z-10 flex flex-col items-center justify-center"
         animate={{
-          y: [-7, 7, -7],
+          y: [-6, 5, -6],
           rotateZ: [-0.8, 0.8, -0.8],
         }}
         transition={{
@@ -78,12 +79,12 @@ const Slide2Scanner: React.FC = () => {
           <img
             src={scanner3D}
             alt="3D Akıllı Tarayıcı"
-            className="w-[240px] sm:w-[270px] h-auto object-contain drop-shadow-[0_22px_38px_rgba(0,0,0,0.2)] dark:drop-shadow-[0_28px_50px_rgba(0,0,0,0.7)] select-none pointer-events-none"
+            className="h-[170px] sm:h-[195px] w-auto object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.16)] dark:drop-shadow-[0_24px_45px_rgba(0,0,0,0.7)] select-none pointer-events-none"
           />
 
           {/* Smooth Subtle Scan Light Line */}
           <motion.div
-            className="absolute left-7 right-7 h-[2px] rounded-full bg-gradient-to-r from-transparent via-neutral-400 to-transparent dark:via-white/80 shadow-[0_0_10px_rgba(255,255,255,0.6)] z-20 pointer-events-none"
+            className="absolute left-6 right-6 h-[2px] rounded-full bg-gradient-to-r from-transparent via-neutral-400 to-transparent dark:via-white/80 shadow-[0_0_10px_rgba(255,255,255,0.6)] z-20 pointer-events-none"
             style={{ top: '25%' }}
             animate={{
               top: ['22%', '52%', '22%'],
@@ -96,21 +97,21 @@ const Slide2Scanner: React.FC = () => {
             }}
           />
         </div>
-
-        {/* Ambient Floor Shadow */}
-        <motion.div
-          className="w-36 h-3 rounded-full bg-black/15 dark:bg-white/10 blur-sm -mt-2"
-          animate={{
-            scale: [0.92, 1.08, 0.92],
-            opacity: [0.35, 0.65, 0.35],
-          }}
-          transition={{
-            duration: 4.2,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
       </motion.div>
+
+      {/* Ambient Floor Shadow - Stationary on ground plane */}
+      <motion.div
+        className="w-32 sm:w-36 h-2 rounded-full bg-neutral-900/[0.12] dark:bg-black/60 blur-sm mt-3"
+        animate={{
+          scale: [0.94, 1.06, 0.94],
+          opacity: [0.35, 0.6, 0.35],
+        }}
+        transition={{
+          duration: 4.2,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
     </div>
   );
 };
@@ -118,15 +119,15 @@ const Slide2Scanner: React.FC = () => {
 /* ─── Slide 3: Large Backgroundless Kapsüle Logo Hero ─── */
 const Slide3LogoHero: React.FC = () => {
   return (
-    <div className="relative w-full max-w-[340px] h-[310px] sm:h-[350px] flex items-center justify-center">
+    <div className="relative w-full max-w-[320px] h-[250px] sm:h-[280px] flex flex-col items-center justify-end pb-3">
       {/* Subtle ambient light pool */}
-      <div className="absolute w-60 h-60 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
+      <div className="absolute w-52 h-52 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
 
       {/* Floating Large Backgroundless Kapsüle Logo */}
       <motion.div
         className="relative z-10 flex flex-col items-center justify-center"
         animate={{
-          y: [-8, 8, -8],
+          y: [-7, 5, -7],
           rotateZ: [-1, 1, -1],
         }}
         transition={{
@@ -138,23 +139,23 @@ const Slide3LogoHero: React.FC = () => {
         <img
           src={kapsuleLogoClean}
           alt="Kapsüle Logo"
-          className="w-[170px] sm:w-[200px] h-auto object-contain dark:invert select-none pointer-events-none drop-shadow-[0_20px_35px_rgba(0,0,0,0.18)] dark:drop-shadow-[0_24px_45px_rgba(255,255,255,0.2)]"
-        />
-
-        {/* Ambient Floor Shadow */}
-        <motion.div
-          className="w-32 h-3.5 rounded-full bg-black/15 dark:bg-white/10 blur-sm mt-5"
-          animate={{
-            scale: [0.9, 1.1, 0.9],
-            opacity: [0.35, 0.6, 0.35],
-          }}
-          transition={{
-            duration: 4.8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
+          className="h-[140px] sm:h-[165px] w-auto object-contain dark:invert select-none pointer-events-none drop-shadow-[0_16px_28px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_20px_40px_rgba(255,255,255,0.18)]"
         />
       </motion.div>
+
+      {/* Ambient Floor Shadow - Stationary on ground plane */}
+      <motion.div
+        className="w-24 sm:w-28 h-2 rounded-full bg-neutral-900/[0.12] dark:bg-black/60 blur-sm mt-4"
+        animate={{
+          scale: [0.92, 1.08, 0.92],
+          opacity: [0.35, 0.6, 0.35],
+        }}
+        transition={{
+          duration: 4.8,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
     </div>
   );
 };
@@ -296,20 +297,20 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
               {slides[currentSlide].component}
             </div>
 
-            {/* Typography — Clean, Neutral, No Green Text */}
-            <div className="mt-3 sm:mt-5 space-y-2.5 max-w-sm">
-              <span className="inline-block text-[11px] font-semibold tracking-widest uppercase text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800/90 border border-neutral-200/60 dark:border-neutral-700/50 px-3 py-1 rounded-full">
+            {/* Typography — Clean, Neutral, Quiet Luxury */}
+            <div className="mt-5 sm:mt-7 space-y-2.5 max-w-sm">
+              <span className="inline-block text-[11px] font-semibold tracking-wider uppercase text-neutral-600 dark:text-neutral-300 bg-neutral-100/90 dark:bg-neutral-800/90 border border-neutral-200/80 dark:border-neutral-700/60 px-3.5 py-1 rounded-full shadow-xs">
                 {slides[currentSlide].tag}
               </span>
 
-              <h1 className="text-[28px] sm:text-[34px] font-extrabold tracking-tight leading-[1.14] text-neutral-900 dark:text-neutral-50">
+              <h1 className="text-[26px] sm:text-[32px] font-extrabold tracking-tight leading-[1.15] text-neutral-900 dark:text-neutral-50">
                 {slides[currentSlide].title} <br />
-                <span className="text-neutral-400 dark:text-neutral-500">
+                <span className="text-neutral-400 dark:text-neutral-500 font-semibold">
                   {slides[currentSlide].titleAccent}
                 </span>
               </h1>
 
-              <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 font-normal leading-relaxed px-2">
+              <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 font-normal leading-relaxed px-2">
                 {slides[currentSlide].description}
               </p>
             </div>

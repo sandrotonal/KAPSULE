@@ -142,15 +142,17 @@ const SettingsRow: React.FC<SettingsRowProps> = ({
         : ""
     )}
   >
-    {/* Pure floating icon (no square box) */}
-    <span
+    {/* Refined Squircle Icon Container */}
+    <div
       className={cn(
-        "shrink-0 transition-colors",
-        danger ? "text-red-500" : "text-secondary/70 group-hover:text-accent"
+        "w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+        danger
+          ? "bg-red-500/10 text-red-500 border border-red-500/20"
+          : "bg-surface-elevated/80 dark:bg-white/[0.05] text-secondary/80 border border-border/60 dark:border-white/[0.06] group-hover:text-primary group-hover:border-border"
       )}
     >
       {icon}
-    </span>
+    </div>
 
     <div className="flex-1 min-w-0">
       <p className={cn("text-sm font-medium", danger ? "text-red-500" : "text-primary")}>
@@ -165,7 +167,7 @@ const SettingsRow: React.FC<SettingsRowProps> = ({
 
     {right && <div className="shrink-0">{right}</div>}
     {onClick && !right && (
-      <ChevronRight className="w-4 h-4 text-secondary/30 group-hover:text-accent group-hover:translate-x-0.5 transition-all shrink-0 stroke-[2]" />
+      <ChevronRight className="w-4 h-4 text-secondary/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0 stroke-[2]" />
     )}
   </div>
 );
@@ -180,7 +182,7 @@ const SettingsSection: React.FC<{ title?: string; children: React.ReactNode }> =
         {title}
       </p>
     )}
-    <div className="bg-surface/50 dark:bg-white/[0.025] border border-border/70 dark:border-white/[0.07] rounded-2xl overflow-hidden divide-y divide-border/40 dark:divide-white/[0.05]">
+    <div className="bg-surface dark:bg-[#121316] border border-border/80 dark:border-white/[0.08] rounded-2xl overflow-hidden divide-y divide-border/60 dark:divide-white/[0.05] shadow-xs">
       {children}
     </div>
   </div>
