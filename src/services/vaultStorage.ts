@@ -318,6 +318,17 @@ export class VaultStorageService {
     this.removeTimelineEventsForItem(id);
   }
 
+  static togglePinNote(id: string): NoteItem | undefined {
+    const notes = this.getNotes();
+    const note = notes.find(n => n.id === id);
+    if (note) {
+      note.isPinned = !note.isPinned;
+      note.updatedAt = todayISO();
+      setStored(STORAGE_KEYS.NOTES, notes);
+    }
+    return note;
+  }
+
   // Bookmarks
   static getBookmarks(): BookmarkItem[] {
     this.removeLegacyDemoContent();

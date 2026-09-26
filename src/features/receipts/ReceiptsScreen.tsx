@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Receipt, Search, Plus, ShieldCheck, Printer, Trash2, Pencil, Calendar, DollarSign, Tag, FileText } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
@@ -45,6 +45,12 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
     }
     return null;
   });
+
+  const activeReceiptRef = useRef<ReceiptItem | null>(selectedReceipt);
+  if (selectedReceipt) {
+    activeReceiptRef.current = selectedReceipt;
+  }
+  const currentReceipt = selectedReceipt || activeReceiptRef.current;
   const [editingReceipt, setEditingReceipt] = useState<ReceiptItem | null>(null);
   const [showPrintPreview, setShowPrintPreview] = useState(false);
   const { showToast } = useToast();
@@ -127,32 +133,32 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
   return (
     <div className="space-y-10">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+      <div className="flex flex-row items-end justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-4xl font-bold text-primary tracking-tight">Fişler & Faturalar</h1>
-          <p className="text-lg text-secondary font-medium">
-            {receipts.length} harcama · Toplam {formatCurrency(totalSpend, 'TL')}
+          <h1 className="text-3xl sm:text-4xl font-bold text-primary tracking-tight">Fişler & Faturalar</h1>
+          <p className="text-sm text-secondary font-normal">
+            {receipts.length === 0 ? 'Kayıtlı fiş bulunmuyor' : `${receipts.length} harcama · Toplam ${formatCurrency(totalSpend, 'TL')}`}
           </p>
         </div>
         <Button
           variant="primary"
           size="md"
-          className="rounded-full px-6 bg-accent text-white hover:bg-accent/90 shadow-soft"
-          icon={<Plus className="w-4 h-4" />}
+          className="rounded-full px-5 h-10 font-semibold shrink-0"
+          icon={<Plus className="w-4 h-4 stroke-[2.2]" />}
           onClick={onOpenAdd}
         >
-          Ekle
+          Yeni Fiş
         </Button>
       </div>
 
       {/* Search & Category Filter */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div className="max-w-md">
           <Input
             placeholder="Mağaza, kategori veya not ara..."
             aria-label="Fişlerde ara"
-            className="rounded-2xl bg-surface border-border/60 text-primary placeholder:text-secondary/50 focus:border-accent h-12"
-            icon={<Search className="w-4 h-4 text-secondary opacity-60" />}
+            className="rounded-xl bg-surface-elevated/60 dark:bg-zinc-900/60 border-border/40 text-primary placeholder:text-secondary/50 focus:border-accent h-11 text-sm"
+            icon={<Search className="w-4 h-4 text-secondary/60" />}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />
@@ -163,10 +169,10 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               aria-pressed={selectedCategory === cat}
-              className={`shrink-0 min-h-[40px] px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 ${
+              className={`shrink-0 min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 ${
                 selectedCategory === cat
-                  ? 'bg-accent text-white shadow-soft'
-                  : 'bg-surface/50 text-secondary border border-border/60 hover:text-primary hover:bg-surface/80'
+                  ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-sm font-semibold'
+                  : 'bg-surface-elevated/40 text-secondary border border-border/40 hover:text-primary hover:bg-surface-elevated/70'
               }`}
             >
               {CATEGORY_LABELS[cat]}
@@ -229,26 +235,26 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
       <Modal
         isOpen={!!selectedReceipt && !showPrintPreview && !editingReceipt}
         onClose={() => setSelectedReceipt(null)}
-        title={selectedReceipt?.merchant}
-        subtitle={selectedReceipt ? formatDate(selectedReceipt.date) : ''}
+        title={currentReceipt?.merchant}
+        subtitle={currentReceipt ? formatDate(currentReceipt.date) : ''}
         maxWidth="md"
       >
-        {selectedReceipt && (
+        {currentReceipt && (
           <div className="space-y-5">
             {/* Merchant Header with Brand Logo */}
             <div className="flex items-center gap-3.5 pb-3 border-b border-border/40">
               <BrandAvatar
-                name={selectedReceipt.merchant}
-                brand={selectedReceipt.merchant}
-                imageUrl={selectedReceipt.merchantLogo}
+                name={currentReceipt.merchant}
+                brand={currentReceipt.merchant}
+                imageUrl={currentReceipt.merchantLogo}
                 size="lg"
               />
               <div className="min-w-0 flex-1">
                 <h3 className="text-lg font-bold text-primary tracking-tight capitalize truncate">
-                  {selectedReceipt.merchant}
+                  {currentReceipt.merchant}
                 </h3>
                 <p className="text-xs text-secondary font-medium mt-0.5">
-                  {formatDate(selectedReceipt.date)}
+                  {formatDate(currentReceipt.date)}
                 </p>
               </div>
             </div>
@@ -258,31 +264,31 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
               <div>
                 <p className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px]">Tutar</p>
                 <p className="text-2xl font-bold text-primary tabular-nums mt-1">
-                  {formatCurrency(selectedReceipt.amount, selectedReceipt.currency)}
+                  {formatCurrency(currentReceipt.amount, currentReceipt.currency)}
                 </p>
               </div>
               <Badge variant="muted" size="sm" className="rounded-full px-3 py-1 font-semibold">
-                {CATEGORY_LABELS[selectedReceipt.category] || selectedReceipt.category}
+                {CATEGORY_LABELS[currentReceipt.category] || currentReceipt.category}
               </Badge>
             </div>
 
             {/* Receipt Image if available */}
-            {selectedReceipt.receiptUrl && (
+            {currentReceipt.receiptUrl && (
               <div className="h-56 rounded-2xl overflow-hidden border border-border/60 bg-surface shadow-inner">
                 <img
-                  src={selectedReceipt.receiptUrl}
-                  alt={`${selectedReceipt.merchant} fişi`}
+                  src={currentReceipt.receiptUrl}
+                  alt={`${currentReceipt.merchant} fişi`}
                   className="w-full h-full object-cover"
                 />
               </div>
             )}
 
             {/* Notes if available */}
-            {selectedReceipt.notes && (
+            {currentReceipt.notes && (
               <div className="space-y-2">
                 <p className="text-[11px] font-bold text-secondary uppercase tracking-[1.5px]">Notlar</p>
                 <p className="text-sm text-primary px-5 py-4 bg-surface/50 rounded-2xl border border-border/60 leading-relaxed font-medium">
-                  {selectedReceipt.notes}
+                  {currentReceipt.notes}
                 </p>
               </div>
             )}
@@ -295,7 +301,7 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
                   variant="ghost"
                   size="sm"
                   icon={<Trash2 className="w-4 h-4" />}
-                  onClick={() => handleDeleteReceipt(selectedReceipt.id)}
+                  onClick={() => handleDeleteReceipt(currentReceipt.id)}
                   className="text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 rounded-xl px-3 py-2 border-0 bg-transparent"
                 >
                   Sil
@@ -304,7 +310,7 @@ export const ReceiptsScreen: React.FC<ReceiptsScreenProps> = ({ onOpenAdd, selec
                   variant="ghost"
                   size="sm"
                   icon={<Pencil className="w-4 h-4" />}
-                  onClick={() => handleOpenEdit(selectedReceipt)}
+                  onClick={() => handleOpenEdit(currentReceipt)}
                   className="text-secondary hover:text-primary hover:bg-surface rounded-xl px-3 py-2 border-0 bg-transparent"
                 >
                   Düzenle

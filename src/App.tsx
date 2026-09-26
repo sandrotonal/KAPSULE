@@ -231,12 +231,18 @@ function AppContent() {
     );
   }
 
+  const handleGlobalRefresh = async () => {
+    setRefreshKey(prev => prev + 1);
+    showToast('Kasa güncellendi.');
+  };
+
   return (
     <MainLayout
       activeTab={activeTab}
       onTabChange={handleTabChange}
       onOpenSearch={() => setIsSearchOpen(true)}
       onOpenQuickAdd={() => handleOpenQuickAdd()}
+      onRefresh={handleGlobalRefresh}
     >
       {renderActiveScreen()}
 

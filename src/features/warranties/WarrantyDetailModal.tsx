@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Calendar, Hash, FileText, Trash2, Copy, Check, ShieldCheck, Clock } from 'lucide-react';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
@@ -18,12 +18,17 @@ export interface WarrantyDetailModalProps {
 }
 
 export const WarrantyDetailModal: React.FC<WarrantyDetailModalProps> = ({
-  warranty,
+  warranty: propWarranty,
   isOpen,
   onClose,
   onDelete,
   onViewReceipt,
 }) => {
+  const activeWarrantyRef = useRef<WarrantyItem | null>(propWarranty);
+  if (propWarranty) {
+    activeWarrantyRef.current = propWarranty;
+  }
+  const warranty = propWarranty || activeWarrantyRef.current;
   const [copied, setCopied] = useState(false);
   const { showToast } = useToast();
 

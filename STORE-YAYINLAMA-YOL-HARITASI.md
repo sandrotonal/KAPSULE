@@ -15,10 +15,11 @@
 | **Store Yasal ve Review Kurallari**| Tamamlandi | **%100** | Apple 5.1.1 uyumlu Gizlilik Politikasi, Kullanim Kosullari ve Destek modallari aktif. |
 | **Native Donanim Entegrasyonu**| Tamamlandi | **%100** | Kamera ile fis/belge cekme, Face ID / Biyometrik kilit ve Native Share Sheet entegre. |
 | **Native Paket ve Varliklar** | Tamamlandi | **%100** | Android ve iOS platformlari eklendi, 6 Capacitor eklentisi baglandi, simgeler uretildi. |
+| **Mobil Akicilik ve Animasyon**| Mukemmel | **%100** | Native bottom sheet yay fizigi, sifir titreme, icerik sabitleme, pull-to-refresh. |
 
 ---
 
-## 5 Asamali Uygulama Eylem Plani (Tamamlandi)
+## 6 Asamali Uygulama Eylem Plani (Tamamlandi)
 
 ```mermaid
 graph TD
@@ -26,6 +27,7 @@ graph TD
     B --> C[Faz 3: Native Donanim Yetenekleri]
     C --> D[Faz 4: Varliklar ve Native Paketleme]
     D --> E[Faz 5: Magaza Listeleme ve Gonderim]
+    E --> F[Faz 6: Mobil Akicilik ve UI/UX Optimizasyonu]
 ```
 
 ---
@@ -65,3 +67,13 @@ graph TD
 - [x] **5.1. Ekran Goruntuleri Kilavuzu:** 6.7" ve 6.5" iPhone ile Android ekran cozunurlukleri belirlendi.
 - [x] **5.2. Magaza Metinleri ve ASO:** Baslik, alt baslik, tanitim metni, anahtar kelimeler ve tam aciklama `MAGAZA-YAYINLAMA-REHBERI.md` dosyasina hazirlandi.
 - [x] **5.3. TestFlight ve Google Play Dahili Test Rehberi:** Derleme ve yayinlama adimlari belgelendi.
+
+---
+
+### FAZ 6: Mobil Animasyon, Akicilik ve UI/UX Optimizasyonlari (Tamamlandi)
+- [x] **6.1. Native iOS Bottom Sheet Acilis/Kapanis Fizigi:** `Modal.tsx` bileseninde mobilde `y: "100%"` tabanli native Apple yay fizigi (`type: "spring", damping: 32, stiffness: 360, mass: 0.8`) uygulandi. Ekrandan kopmaya yol acan `scale` deformasyonu giderildi.
+- [x] **6.2. Kapanis Animasyonunda Icerik Sabitleme (State & Content Retention):** Modal kapatildiginda ust state `null` olsa dahi kapanis suresi boyunca icerigin silinmesini onleyen cift katmanli `activeItemRef` ve `childrenRef` mekanizmasi kuruldu; titreme ve icerik cokmesi sifira indirildi.
+- [x] **6.3. AnimatePresence ve Pointer Event Blokaji Cozumu:** Modal ve `QuickAddModal` kok sarmalayicilari `<motion.div>` olarak yapilandirildi. Backdrop uzerindeki cakisici CSS siniflari temizlenerek pencere kapandiktan sonra arkada kalan tiklama blokajlari tamamen cozuldu.
+- [x] **6.4. Native iOS Pull-to-Refresh & Haptik:** `usePullToRefresh` hook'u ve `PullToRefreshIndicator` bileseni gelistirildi. Mobilde tepe noktada asagi cekildiginde logaritmik yay direnci, 60px esiginde fiziksel haptik titresim ve Apple tipi donen aktivite gostergesiyle kasa yenilemesi entegre edildi.
+- [x] **6.5. Apple Quiet Luxury Ikon ve Tipografi Standartlari:** Notlar ve Belgeler ekranlarindaki kutulu/border-radiuslu arka planlar kaldirildi; saf Phosphor (`@phosphor-icons/react`) vektor gliflerine gecildi.
+- [x] **6.6. Mobil Baslik ve Buton Orantisalligi:** Fisler, Garantiler ve Abonelikler ekranlarinda mobilde tum satiri kaplayan hantal buton bloklari duzeltildi; Apple Human Interface standardina uygun sag ust hap buton duzenine gecildi.

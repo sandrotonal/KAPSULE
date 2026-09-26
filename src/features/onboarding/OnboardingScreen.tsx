@@ -10,43 +10,43 @@ interface OnboardingScreenProps {
   onComplete: () => void;
 }
 
-/* ─── Slide 1: 3D Capsule Vault (Clean, Centered, Backgroundless) ─── */
+/* ─── Slide 1: 3D Capsule Vault (Standardized Optical Mass: ~25,000 px²) ─── */
 const Slide1Vault: React.FC = () => {
   return (
-    <div className="relative w-full max-w-[320px] h-[250px] sm:h-[280px] flex flex-col items-center justify-end pb-3">
+    <div className="relative w-full max-w-[320px] h-[250px] sm:h-[270px] flex flex-col items-center justify-center">
       {/* Subtle ambient light pool */}
       <div className="absolute w-52 h-52 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
 
       {/* Floating 3D Capsule Vault */}
       <motion.div
-        className="relative z-10 flex flex-col items-center justify-center"
+        className="relative z-10 flex flex-col items-center justify-center transform-gpu"
         animate={{
-          y: [-7, 5, -7],
-          rotateZ: [-1, 1, -1],
+          y: [-5, 5, -5],
         }}
         transition={{
-          duration: 4.6,
+          duration: 4.4,
           repeat: Infinity,
           ease: 'easeInOut',
         }}
+        style={{ willChange: 'transform' }}
       >
         <img
           src={kapsuleVault3D}
           alt="Kapsüle 3D Kasa"
-          style={{ clipPath: 'inset(0 0 11.5% 0)' }}
-          className="h-[195px] sm:h-[225px] w-auto max-w-[170px] sm:max-w-[190px] object-contain drop-shadow-[0_18px_32px_rgba(0,0,0,0.18)] dark:drop-shadow-[0_24px_45px_rgba(0,0,0,0.7)] select-none pointer-events-none"
+          style={{ clipPath: 'inset(0 0 11.5% 0)', willChange: 'transform' }}
+          className="h-[200px] sm:h-[220px] w-auto object-contain drop-shadow-[0_18px_32px_rgba(0,0,0,0.18)] dark:drop-shadow-[0_24px_45px_rgba(0,0,0,0.7)] select-none pointer-events-none transform-gpu"
         />
       </motion.div>
 
-      {/* Ambient Floor Shadow - Stationary on ground plane, scales softly with height */}
+      {/* Ambient Floor Shadow - Stationary on ground plane */}
       <motion.div
-        className="w-24 sm:w-28 h-2 rounded-full bg-neutral-900/[0.12] dark:bg-black/60 blur-sm mt-3"
+        className="w-28 sm:w-32 h-2.5 rounded-full bg-neutral-900/[0.08] dark:bg-black/60 blur-sm mt-3"
         animate={{
-          scale: [0.92, 1.08, 0.92],
+          scale: [0.94, 1.06, 0.94],
           opacity: [0.35, 0.6, 0.35],
         }}
         transition={{
-          duration: 4.6,
+          duration: 4.4,
           repeat: Infinity,
           ease: 'easeInOut',
         }}
@@ -55,36 +55,37 @@ const Slide1Vault: React.FC = () => {
   );
 };
 
-/* ─── Slide 2: 3D Holographic AI Scanner (Clean, No Clutter Badges) ─── */
+/* ─── Slide 2: 3D Holographic AI Scanner (Harmonized Width to Match Vault Mass) ─── */
 const Slide2Scanner: React.FC = () => {
   return (
-    <div className="relative w-full max-w-[320px] h-[250px] sm:h-[280px] flex flex-col items-center justify-end pb-3">
+    <div className="relative w-full max-w-[320px] h-[250px] sm:h-[270px] flex flex-col items-center justify-center">
       {/* Subtle ambient light pool */}
       <div className="absolute w-52 h-52 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
 
       {/* Floating 3D Scanner */}
       <motion.div
-        className="relative z-10 flex flex-col items-center justify-center"
+        className="relative z-10 flex flex-col items-center justify-center transform-gpu"
         animate={{
-          y: [-6, 5, -6],
-          rotateZ: [-0.8, 0.8, -0.8],
+          y: [-5, 5, -5],
         }}
         transition={{
-          duration: 4.2,
+          duration: 4.4,
           repeat: Infinity,
           ease: 'easeInOut',
         }}
+        style={{ willChange: 'transform' }}
       >
-        <div className="relative">
+        <div className="relative flex items-center justify-center">
           <img
             src={scanner3D}
             alt="3D Akıllı Tarayıcı"
-            className="h-[170px] sm:h-[195px] w-auto object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.16)] dark:drop-shadow-[0_24px_45px_rgba(0,0,0,0.7)] select-none pointer-events-none"
+            style={{ willChange: 'transform' }}
+            className="w-[185px] sm:w-[205px] h-auto object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.16)] dark:drop-shadow-[0_24px_45px_rgba(0,0,0,0.7)] select-none pointer-events-none transform-gpu"
           />
 
           {/* Smooth Subtle Scan Light Line */}
           <motion.div
-            className="absolute left-6 right-6 h-[2px] rounded-full bg-gradient-to-r from-transparent via-neutral-400 to-transparent dark:via-white/80 shadow-[0_0_10px_rgba(255,255,255,0.6)] z-20 pointer-events-none"
+            className="absolute left-5 right-5 h-[2px] rounded-full bg-gradient-to-r from-transparent via-neutral-400 to-transparent dark:via-white/80 shadow-[0_0_10px_rgba(255,255,255,0.6)] z-20 pointer-events-none"
             style={{ top: '25%' }}
             animate={{
               top: ['22%', '52%', '22%'],
@@ -99,15 +100,15 @@ const Slide2Scanner: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Ambient Floor Shadow - Stationary on ground plane */}
+      {/* Ambient Floor Shadow - Uniform scale and spacing */}
       <motion.div
-        className="w-32 sm:w-36 h-2 rounded-full bg-neutral-900/[0.12] dark:bg-black/60 blur-sm mt-3"
+        className="w-28 sm:w-32 h-2.5 rounded-full bg-neutral-900/[0.08] dark:bg-black/60 blur-sm mt-3"
         animate={{
           scale: [0.94, 1.06, 0.94],
           opacity: [0.35, 0.6, 0.35],
         }}
         transition={{
-          duration: 4.2,
+          duration: 4.4,
           repeat: Infinity,
           ease: 'easeInOut',
         }}
@@ -116,42 +117,43 @@ const Slide2Scanner: React.FC = () => {
   );
 };
 
-/* ─── Slide 3: Large Backgroundless Kapsüle Logo Hero ─── */
+/* ─── Slide 3: Large Backgroundless Kapsüle Logo Hero (Harmonized Scale) ─── */
 const Slide3LogoHero: React.FC = () => {
   return (
-    <div className="relative w-full max-w-[320px] h-[250px] sm:h-[280px] flex flex-col items-center justify-end pb-3">
+    <div className="relative w-full max-w-[320px] h-[250px] sm:h-[270px] flex flex-col items-center justify-center">
       {/* Subtle ambient light pool */}
       <div className="absolute w-52 h-52 rounded-full bg-neutral-200/40 dark:bg-white/[0.03] blur-3xl pointer-events-none" />
 
       {/* Floating Large Backgroundless Kapsüle Logo */}
       <motion.div
-        className="relative z-10 flex flex-col items-center justify-center"
+        className="relative z-10 flex flex-col items-center justify-center transform-gpu"
         animate={{
-          y: [-7, 5, -7],
-          rotateZ: [-1, 1, -1],
+          y: [-5, 5, -5],
         }}
         transition={{
-          duration: 4.8,
+          duration: 4.4,
           repeat: Infinity,
           ease: 'easeInOut',
         }}
+        style={{ willChange: 'transform' }}
       >
         <img
           src={kapsuleLogoClean}
           alt="Kapsüle Logo"
-          className="h-[140px] sm:h-[165px] w-auto object-contain dark:invert select-none pointer-events-none drop-shadow-[0_16px_28px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_20px_40px_rgba(255,255,255,0.18)]"
+          style={{ willChange: 'transform' }}
+          className="h-[165px] sm:h-[185px] w-auto object-contain dark:invert select-none pointer-events-none drop-shadow-[0_16px_28px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_20px_40px_rgba(255,255,255,0.18)] transform-gpu"
         />
       </motion.div>
 
-      {/* Ambient Floor Shadow - Stationary on ground plane */}
+      {/* Ambient Floor Shadow - Matching baseline */}
       <motion.div
-        className="w-24 sm:w-28 h-2 rounded-full bg-neutral-900/[0.12] dark:bg-black/60 blur-sm mt-4"
+        className="w-28 sm:w-32 h-2.5 rounded-full bg-neutral-900/[0.08] dark:bg-black/60 blur-sm mt-3"
         animate={{
-          scale: [0.92, 1.08, 0.92],
+          scale: [0.94, 1.06, 0.94],
           opacity: [0.35, 0.6, 0.35],
         }}
         transition={{
-          duration: 4.8,
+          duration: 4.4,
           repeat: Infinity,
           ease: 'easeInOut',
         }}
@@ -160,62 +162,100 @@ const Slide3LogoHero: React.FC = () => {
   );
 };
 
+/* ─── Stable Slide Data (Module-Level Constant) ─── */
+const SLIDES = [
+  {
+    component: <Slide1Vault />,
+    tag: 'KAPSÜLE KASASI',
+    title: 'Her önemli evrak.',
+    titleAccent: 'Tek güvenli kasada.',
+    description:
+      'Fiş, fatura, garanti belgesi ve aboneliklerini dağınıklıktan kurtar; akıllı kişisel kasan cebinde olsun.',
+    ctaText: 'Devam Et',
+  },
+  {
+    component: <Slide2Scanner />,
+    tag: 'AKILLI TARAYICI',
+    title: 'Kameranı doğrult.',
+    titleAccent: 'Saniyeler içinde ayrışsın.',
+    description:
+      'Fiş veya fatura görüntünü yükle; tutar, satıcı ve garanti süresi yapay zekâ ile anında kütüphanene işlensin.',
+    ctaText: 'Devam Et',
+  },
+  {
+    component: <Slide3LogoHero />,
+    tag: 'GÜVENLİ & ÇEVRİMDIŞI',
+    title: 'Tamamen cihazında.',
+    titleAccent: 'Yalnızca senin gözün için.',
+    description:
+      'Kayıtların sunucularda depolanmaz, cihazından dışarı çıkmaz. Uçtan uca şifreleme ile mutlak gizlilik.',
+    ctaText: 'Kasamı Başlat',
+  },
+];
+
+/* ─── Directional Motion Variants (Zero Scale Font Jitter, 120Hz Native Spring) ─── */
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 36 : -36,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      x: { type: 'spring', stiffness: 400, damping: 34 },
+      opacity: { duration: 0.2, ease: 'easeOut' },
+    },
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? -36 : 36,
+    opacity: 0,
+    transition: {
+      x: { type: 'spring', stiffness: 400, damping: 34 },
+      opacity: { duration: 0.15, ease: 'easeIn' },
+    },
+  }),
+};
+
 /* ─── Main Onboarding Screen ─── */
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [[currentSlide, direction], setSlide] = useState([0, 0]);
 
-  const slides = [
-    {
-      component: <Slide1Vault />,
-      tag: 'KAPSÜLE KASASI',
-      title: 'Her önemli evrak.',
-      titleAccent: 'Tek güvenli kasada.',
-      description:
-        'Fiş, fatura, garanti belgesi ve aboneliklerini dağınıklıktan kurtar; akıllı kişisel kasan cebinde olsun.',
-      ctaText: 'Devam Et',
-    },
-    {
-      component: <Slide2Scanner />,
-      tag: 'AKILLI TARAYICI',
-      title: 'Kameranı doğrult.',
-      titleAccent: 'Saniyeler içinde ayrışsın.',
-      description:
-        'Fiş veya fatura görüntünü yükle; tutar, satıcı ve garanti süresi yapay zekâ ile anında kütüphanene işlensin.',
-      ctaText: 'Devam Et',
-    },
-    {
-      component: <Slide3LogoHero />,
-      tag: 'GÜVENLİ & ÇEVRİMDIŞI',
-      title: 'Tamamen cihazında.',
-      titleAccent: 'Yalnızca senin gözün için.',
-      description:
-        'Kayıtların sunucularda depolanmaz, cihazından dışarı çıkmaz. Uçtan uca şifreleme ile mutlak gizlilik.',
-      ctaText: 'Kasamı Başlat',
-    },
-  ];
+  const isLastSlide = currentSlide === SLIDES.length - 1;
 
-  const isLastSlide = currentSlide === slides.length - 1;
+  const paginate = (newDirection: number) => {
+    const nextSlide = currentSlide + newDirection;
+    if (nextSlide >= 0 && nextSlide < SLIDES.length) {
+      setSlide([nextSlide, newDirection]);
+    }
+  };
 
   const handleNext = () => {
     if (isLastSlide) {
       onComplete();
     } else {
-      setCurrentSlide((prev) => prev + 1);
+      paginate(1);
     }
   };
 
   const handlePrev = () => {
     if (currentSlide > 0) {
-      setCurrentSlide((prev) => prev - 1);
+      paginate(-1);
     }
   };
 
-  // Support touch swipe gestures
+  const goToSlide = (targetIndex: number) => {
+    if (targetIndex !== currentSlide) {
+      setSlide([targetIndex, targetIndex > currentSlide ? 1 : -1]);
+    }
+  };
+
+  // Support touch swipe gestures with responsive delta
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    if (info.offset.x < -40 && currentSlide < slides.length - 1) {
-      handleNext();
+    if (info.offset.x < -40 && currentSlide < SLIDES.length - 1) {
+      paginate(1);
     } else if (info.offset.x > 40 && currentSlide > 0) {
-      handlePrev();
+      paginate(-1);
     }
   };
 
@@ -225,10 +265,10 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
       <div className="w-full max-w-lg mx-auto px-6 pt-10 pb-2 flex flex-col gap-5 z-30">
         {/* Segmented Story Indicators */}
         <div className="w-full flex items-center gap-1.5">
-          {slides.map((_, i) => (
+          {SLIDES.map((_, i) => (
             <div
               key={i}
-              onClick={() => setCurrentSlide(i)}
+              onClick={() => goToSlide(i)}
               className="flex-1 h-1 rounded-full bg-neutral-200/80 dark:bg-neutral-800/80 overflow-hidden cursor-pointer"
             >
               <motion.div
@@ -238,7 +278,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
                   width: i <= currentSlide ? '100%' : '0%',
                 }}
                 transition={{
-                  duration: 0.35,
+                  duration: 0.3,
                   ease: [0.16, 1, 0.3, 1],
                 }}
               />
@@ -275,43 +315,45 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
         </div>
       </div>
 
-      {/* ─── Middle Section: Clean 3D Visual Hero + Typography (Swipeable) ─── */}
+      {/* ─── Middle Section: Clean 3D Visual Hero + Typography (Hardware Accelerated) ─── */}
       <motion.div
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.2}
+        dragElastic={0.15}
         onDragEnd={handleDragEnd}
-        className="flex-1 w-full max-w-lg mx-auto flex flex-col items-center justify-center px-6 cursor-grab active:cursor-grabbing"
+        className="flex-1 w-full max-w-lg mx-auto flex flex-col items-center justify-center px-6 cursor-grab active:cursor-grabbing overflow-hidden"
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence custom={direction} mode="popLayout" initial={false}>
           <motion.div
             key={currentSlide}
-            initial={{ opacity: 0, x: 24, scale: 0.98 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -24, scale: 0.98 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full flex flex-col items-center text-center"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            className="w-full flex flex-col items-center text-center transform-gpu"
+            style={{ willChange: 'transform, opacity' }}
           >
-            {/* 3D Visual Hero (No Floating Badges) */}
+            {/* 3D Visual Hero (Uniform Optical Mass) */}
             <div className="w-full flex items-center justify-center">
-              {slides[currentSlide].component}
+              {SLIDES[currentSlide].component}
             </div>
 
-            {/* Typography — Clean, Neutral, Quiet Luxury */}
-            <div className="mt-5 sm:mt-7 space-y-2.5 max-w-sm">
+            {/* Typography — Stable Heights, Zero Text Jitter */}
+            <div className="mt-4 sm:mt-6 space-y-2.5 max-w-sm w-full min-h-[148px] sm:min-h-[158px] flex flex-col items-center">
               <span className="inline-block text-[11px] font-semibold tracking-wider uppercase text-neutral-600 dark:text-neutral-300 bg-neutral-100/90 dark:bg-neutral-800/90 border border-neutral-200/80 dark:border-neutral-700/60 px-3.5 py-1 rounded-full shadow-xs">
-                {slides[currentSlide].tag}
+                {SLIDES[currentSlide].tag}
               </span>
 
               <h1 className="text-[26px] sm:text-[32px] font-extrabold tracking-tight leading-[1.15] text-neutral-900 dark:text-neutral-50">
-                {slides[currentSlide].title} <br />
+                {SLIDES[currentSlide].title} <br />
                 <span className="text-neutral-400 dark:text-neutral-500 font-semibold">
-                  {slides[currentSlide].titleAccent}
+                  {SLIDES[currentSlide].titleAccent}
                 </span>
               </h1>
 
               <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 font-normal leading-relaxed px-2">
-                {slides[currentSlide].description}
+                {SLIDES[currentSlide].description}
               </p>
             </div>
           </motion.div>
@@ -327,7 +369,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
           whileTap={{ scale: 0.98 }}
           className="w-full h-14 rounded-2xl flex items-center justify-center gap-2 text-base font-bold tracking-tight bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-xl transition-all duration-200 active:scale-[0.98]"
         >
-          <span>{slides[currentSlide].ctaText}</span>
+          <span>{SLIDES[currentSlide].ctaText}</span>
           {isLastSlide ? (
             <ArrowRight className="w-5 h-5 stroke-[2]" />
           ) : (
@@ -337,12 +379,12 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 
         {/* Micro Page Indicator Dots */}
         <div className="flex items-center justify-center gap-1.5 pt-1">
-          {slides.map((_, i) => (
+          {SLIDES.map((_, i) => (
             <button
               key={i}
               type="button"
               aria-label={`Slide ${i + 1}`}
-              onClick={() => setCurrentSlide(i)}
+              onClick={() => goToSlide(i)}
               className={`h-1.5 rounded-full transition-all duration-300 ${
                 i === currentSlide
                   ? 'w-6 bg-neutral-900 dark:bg-white'

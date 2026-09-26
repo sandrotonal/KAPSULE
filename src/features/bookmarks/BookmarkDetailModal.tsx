@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Bookmark, Globe, ExternalLink, Calendar, Trash2 } from 'lucide-react';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
@@ -15,11 +15,16 @@ export interface BookmarkDetailModalProps {
 }
 
 export const BookmarkDetailModal: React.FC<BookmarkDetailModalProps> = ({
-  bookmark,
+  bookmark: propBookmark,
   isOpen,
   onClose,
   onDelete,
 }) => {
+  const activeBookmarkRef = useRef<BookmarkItem | null>(propBookmark);
+  if (propBookmark) {
+    activeBookmarkRef.current = propBookmark;
+  }
+  const bookmark = propBookmark || activeBookmarkRef.current;
   const { showToast } = useToast();
 
   if (!bookmark) return null;

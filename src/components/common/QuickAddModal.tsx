@@ -293,17 +293,18 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div
+        <motion.div
+          key="quick-add-modal-root"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
           className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-0 sm:p-4 select-none"
           role="dialog"
           aria-modal="true"
         >
           {/* Backdrop with Silky Blur */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+          <div
             onClick={() => {
               triggerHaptic.light();
               onClose();
@@ -731,7 +732,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
               </form>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       )}
     </AnimatePresence>,
     document.body

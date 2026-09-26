@@ -69,21 +69,21 @@ export const WarrantiesScreen: React.FC<WarrantiesScreenProps> = ({
   return (
     <div className="space-y-7">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+      <div className="flex flex-row items-end justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-3xl sm:text-4xl font-bold text-primary tracking-tight">Garantiler</h1>
-          <p className="text-sm sm:text-base text-secondary font-medium">
+          <p className="text-sm text-secondary font-normal">
             {activeCount} aktif koruma{expiredCount > 0 ? ` · ${expiredCount} süresi dolan` : ''}
           </p>
         </div>
         <Button
           variant="primary"
           size="md"
-          className="rounded-full px-6 bg-primary text-background hover:opacity-90 shadow-sm"
-          icon={<Plus className="w-4 h-4" />}
+          className="rounded-full px-5 h-10 font-semibold shrink-0"
+          icon={<Plus className="w-4 h-4 stroke-[2.2]" />}
           onClick={onOpenAdd}
         >
-          Garanti Ekle
+          Yeni Garanti
         </Button>
       </div>
 
