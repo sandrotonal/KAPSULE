@@ -102,27 +102,34 @@ export const Modal: React.FC<ModalProps> = ({
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          key="modal-root"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden"
-          role="dialog"
-          aria-modal="true"
-        >
-          {/* Backdrop — Clean native blur with instant tap response */}
-          <div
-            onClick={onClose}
-            className="fixed inset-0 bg-black/25 dark:bg-black/60 backdrop-blur-sm"
-          />
-
-          {/* Sheet (mobile bottom slide) / Modal (desktop center zoom) */}
           <motion.div
-            key="modal-sheet"
-            initial={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.96, y: 12 }}
-            animate={isMobile ? { y: 0 } : { opacity: 1, scale: 1, y: 0 }}
+            key="modal-root"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className={cn(
+              "fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden",
+              !isOpen && "pointer-events-none"
+            )}
+            style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
+            role="dialog"
+            aria-modal="true"
+          >
+            {/* Backdrop — Clean native blur with instant tap response */}
+            <div
+              onClick={onClose}
+              className={cn(
+                "fixed inset-0 bg-black/25 dark:bg-black/60 backdrop-blur-sm",
+                !isOpen && "pointer-events-none"
+              )}
+            />
+
+            {/* Sheet (mobile bottom slide) / Modal (desktop center zoom) */}
+            <motion.div
+              key="modal-sheet"
+              initial={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.96, y: 12 }}
+              animate={isMobile ? { y: 0 } : { opacity: 1, scale: 1, y: 0 }}
             exit={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.96, y: 12 }}
             transition={
               isMobile

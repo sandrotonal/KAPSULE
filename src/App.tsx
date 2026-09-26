@@ -258,9 +258,8 @@ function AppContent() {
         isOpen={isQuickAddOpen}
         initialType={quickAddInitialType}
         onClose={() => {
-            setIsQuickAddOpen(false);
-            setQuickAddInitialType('document'); // reset so next generic add starts fresh
-          }}
+          setIsQuickAddOpen(false);
+        }}
         onSuccess={() => {
           // Increment trigger key to refresh active sub-screen data
           setRefreshKey(prev => prev + 1);

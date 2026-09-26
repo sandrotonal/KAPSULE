@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { triggerHaptic } from '../../utils/haptics';
+import { cn } from '../../lib/utils';
 
 interface AvatarCropModalProps {
   isOpen: boolean;
@@ -116,14 +117,25 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
   return createPortal(
     <AnimatePresence>
       {isOpen && imageSrc && (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 select-none">
+        <motion.div
+          key="avatar-crop-root"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18, ease: 'easeOut' }}
+          className={cn(
+            "fixed inset-0 z-[300] flex items-center justify-center p-4 select-none",
+            !isOpen && "pointer-events-none"
+          )}
+          style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
+        >
           {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <div
             onClick={onClose}
-            className="fixed inset-0 bg-black/85 backdrop-blur-md"
+            className={cn(
+              "fixed inset-0 bg-black/85 backdrop-blur-md",
+              !isOpen && "pointer-events-none"
+            )}
           />
 
           {/* Minimalist Card (Quiet Luxury & Clean) */}
@@ -205,7 +217,7 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
               </button>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       )}
     </AnimatePresence>,
     document.body

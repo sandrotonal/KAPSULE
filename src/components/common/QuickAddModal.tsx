@@ -278,8 +278,8 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
       }
 
       triggerHaptic.success();
-      onSuccess();
       onClose();
+      onSuccess();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Kayıt sırasında bir hata oluştu.');
       triggerHaptic.error();
@@ -288,18 +288,35 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
     }
   };
 
-  if (typeof document === 'undefined') return null;
+  const [shouldRender, setShouldRender] = useState(isOpen);
+
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      return undefined;
+    }
+    const timer = setTimeout(() => {
+      setShouldRender(false);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [isOpen]);
+
+  if (typeof document === 'undefined' || (!isOpen && !shouldRender)) return null;
 
   return createPortal(
-    <AnimatePresence>
+    <AnimatePresence mode="wait" onExitComplete={() => setShouldRender(false)}>
       {isOpen && (
         <motion.div
           key="quick-add-modal-root"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-0 sm:p-4 select-none"
+          transition={{ duration: 0.18, ease: 'easeOut' }}
+          className={cn(
+            "fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-0 sm:p-4 select-none",
+            !isOpen && "pointer-events-none"
+          )}
+          style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
           role="dialog"
           aria-modal="true"
         >
@@ -309,15 +326,19 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
               triggerHaptic.light();
               onClose();
             }}
-            className="fixed inset-0 bg-black/40 dark:bg-black/75 backdrop-blur-md"
+            className={cn(
+              "fixed inset-0 bg-black/40 dark:bg-black/75 backdrop-blur-md",
+              !isOpen && "pointer-events-none"
+            )}
           />
 
           {/* Luxury Sheet Container */}
           <motion.div
+            key="quick-add-sheet-container"
             initial={{ y: '100%', opacity: 0.8 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
-            transition={{ type: 'spring', damping: 30, stiffness: 340, mass: 0.8 }}
+            transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
             className={cn(
               "relative w-full max-w-lg z-10 max-h-[92vh] flex flex-col",
               "bg-white dark:bg-[#0c0d11]",

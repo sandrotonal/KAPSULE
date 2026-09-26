@@ -77,3 +77,12 @@ graph TD
 - [x] **6.4. Native iOS Pull-to-Refresh & Haptik:** `usePullToRefresh` hook'u ve `PullToRefreshIndicator` bileseni gelistirildi. Mobilde tepe noktada asagi cekildiginde logaritmik yay direnci, 60px esiginde fiziksel haptik titresim ve Apple tipi donen aktivite gostergesiyle kasa yenilemesi entegre edildi.
 - [x] **6.5. Apple Quiet Luxury Ikon ve Tipografi Standartlari:** Notlar ve Belgeler ekranlarindaki kutulu/border-radiuslu arka planlar kaldirildi; saf Phosphor (`@phosphor-icons/react`) vektor gliflerine gecildi.
 - [x] **6.6. Mobil Baslik ve Buton Orantisalligi:** Fisler, Garantiler ve Abonelikler ekranlarinda mobilde tum satiri kaplayan hantal buton bloklari duzeltildi; Apple Human Interface standardina uygun sag ust hap buton duzenine gecildi.
+
+---
+
+### FAZ 7: QuickAddModal Unmount & Ghost Overlay Kalici Cozumu (Tamamlandi)
+- [x] **7.1. QuickAddModal Unmount & Z-Index Blokaj Cozumu:** Not/fis/belge kaydi tamamlandiktan sonra modal `opacity: 0` degerine dusmesine ragmen DOM'da kalarak tum ekrani bloke eden gorunmez `z-[200]` phantom overlay sorunu cozuldu.
+- [x] **7.2. Failsafe Unmount Timer (250ms Guvencesi):** `QuickAddModal.tsx` icine `shouldRender` state'i ve 250ms emniyet zamanlayicisi eklendi. Animasyon tamamlansa da tamamlanmasa da DOM elemani kosulsuz olarak bellekten kaldirildi.
+- [x] **7.3. Dinamik Pointer Events Korumasi:** `Modal.tsx`, `QuickAddModal.tsx`, `LegalModals.tsx`, `AvatarCropModal.tsx` ve `SettingsScreen.tsx` kok elemanlarina ve arka planlarina `pointerEvents: isOpen ? 'auto' : 'none'` guvencesi eklendi; kapanis aninda arka plan tiklamalarinin engellenmesi imkansiz hale getirildi.
+- [x] **7.4. Yasam Dongusu ve Siralama Optimizasyonu:** `QuickAddModal` submit aninda `onClose()` fonksiyonu `onSuccess()` oncesine alindi; `App.tsx` icerisindeki zararli `setQuickAddInitialType` mutasyonu kaldirilarak cikis animasyonu esnasinda bilesenin bastan render edilmesi onlendi.
+- [x] **7.5. Tum Sayfalarin Uctan Uca Dogrulanmasi:** Notlar, Fisler, Garantiler, Abonelikler, Belgeler, Yer Imleri, Arama Modali ve Ayarlar bolumleri canli tarayici testlerinden gecirilerek sifir konsol hatasi ve tam akicilikla onaylandi.

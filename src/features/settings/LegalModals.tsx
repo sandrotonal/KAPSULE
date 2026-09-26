@@ -43,21 +43,30 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div
-          className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center p-0 sm:p-4 select-none"
+        <motion.div
+          key="legal-modal-root"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18, ease: 'easeOut' }}
+          className={cn(
+            "fixed inset-0 z-[300] flex items-end sm:items-center justify-center p-0 sm:p-4 select-none",
+            !isOpen && "pointer-events-none"
+          )}
+          style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
           role="dialog"
           aria-modal="true"
         >
           {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <div
             onClick={() => {
               triggerHaptic.light();
               onClose();
             }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-md"
+            className={cn(
+              "fixed inset-0 bg-black/60 backdrop-blur-md",
+              !isOpen && "pointer-events-none"
+            )}
           />
 
           {/* Modal Container */}
@@ -117,7 +126,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
               </Button>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       )}
     </AnimatePresence>,
     document.body

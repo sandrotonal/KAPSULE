@@ -879,17 +879,18 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         <AnimatePresence>
           {/* 1. Lüks Profil & Avatar Modalı */}
           {showProfileModal && (
-            <div
-              className="fixed inset-0 z-[250] flex items-end sm:items-center justify-center p-0 sm:p-4"
+            <motion.div
+              key="profile-modal-root"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              className="fixed inset-0 z-[250] flex items-end sm:items-center justify-center p-0 sm:p-4 select-none"
               role="dialog"
               aria-modal="true"
             >
               {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.16 }}
+              <div
                 onClick={() => setShowProfileModal(false)}
                 className="fixed inset-0 bg-black/60 backdrop-blur-md"
               />
@@ -1033,20 +1034,22 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                   </div>
                 </form>
               </motion.div>
-            </div>
+            </motion.div>
           )}
 
           {/* 2. PIN Şifre Belirleme / Değiştirme Modalı */}
           {showPasscodeModal && (
-            <div
-              className="fixed inset-0 z-[250] flex items-end sm:items-center justify-center p-0 sm:p-4"
+            <motion.div
+              key="passcode-modal-root"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              className="fixed inset-0 z-[250] flex items-end sm:items-center justify-center p-0 sm:p-4 select-none"
               role="dialog"
               aria-modal="true"
             >
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+              <div
                 onClick={() => {
                   setShowPasscodeModal(false);
                   setEnableLockAfterPasscode(false);
@@ -1056,6 +1059,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               />
 
               <motion.div
+                key="passcode-modal-content"
                 initial={{ opacity: 0, y: 24, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -1129,25 +1133,28 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                   </Button>
                 </div>
               </motion.div>
-            </div>
+            </motion.div>
           )}
 
           {/* 3. Kasayı Sıfırlama Onay Modalı */}
           {showResetModal && (
-            <div
-              className="fixed inset-0 z-[250] flex items-end sm:items-center justify-center p-0 sm:p-4"
+            <motion.div
+              key="reset-modal-root"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              className="fixed inset-0 z-[250] flex items-end sm:items-center justify-center p-0 sm:p-4 select-none"
               role="dialog"
               aria-modal="true"
             >
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+              <div
                 onClick={() => setShowResetModal(false)}
                 className="fixed inset-0 bg-black/60 backdrop-blur-sm"
               />
 
               <motion.div
+                key="reset-modal-content"
                 initial={{ opacity: 0, y: 24, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -1185,7 +1192,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                   </Button>
                 </div>
               </motion.div>
-            </div>
+            </motion.div>
           )}
         </AnimatePresence>,
         portalTarget
