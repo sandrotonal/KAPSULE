@@ -24,8 +24,28 @@ const PasscodeLock = lazy(() => import('./components/common/PasscodeLock').then(
 const OnboardingScreen = lazy(() => import('./features/onboarding/OnboardingScreen').then(module => ({ default: module.OnboardingScreen })));
 
 const ScreenLoading: React.FC = () => (
-  <div className="flex min-h-[50vh] items-center justify-center" role="status" aria-label="Ekran yükleniyor">
-    <span className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-primary" />
+  <div className="screen-loading" role="status" aria-label="Ekran yükleniyor">
+    <div className="capsule-loader" aria-hidden="true">
+      <div className="capsule-loader__scene">
+        <div className="capsule-loader__shadow" />
+        <div className="capsule-loader__cube capsule-loader__cube--one">
+          <span className="capsule-loader__face capsule-loader__face--front" />
+          <span className="capsule-loader__face capsule-loader__face--top" />
+          <span className="capsule-loader__face capsule-loader__face--side" />
+        </div>
+        <div className="capsule-loader__cube capsule-loader__cube--two">
+          <span className="capsule-loader__face capsule-loader__face--front" />
+          <span className="capsule-loader__face capsule-loader__face--top" />
+          <span className="capsule-loader__face capsule-loader__face--side" />
+        </div>
+        <div className="capsule-loader__cube capsule-loader__cube--three">
+          <span className="capsule-loader__face capsule-loader__face--front" />
+          <span className="capsule-loader__face capsule-loader__face--top" />
+          <span className="capsule-loader__face capsule-loader__face--side" />
+        </div>
+      </div>
+    </div>
+    <span className="screen-loading__label">Hazırlanıyor</span>
   </div>
 );
 
