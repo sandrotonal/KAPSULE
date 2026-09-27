@@ -116,11 +116,14 @@ export const Modal: React.FC<ModalProps> = ({
             role="dialog"
             aria-modal="true"
           >
-            {/* Backdrop — Clean native blur with instant tap response */}
+            {/* Backdrop — Clean native scrim with instant tap response and zero GPU blur overhead */}
             <div
-              onClick={onClose}
+              onClick={() => {
+                (document.activeElement as HTMLElement)?.blur();
+                onClose();
+              }}
               className={cn(
-                "fixed inset-0 bg-black/25 dark:bg-black/60 backdrop-blur-sm",
+                "fixed inset-0 bg-black/40 dark:bg-black/70",
                 !isOpen && "pointer-events-none"
               )}
             />
@@ -130,20 +133,20 @@ export const Modal: React.FC<ModalProps> = ({
               key="modal-sheet"
               initial={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.96, y: 12 }}
               animate={isMobile ? { y: 0 } : { opacity: 1, scale: 1, y: 0 }}
-            exit={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.96, y: 12 }}
-            transition={
-              isMobile
-                ? { type: 'spring', damping: 32, stiffness: 360, mass: 0.8 }
-                : { duration: 0.18, ease: [0.16, 1, 0.3, 1] }
-            }
-            className={cn(
-              "relative w-full bg-background z-10",
-              "border border-border/70 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.18)] dark:shadow-[0_24px_60px_-12px_rgba(0,0,0,0.75)]",
-              "max-h-[90vh] flex flex-col",
-              "rounded-t-[32px] sm:rounded-3xl overflow-hidden",
-              widths[maxWidth],
-              className
-            )}
+              exit={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.96, y: 12 }}
+              transition={
+                isMobile
+                  ? { duration: 0.22, ease: [0.32, 0.72, 0, 1] }
+                  : { duration: 0.18, ease: [0.16, 1, 0.3, 1] }
+              }
+              className={cn(
+                "relative w-full bg-background z-10 transform-gpu will-change-transform",
+                "border border-border/70 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.18)] dark:shadow-[0_24px_60px_-12px_rgba(0,0,0,0.75)]",
+                "max-h-[90vh] flex flex-col",
+                "rounded-t-[32px] sm:rounded-3xl overflow-hidden",
+                widths[maxWidth],
+                className
+              )}
             style={{
               paddingBottom: isMobile ? 'max(0.75rem, env(safe-area-inset-bottom, 16px))' : undefined,
             }}

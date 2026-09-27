@@ -288,23 +288,17 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
     }
   };
 
-  const [shouldRender, setShouldRender] = useState(isOpen);
+  const handleClose = () => {
+    (document.activeElement as HTMLElement)?.blur();
+    triggerHaptic.light();
+    onClose();
+  };
 
-  useEffect(() => {
-    if (isOpen) {
-      setShouldRender(true);
-      return undefined;
-    }
-    const timer = setTimeout(() => {
-      setShouldRender(false);
-    }, 250);
-    return () => clearTimeout(timer);
-  }, [isOpen]);
-
-  if (typeof document === 'undefined' || (!isOpen && !shouldRender)) return null;
+  const portal = typeof document !== 'undefined' ? document.body : null;
+  if (!portal) return null;
 
   return createPortal(
-    <AnimatePresence mode="wait" onExitComplete={() => setShouldRender(false)}>
+    <AnimatePresence>
       {isOpen && (
         <motion.div
           key="quick-add-modal-root"
@@ -320,14 +314,11 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
           role="dialog"
           aria-modal="true"
         >
-          {/* Backdrop with Silky Blur */}
+          {/* Backdrop with native scrim and zero GPU blur overhead */}
           <div
-            onClick={() => {
-              triggerHaptic.light();
-              onClose();
-            }}
+            onClick={handleClose}
             className={cn(
-              "fixed inset-0 bg-black/40 dark:bg-black/75 backdrop-blur-md",
+              "fixed inset-0 bg-black/50 dark:bg-black/80",
               !isOpen && "pointer-events-none"
             )}
           />
@@ -338,9 +329,9 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
             initial={{ y: '100%', opacity: 0.8 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
-            transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+            transition={{ duration: 0.22, ease: [0.32, 0.72, 0, 1] }}
             className={cn(
-              "relative w-full max-w-lg z-10 max-h-[92vh] flex flex-col",
+              "relative w-full max-w-lg z-10 max-h-[92vh] flex flex-col transform-gpu will-change-transform",
               "bg-white dark:bg-[#0c0d11]",
               "border-t border-x sm:border border-zinc-200/90 dark:border-white/[0.08]",
               "shadow-[0_-20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_-25px_60px_rgba(0,0,0,0.85)]",

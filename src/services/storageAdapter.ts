@@ -6,6 +6,8 @@ import { Preferences } from '@capacitor/preferences';
  * Fallback storage: Window LocalStorage (Web environment)
  */
 export const storageAdapter = {
+  isHydrated: false,
+
   /**
    * Synchronously get item from localStorage as initial cache / web fallback
    */
@@ -25,6 +27,9 @@ export const storageAdapter = {
     try {
       const serialized = JSON.stringify(value);
       localStorage.setItem(key, serialized);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('kapsule_storage_change', { detail: { key } }));
+      }
       // Asynchronously mirror to Capacitor Preferences
       Preferences.set({ key, value: serialized }).catch(() => {});
     } catch (error) {
@@ -95,17 +100,27 @@ export const storageAdapter = {
   async hydrateFromPreferences(): Promise<void> {
     try {
       const { keys } = await Preferences.keys();
-      for (const key of keys) {
-        if (key.startsWith('kapsule_')) {
+      const managedKeys = keys.filter(key => key.startsWith('kapsule_'));
+      const storedEntries = await Promise.all(
+        managedKeys.map(async key => {
           const { value } = await Preferences.get({ key });
-          if (value !== null) {
-            localStorage.setItem(key, value);
-          }
+          return value === null ? null : [key, value] as const;
+        })
+      );
+
+      for (const entry of storedEntries) {
+        if (entry) {
+          localStorage.setItem(entry[0], entry[1]);
         }
       }
     } catch (e) {
       // In pure web environments or when Preferences is unavailable, gracefully ignore
       console.warn('[StorageAdapter] Preferences hydration skipped:', e);
+    } finally {
+      this.isHydrated = true;
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('kapsule_storage_hydrated'));
+      }
     }
   },
 };

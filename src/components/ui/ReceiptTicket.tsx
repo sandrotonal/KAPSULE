@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Clock, Store } from 'lucide-react';
+import { Store } from 'lucide-react';
 import { formatCurrency } from '../../lib/utils';
 import { BrandAvatar } from './BrandAvatar';
 
@@ -29,26 +29,6 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
   orderId,
   items = []
 }) => {
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [isHovered, setIsHovered] = useState(false);
-
-  useEffect(() => {
-    let animationFrameId: number;
-    let lastUpdate = Date.now();
-
-    const updateTime = () => {
-      const now = Date.now();
-      if (now - lastUpdate >= 50) {
-        setCurrentTime(new Date(now));
-        lastUpdate = now;
-      }
-      animationFrameId = requestAnimationFrame(updateTime);
-    };
-
-    animationFrameId = requestAnimationFrame(updateTime);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, []);
-
   const currencySymbol = currency === 'TL' || currency === 'TRY' ? '₺' : 
                         currency === 'USD' ? '$' : 
                         currency === 'EUR' ? '€' : '₺';
@@ -70,21 +50,10 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
       className="relative perspective-1000"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
+      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
     >
       <motion.div
         className="relative h-[180px] w-[340px] flex bg-white dark:bg-zinc-900 border border-gray-200/80 dark:border-white/10 rounded-2xl overflow-hidden shadow-md dark:shadow-2xl"
-        animate={{
-          rotateY: isHovered ? 0 : [0, -5, 5, 0],
-          y: isHovered ? -10 : 0
-        }}
-        transition={{
-          rotateY: { duration: 8, repeat: Infinity, ease: "easeInOut" },
-          y: { duration: 0.3 }
-        }}
-        style={{ transformStyle: 'preserve-3d' }}
       >
         <svg
           className="absolute left-0 top-0 h-full fill-zinc-200/80 dark:fill-zinc-800"
@@ -94,12 +63,10 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
           viewBox="0 0 64 180"
         >
           {Array.from({ length: 35 }).map((_, i) => (
-            <motion.path
+            <path
               key={i}
               d={`M44 ${12 + i * 4}V${11 + i * 4}H20V${12 + i * 4}H44Z`}
-              initial={{ opacity: 0.3 }}
-              animate={{ opacity: [0.3, 0.8, 0.3] }}
-              transition={{ duration: 2, delay: i * 0.05, repeat: Infinity }}
+              opacity={0.55}
             />
           ))}
         </svg>
@@ -110,20 +77,6 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background" />
           </div>
         </div>
-
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          animate={{
-            x: [-100, 400]
-          }}
-          transition={{ duration: 3, repeat: Infinity, repeatDelay: 5 }}
-          style={{ 
-            width: '80px', 
-            height: '100%', 
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)',
-            transform: 'skewX(-20deg)'
-          }}
-        />
 
         <div className="relative flex-1 flex flex-col justify-between p-4 pl-16 z-10">
           <div className="flex items-start justify-between">
@@ -145,10 +98,6 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
               <p className="text-lg font-bold text-gray-900 dark:text-zinc-100 tabular-nums">
                 {formatCurrency(amount, currency)}
               </p>
-              <div className="flex items-center justify-end gap-1 text-[9px] text-gray-400 dark:text-zinc-500 mt-0.5">
-                <Clock className="w-3 h-3" />
-                <span>{currentTime.toLocaleTimeString('tr-TR')}</span>
-              </div>
             </div>
           </div>
 
@@ -188,15 +137,6 @@ export const ReceiptTicket: React.FC<ReceiptTicketProps> = ({
           )}
         </div>
 
-        <motion.div
-          className="absolute top-0 right-0 w-40 h-full bg-gradient-to-l from-black/5 dark:from-white/5 to-transparent pointer-events-none"
-          animate={{
-            x: [200, 0],
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          style={{ filter: 'blur(20px)' }}
-        />
       </motion.div>
     </motion.div>
   );

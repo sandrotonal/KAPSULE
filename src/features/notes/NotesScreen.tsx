@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Plus, X } from 'lucide-react';
 import {
   PushPin,
@@ -66,6 +66,35 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd, selectedIte
 
   const reloadNotes = () => {
     setNotes(VaultStorageService.getNotes());
+  };
+
+  // Sync when selectedItemId changes
+  useEffect(() => {
+    if (selectedItemId) {
+      const list = VaultStorageService.getNotes();
+      const match = list.find(n => n.id === selectedItemId);
+      if (match) {
+        handleOpenNote(match);
+      }
+    }
+  }, [selectedItemId]);
+
+  // Reactive live updates when notes are saved anywhere (e.g. QuickAddModal)
+  useEffect(() => {
+    const handleStorageChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ key?: string }>;
+      if (!customEvent.detail?.key || customEvent.detail.key === 'kapsule_notes') {
+        reloadNotes();
+      }
+    };
+    window.addEventListener('kapsule_storage_change', handleStorageChange);
+    return () => window.removeEventListener('kapsule_storage_change', handleStorageChange);
+  }, []);
+
+  const handleCloseNote = () => {
+    (document.activeElement as HTMLElement)?.blur();
+    setSelectedNote(null);
+    setIsEditing(false);
   };
 
   const filteredNotes = useMemo(() => {
@@ -398,10 +427,7 @@ export const NotesScreen: React.FC<NotesScreenProps> = ({ onOpenAdd, selectedIte
       {/* ─── Apple Notes Interactive Reader & Editor Sheet ─── */}
       <Modal
         isOpen={!!selectedNote}
-        onClose={() => {
-          setSelectedNote(null);
-          setIsEditing(false);
-        }}
+        onClose={handleCloseNote}
         title=""
         maxWidth="lg"
       >

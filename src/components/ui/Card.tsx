@@ -36,12 +36,12 @@ export const Card: React.FC<CardProps> = ({
   return (
     <motion.div
       whileHover={interactive ? { 
-        y: -4, 
-        transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } 
+        y: -2,
+        transition: { duration: 0.16, ease: [0.16, 1, 0.3, 1] }
       } : undefined}
       whileTap={interactive ? { scale: 0.98, y: 0 } : undefined}
       className={cn(
-        "bg-background/40 backdrop-blur-xl border transition-all duration-500 rounded-[2rem]",
+        "bg-background/70 border transition-[transform,border-color,box-shadow] duration-200 rounded-[2rem]",
         selected
           ? "border-accent ring-4 ring-accent/5 shadow-card"
           : "border-border shadow-soft hover:shadow-card hover:border-border-subtle",

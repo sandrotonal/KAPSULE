@@ -114,8 +114,22 @@ Eski dağınık, kalabalık ve klişe rozetli onboarding ekranları baştan sona
   - Bildirim izin durumu anlık rozeti (`Aktif` / `İzin Bekleniyor`).
   - Cihaza anlık "Test Bildirimi Gönder" eylemi.
   - Yedekten Geri Yükle (JSON Import) ile alınan yedekleri tek tıkla geri getirme.
-  - `ReturnsCalendar` içindeki sahte `Math.random()` kaldırıldı; gerçek kasa hareketleri sıfır hatayla yansıtıldı.
+- `ReturnsCalendar` içindeki sahte `Math.random()` kaldırıldı; gerçek kasa hareketleri sıfır hatayla yansıtıldı.
 - **TypeScript & Derleme:**
   - `npx tsc --noEmit` ➔ **0 Hata**.
 
+---
 
+## 10. Mobil Açılış, Animasyon ve Performans İyileştirmeleri
+
+**Tarih:** 28 Eylül 2026 (Pazartesi)
+**Branch:** `codex/animasyon-sperformans`
+
+- Ana ekranların ilk yükleme maliyetini azaltmak için ekranlar lazy-load edildi; mobil derleme ve Capacitor senkronizasyonu için `build:mobile` komutu eklendi.
+- Native tercih depolaması paralel okunacak şekilde düzenlendi; uygulama verileri eşitlenmeden önce harcama tutarlarının yanlış/ara değer göstermemesi için depolama hazır olma sinyali eklendi.
+- Harcama kartındaki aylık ve yıllık gerçek tutarlar, depolama hazır olduktan sonra yaklaşık 900 ms’lik yumuşak sayım animasyonuyla gösteriliyor. Animasyon DOM üzerinde ilerlediği için her karede React ağacı yeniden çizilmiyor; tutar alanı sabit genişlikte kalıyor ve sistemin azaltılmış hareket tercihi gözetiliyor.
+- Kartın açılışındaki dikey kayma ve harcama çubuğunun veri yüklenirken tekrar hedeflenen genişlik animasyonu kaldırılarak ilk açılıştaki sarsıntı azaltıldı.
+- Pull-to-refresh hareketi kare başına React state güncellemek yerine doğrudan ilgili elementlerin transform değerlerini kullanıyor; `touchcancel` durumunda yenileme başlatmak yerine hareketi güvenle sıfırlıyor.
+- Fiş, abonelik ve garanti biletlerindeki sürekli/yoğun animasyon ve efektler sadeleştirildi; mobil kaydırma, navigasyon, modal, notlar ve genel yüzey geçişlerinde maliyetli efektler azaltıldı.
+- UI yerleşimi, içerik hiyerarşisi ve temel gezinme akışı korunurken Android donanım hızlandırma ayarları güncellendi.
+- **Doğrulama:** `npm run build:mobile` başarılı; TypeScript/Vite üretim derlemesi ve Android/iOS Capacitor web varlık senkronizasyonu tamamlandı. Fiziksel cihazda son animasyon kontrolü ve platforma özgü APK/iOS derlemesi ayrıca yapılmalı.

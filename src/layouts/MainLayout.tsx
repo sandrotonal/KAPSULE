@@ -23,7 +23,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   onRefresh,
   children,
 }) => {
-  const { containerRef, isPulling, isRefreshing, pullDistance, pullProgress } = usePullToRefresh({
+  const { containerRef, contentRef, indicatorRef, arrowRef, isPulling, isRefreshing } = usePullToRefresh({
     onRefresh: onRefresh || (() => {}),
     disabled: !onRefresh,
   });
@@ -51,23 +51,22 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         {/* Main scrollable area */}
         <main
           ref={containerRef as React.RefObject<HTMLElement>}
-          className="flex-1 overflow-y-auto thin-scrollbar relative"
+          className="app-scroll-region flex-1 overflow-y-auto thin-scrollbar relative"
           style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
         >
           {/* Mobile Pull To Refresh Indicator */}
           <PullToRefreshIndicator
+            indicatorRef={indicatorRef}
+            arrowRef={arrowRef}
             isPulling={isPulling}
             isRefreshing={isRefreshing}
-            pullDistance={pullDistance}
-            pullProgress={pullProgress}
           />
 
           <div
+            ref={contentRef}
             className="max-w-5xl mx-auto px-6 sm:px-10 py-8 sm:py-16 md:pb-16"
             style={{
               paddingBottom: 'calc(6.5rem + env(safe-area-inset-bottom, 0px))',
-              transform: isPulling || isRefreshing ? `translateY(${pullDistance * 0.45}px)` : undefined,
-              transition: isRefreshing ? 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
             }}
           >
             <motion.div
@@ -78,7 +77,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
                 duration: 0.15,
                 ease: [0.16, 1, 0.3, 1]
               }}
-              className="transform-gpu will-change-[transform,opacity]"
+              className="transform-gpu"
             >
               {children}
             </motion.div>

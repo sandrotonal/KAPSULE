@@ -1,8 +1,77 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Plus, CreditCard } from 'lucide-react';
 import { formatCurrency, getCategoryLabel, cn } from '../../lib/utils';
+import { storageAdapter } from '../../services/storageAdapter';
 import { VaultStorageService } from '../../services/vaultStorage';
 import { motion } from 'framer-motion';
+
+interface AnimatedCurrencyProps {
+  amount: number;
+  isReady: boolean;
+  className?: string;
+}
+
+const AnimatedCurrency: React.FC<AnimatedCurrencyProps> = ({ amount, isReady, className }) => {
+  const valueRef = useRef<HTMLSpanElement>(null);
+  const currentAmount = useRef(0);
+
+  useLayoutEffect(() => {
+    const element = valueRef.current;
+    if (!element || !isReady) return;
+
+    const start = currentAmount.current;
+    const end = Number.isFinite(amount) ? amount : 0;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion || start === end) {
+      currentAmount.current = end;
+      element.textContent = formatCurrency(end, 'TL');
+      return;
+    }
+
+    const duration = 900;
+    let startTime: number | undefined;
+    let frameId = 0;
+    element.textContent = formatCurrency(start, 'TL');
+
+    const tick = (time: number) => {
+      startTime ??= time;
+      const progress = Math.min((time - startTime) / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 4);
+      const nextAmount = start + (end - start) * easedProgress;
+
+      currentAmount.current = nextAmount;
+      element.textContent = formatCurrency(Math.round(nextAmount), 'TL');
+
+      if (progress < 1) {
+        frameId = window.requestAnimationFrame(tick);
+      } else {
+        currentAmount.current = end;
+        element.textContent = formatCurrency(end, 'TL');
+      }
+    };
+
+    frameId = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frameId);
+  }, [amount, isReady]);
+
+  const formattedAmount = formatCurrency(amount, 'TL');
+
+  return (
+    <span className={cn('inline-grid tabular-nums', className)}>
+      <span className="invisible col-start-1 row-start-1 whitespace-nowrap" aria-hidden="true">
+        {formattedAmount}
+      </span>
+      <span
+        ref={valueRef}
+        className="col-start-1 row-start-1 whitespace-nowrap"
+        aria-label={formattedAmount}
+      >
+        {isReady ? formattedAmount : '—'}
+      </span>
+    </span>
+  );
+};
 
 export interface SpendingCardProps {
   onOpenQuickAdd?: () => void;
@@ -27,6 +96,18 @@ export const SpendingCard: React.FC<SpendingCardProps> = ({
   const stats = VaultStorageService.getStats();
   const receipts = VaultStorageService.getReceipts();
   const subscriptions = VaultStorageService.getSubscriptions();
+  const [storageReady, setStorageReady] = useState(storageAdapter.isHydrated);
+
+  useEffect(() => {
+    if (storageAdapter.isHydrated) {
+      setStorageReady(true);
+      return;
+    }
+
+    const handleStorageHydrated = () => setStorageReady(true);
+    window.addEventListener('kapsule_storage_hydrated', handleStorageHydrated, { once: true });
+    return () => window.removeEventListener('kapsule_storage_hydrated', handleStorageHydrated);
+  }, []);
 
   // Dynamic category breakdown with Turkish category translations
   const spendingCategories = useMemo(() => {
@@ -63,11 +144,11 @@ export const SpendingCard: React.FC<SpendingCardProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        'w-full rounded-3xl p-6 sm:p-7 shadow-soft transition-all duration-300 relative overflow-hidden',
+        'w-full rounded-3xl p-6 sm:p-7 shadow-soft transition-colors duration-200 relative overflow-hidden',
         'bg-surface/50 text-primary backdrop-blur-xl border border-border/60 hover:border-border',
         className
       )}
@@ -99,9 +180,11 @@ export const SpendingCard: React.FC<SpendingCardProps> = ({
       {/* Main Amount & Annual Estimate */}
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 mb-6 relative z-10">
         <div className="flex items-baseline gap-2.5">
-          <span className="text-4xl sm:text-5xl font-bold tracking-tighter text-primary">
-            {formatCurrency(stats.totalMonthlyCost, 'TL')}
-          </span>
+          <AnimatedCurrency
+            amount={stats.totalMonthlyCost}
+            isReady={storageReady}
+            className="text-4xl sm:text-5xl font-bold tracking-tighter text-primary tabular-nums"
+          />
           {/* NO border around "Aylık" badge */}
           <span className="text-xs font-semibold text-accent px-2.5 py-0.5 rounded-full bg-accent/15">
             Aylık
@@ -109,7 +192,11 @@ export const SpendingCard: React.FC<SpendingCardProps> = ({
         </div>
         <div className="text-xs font-semibold text-secondary opacity-70">
           <span>Yıllık tahmini: </span>
-          <span className="text-primary font-bold">{formatCurrency(stats.totalAnnualCost, 'TL')}</span>
+          <AnimatedCurrency
+            amount={stats.totalAnnualCost}
+            isReady={storageReady}
+            className="text-primary font-bold tabular-nums"
+          />
         </div>
       </div>
 
@@ -119,12 +206,10 @@ export const SpendingCard: React.FC<SpendingCardProps> = ({
       <div className="space-y-4 relative z-10">
         <div className="flex items-center gap-1.5 w-full overflow-hidden rounded-full h-2.5 bg-surface/60 p-0.5 border border-border/30">
           {spendingCategories.map((cat) => (
-            <motion.div
+            <div
               key={cat.code}
-              initial={{ width: 0 }}
-              animate={{ width: `${Math.max(cat.percent, 4)}%` }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className={cn(cat.color, 'h-full rounded-full transition-all')}
+              style={{ width: `${Math.max(cat.percent, 4)}%` }}
+              className={cn(cat.color, 'h-full rounded-full')}
               title={`${cat.code}: %${cat.percent}`}
             />
           ))}

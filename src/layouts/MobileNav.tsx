@@ -37,7 +37,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
         onActiveIndexChange={(idx) => onTabChange(MAIN_TABS[idx].id)}
         className="w-full max-w-[320px]"
       >
-        <FluidTabs.List className="w-full justify-around bg-surface/90 backdrop-blur-2xl border border-border/80 shadow-2xl p-1.5 rounded-full">
+        <FluidTabs.List className="w-full justify-around bg-surface border border-border/80 shadow-lg p-1.5 rounded-full">
           {MAIN_TABS.map((tab) => (
             <FluidTabs.Tab key={tab.id} label={tab.label} className="py-2.5 px-1 justify-center min-h-[44px]">
               <FluidTabsIcon>{tab.icon}</FluidTabsIcon>

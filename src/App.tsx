@@ -1,26 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { ActiveTab } from './types';
 import { VaultCategory } from './types';
 import { MainLayout } from './layouts/MainLayout';
-import { HomeScreen } from './features/home/HomeScreen';
-import { DocumentsScreen } from './features/documents/DocumentsScreen';
-import { ReceiptsScreen } from './features/receipts/ReceiptsScreen';
-import { SubscriptionsScreen } from './features/subscriptions/SubscriptionsScreen';
-import { WarrantiesScreen } from './features/warranties/WarrantiesScreen';
-import { NotesScreen } from './features/notes/NotesScreen';
-import { BookmarksScreen } from './features/bookmarks/BookmarksScreen';
-import { TimelineScreen } from './features/timeline/TimelineScreen';
-import { SettingsScreen } from './features/settings/SettingsScreen';
 import { SearchModal } from './features/search/SearchModal';
 import { QuickAddModal } from './components/common/QuickAddModal';
-import { PasscodeLock } from './components/common/PasscodeLock';
-import { OnboardingScreen } from './features/onboarding/OnboardingScreen';
 import { VaultStorageService } from './services/vaultStorage';
 import { storageAdapter } from './services/storageAdapter';
 import { NotificationService } from './services/notificationService';
 import { NativeStatusBarService } from './services/nativeStatusBar';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { ToastProvider, useToast } from './components/ui/Toast';
+
+const HomeScreen = lazy(() => import('./features/home/HomeScreen').then(module => ({ default: module.HomeScreen })));
+const DocumentsScreen = lazy(() => import('./features/documents/DocumentsScreen').then(module => ({ default: module.DocumentsScreen })));
+const ReceiptsScreen = lazy(() => import('./features/receipts/ReceiptsScreen').then(module => ({ default: module.ReceiptsScreen })));
+const SubscriptionsScreen = lazy(() => import('./features/subscriptions/SubscriptionsScreen').then(module => ({ default: module.SubscriptionsScreen })));
+const WarrantiesScreen = lazy(() => import('./features/warranties/WarrantiesScreen').then(module => ({ default: module.WarrantiesScreen })));
+const NotesScreen = lazy(() => import('./features/notes/NotesScreen').then(module => ({ default: module.NotesScreen })));
+const BookmarksScreen = lazy(() => import('./features/bookmarks/BookmarksScreen').then(module => ({ default: module.BookmarksScreen })));
+const TimelineScreen = lazy(() => import('./features/timeline/TimelineScreen').then(module => ({ default: module.TimelineScreen })));
+const SettingsScreen = lazy(() => import('./features/settings/SettingsScreen').then(module => ({ default: module.SettingsScreen })));
+const PasscodeLock = lazy(() => import('./components/common/PasscodeLock').then(module => ({ default: module.PasscodeLock })));
+const OnboardingScreen = lazy(() => import('./features/onboarding/OnboardingScreen').then(module => ({ default: module.OnboardingScreen })));
+
+const ScreenLoading: React.FC = () => (
+  <div className="flex min-h-[50vh] items-center justify-center" role="status" aria-label="Ekran yükleniyor">
+    <span className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-primary" />
+  </div>
+);
 
 const ONBOARDING_KEY = 'kapsule_onboarding_complete';
 
@@ -52,6 +59,10 @@ function AppContent() {
       console.error('Failed to save onboarding state', e);
     }
     setShowOnboarding(false);
+  };
+
+  const handleOpenSearch = () => {
+    setIsSearchOpen(true);
   };
 
   // Sync dark theme and native status bar on settings update
@@ -134,7 +145,7 @@ function AppContent() {
           <HomeScreen
             key={`home-${refreshKey}`}
             onNavigateToTab={handleNavigateToTab}
-            onOpenSearch={() => setIsSearchOpen(true)}
+            onOpenSearch={handleOpenSearch}
             onOpenQuickAdd={() => handleOpenQuickAdd('receipt')}
             onOpenQuickAddFor={(cat) => handleOpenQuickAdd(cat)}
           />
@@ -209,25 +220,31 @@ function AppContent() {
           <HomeScreen
             key={`home-${refreshKey}`}
             onNavigateToTab={handleNavigateToTab}
-            onOpenSearch={() => setIsSearchOpen(true)}
-            onOpenQuickAdd={() => setIsQuickAddOpen(true)}
-            onOpenQuickAddFor={(cat) => { setQuickAddInitialType(cat); setIsQuickAddOpen(true); }}
+            onOpenSearch={handleOpenSearch}
+            onOpenQuickAdd={() => handleOpenQuickAdd()}
+            onOpenQuickAddFor={(cat) => handleOpenQuickAdd(cat)}
           />
         );
     }
   };
 
   if (showOnboarding) {
-    return <OnboardingScreen onComplete={handleOnboardingComplete} />;
+    return (
+      <Suspense fallback={<ScreenLoading />}>
+        <OnboardingScreen onComplete={handleOnboardingComplete} />
+      </Suspense>
+    );
   }
 
   if (isLocked && settings.passcode) {
     return (
-      <PasscodeLock
-        correctPasscode={settings.passcode}
-        biometricsEnabled={settings.biometricsEnabled !== false}
-        onSuccess={() => setIsLocked(false)}
-      />
+      <Suspense fallback={<ScreenLoading />}>
+        <PasscodeLock
+          correctPasscode={settings.passcode}
+          biometricsEnabled={settings.biometricsEnabled !== false}
+          onSuccess={() => setIsLocked(false)}
+        />
+      </Suspense>
     );
   }
 
@@ -240,11 +257,13 @@ function AppContent() {
     <MainLayout
       activeTab={activeTab}
       onTabChange={handleTabChange}
-      onOpenSearch={() => setIsSearchOpen(true)}
+      onOpenSearch={handleOpenSearch}
       onOpenQuickAdd={() => handleOpenQuickAdd()}
       onRefresh={handleGlobalRefresh}
     >
-      {renderActiveScreen()}
+      <Suspense fallback={<ScreenLoading />}>
+        {renderActiveScreen()}
+      </Suspense>
 
       {/* Global Search Modal */}
       <SearchModal
@@ -261,7 +280,6 @@ function AppContent() {
           setIsQuickAddOpen(false);
         }}
         onSuccess={() => {
-          // Increment trigger key to refresh active sub-screen data
           setRefreshKey(prev => prev + 1);
           showToast('Kasaya eklendi.');
         }}
